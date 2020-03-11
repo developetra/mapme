@@ -18,11 +18,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        <activity android:name=".activities.AddObjectActivity"></activity>
 
         <service
             android:name=".backend.AppService"
             android:enabled="true"
-            android:permission="android.permission.BIND_MAIN_SERVICE"></service>
+            android:permission="android.permission.BIND_MAIN_SERVICE" />
 
         <activity android:name=".activities.AddMarkerActivity" />
         <activity android:name=".activities.AddPolylineActivity" />

@@ -63,7 +63,7 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/button"
-        android:onClick="showPopupWindow"
+        android:onClick="showInfo"
         android:shape="rectangle"
         android:text="Info"
         app:layout_constraintEnd_toEndOf="parent"

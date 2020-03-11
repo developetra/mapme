@@ -13,6 +13,10 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.example.mapme.activities.AddObjectActivity;
+import com.example.mapme.activities.AddPolygonActivity;
+import com.example.mapme.activities.AddPolylineActivity;
+
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
@@ -29,7 +33,8 @@ import java.util.List;
 
 public class PaintingSurface extends View {
 
-    private Activity currentActivity;
+    private AddObjectActivity currentActivity;
+    private AddPolylineActivity currentPolylineActivity;
 
     public void setMode(Mode mode) {
         this.drawingMode = mode;
@@ -83,9 +88,13 @@ public class PaintingSurface extends View {
         canvas.drawPath(mPath, mPaint);
     }
 
-    public void init(Activity activity, MapView mapView) {
-
+    public void init(AddObjectActivity activity, MapView mapView) {
         this.currentActivity = activity;
+        this.mapView = mapView;
+    }
+
+    public void init(AddPolylineActivity activity, MapView mapView) {
+        this.currentPolylineActivity = activity;
         this.mapView = mapView;
     }
 
@@ -193,7 +202,7 @@ public class PaintingSurface extends View {
                             public boolean onClick(Polygon polygon, MapView mapView, GeoPoint eventPos) {
                                 lastPolygon = polygon;
                                 polygon.onClickDefault(polygon, mapView, eventPos);
-                                //currentActivity.showPopupWindow();
+                                currentActivity.showPopupWindow(mapView);
                                 return false;
                             }
                         });
