@@ -3,6 +3,8 @@ package com.example.mapme.backend;
 import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 
+import com.example.mapme.activities.AddObjectActivity;
+
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
@@ -10,10 +12,12 @@ import org.osmdroid.views.overlay.Overlay;
 
 public class IconPlottingOverlay extends Overlay {
     Drawable markerIcon;
+    AddObjectActivity currentActivity;
 
-    public IconPlottingOverlay(Drawable m) {
+    public IconPlottingOverlay(AddObjectActivity activity,Drawable m) {
         super();
         markerIcon = m;
+        currentActivity = activity;
 
     }
 
@@ -51,6 +55,7 @@ public class IconPlottingOverlay extends Overlay {
 
             mapView.getOverlayManager().add(m);
             mapView.invalidate();
+            currentActivity.showPopupWindow(mapView);
             return true;
         }
         return false;

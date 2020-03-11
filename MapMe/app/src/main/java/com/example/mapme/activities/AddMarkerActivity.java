@@ -50,7 +50,7 @@ public class AddMarkerActivity extends AddObjectActivity implements View.OnClick
         enableRotation();
         disablePainting();
 
-        IconPlottingOverlay plotter = new IconPlottingOverlay(this.getResources().getDrawable(R.drawable.marker_default));
+        IconPlottingOverlay plotter = new IconPlottingOverlay(this, this.getResources().getDrawable(R.drawable.marker_default));
         mMapView.getOverlayManager().add(plotter);
 
         // bind to service

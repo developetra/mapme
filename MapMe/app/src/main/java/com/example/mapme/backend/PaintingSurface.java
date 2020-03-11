@@ -14,7 +14,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.example.mapme.activities.AddObjectActivity;
-import com.example.mapme.activities.AddPolygonActivity;
 import com.example.mapme.activities.AddPolylineActivity;
 
 import org.osmdroid.util.GeoPoint;
@@ -34,7 +33,6 @@ import java.util.List;
 public class PaintingSurface extends View {
 
     private AddObjectActivity currentActivity;
-    private AddPolylineActivity currentPolylineActivity;
 
     public void setMode(Mode mode) {
         this.drawingMode = mode;
@@ -93,11 +91,6 @@ public class PaintingSurface extends View {
         this.mapView = mapView;
     }
 
-    public void init(AddPolylineActivity activity, MapView mapView) {
-        this.currentPolylineActivity = activity;
-        this.mapView = mapView;
-    }
-
     private void touch_start(float x, float y) {
         mPath.reset();
         mPath.moveTo(x, y);
@@ -147,6 +140,7 @@ public class PaintingSurface extends View {
                         line.setPoints(geoPoints);
                         line.showInfoWindow();
                         line.getOutlinePaint().setStrokeCap(Paint.Cap.ROUND);
+                        currentActivity.showPopupWindow(mapView);
                         //example below
                         /*
                         line.setOnClickListener(new Polyline.OnClickListener() {
@@ -188,6 +182,7 @@ public class PaintingSurface extends View {
                         polygon.setPoints(geoPoints);
                         polygon.setTitle("A sample polygon");
                         polygon.showInfoWindow();
+                        currentActivity.showPopupWindow(mapView);
                         if (withArrows) {
                             final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), org.osmdroid.library.R.drawable.round_navigation_white_48);
                             final List<MilestoneManager> managers = new ArrayList<>();
