@@ -18,7 +18,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".activities.AddObjectActivity"></activity>
+        <activity android:name=".activities.EditInformationActivity"></activity>
+        <activity android:name=".activities.AddObjectActivity" />
 
         <service
             android:name=".backend.AppService"
