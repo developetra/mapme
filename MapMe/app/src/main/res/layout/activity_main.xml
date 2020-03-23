@@ -66,6 +66,7 @@
         android:onClick="showInfo"
         android:shape="rectangle"
         android:text="Info"
+        android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
@@ -82,6 +83,7 @@
         android:onClick="startMap"
         android:shape="rectangle"
         android:text="Start"
+        android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/infobutton" />

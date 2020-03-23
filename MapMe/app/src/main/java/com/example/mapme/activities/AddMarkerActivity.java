@@ -36,7 +36,6 @@ public class AddMarkerActivity extends AddObjectActivity implements View.OnClick
     private GeoPoint userGeoPoint;
     private Marker userMarker;
     ImageButton painting, panning;
-    TextView textViewCurrentLocation;
     ImageButton btnRotateLeft, btnRotateRight;
     protected MapView mMapView;
 
@@ -85,7 +84,6 @@ public class AddMarkerActivity extends AddObjectActivity implements View.OnClick
         btnRotateRight = findViewById(R.id.btnRotateRight);
         btnRotateRight.setOnClickListener(this);
         btnRotateLeft.setOnClickListener(this);
-        textViewCurrentLocation = findViewById(R.id.textViewCurrentLocation);
         mMapView = findViewById(R.id.map);
         RotationGestureOverlay mRotationGestureOverlay = new RotationGestureOverlay(mMapView);
         mRotationGestureOverlay.setEnabled(true);
@@ -94,14 +92,12 @@ public class AddMarkerActivity extends AddObjectActivity implements View.OnClick
             @Override
             public boolean onScroll(ScrollEvent event) {
                 Log.i(IMapView.LOGTAG, System.currentTimeMillis() + " onScroll " + event.getX() + "," + event.getY());
-                updateInfo();
                 return true;
             }
 
             @Override
             public boolean onZoom(ZoomEvent event) {
                 Log.i(IMapView.LOGTAG, System.currentTimeMillis() + " onZoom " + event.getZoomLevel());
-                updateInfo();
                 return true;
             }
         });
@@ -115,13 +111,6 @@ public class AddMarkerActivity extends AddObjectActivity implements View.OnClick
         painting.setVisibility(View.GONE);
     }
 
-    private void updateInfo() {
-        IGeoPoint mapCenter = mMapView.getMapCenter();
-        textViewCurrentLocation.setText(mapCenter.getLatitude() + "," +
-                mapCenter.getLongitude()
-                + ",zoom=" + mMapView.getZoomLevelDouble() + ",angle=" + mMapView.getMapOrientation());
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -130,7 +119,6 @@ public class AddMarkerActivity extends AddObjectActivity implements View.OnClick
                 if (angle > 360)
                     angle = 360 - angle;
                 mMapView.setMapOrientation(angle);
-                updateInfo();
             }
             break;
             case R.id.btnRotateRight: {
@@ -138,7 +126,6 @@ public class AddMarkerActivity extends AddObjectActivity implements View.OnClick
                 if (angle < 0)
                     angle += 360f;
                 mMapView.setMapOrientation(angle);
-                updateInfo();
             }
         }
     }
@@ -174,6 +161,13 @@ public class AddMarkerActivity extends AddObjectActivity implements View.OnClick
         userGeoPoint.setLongitude(location.getLongitude());
         userMarker.setPosition(userGeoPoint);
         Log.d("info", "AddMarkerActivity is updating user position");
+    }
+
+    @Override
+    public void editObject(View view){
+        Intent intent = new Intent(this, EditInformationActivity.class);
+        intent.putExtra("name", "Edit Marker");
+        startActivity(intent);
     }
 
 }

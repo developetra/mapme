@@ -37,7 +37,6 @@ public class AddPolygonActivity extends AddObjectActivity implements View.OnClic
     private GeoPoint userGeoPoint;
     private Marker userMarker;
     ImageButton painting, panning;
-    TextView textViewCurrentLocation;
     PaintingSurface paintingSurface;
     ImageButton btnRotateLeft, btnRotateRight;
     protected MapView mMapView;
@@ -83,7 +82,6 @@ public class AddPolygonActivity extends AddObjectActivity implements View.OnClic
         btnRotateRight = findViewById(R.id.btnRotateRight);
         btnRotateRight.setOnClickListener(this);
         btnRotateLeft.setOnClickListener(this);
-        textViewCurrentLocation = findViewById(R.id.textViewCurrentLocation);
         mMapView = findViewById(R.id.map);
         RotationGestureOverlay mRotationGestureOverlay = new RotationGestureOverlay(mMapView);
         mRotationGestureOverlay.setEnabled(true);
@@ -92,13 +90,11 @@ public class AddPolygonActivity extends AddObjectActivity implements View.OnClic
             @Override
             public boolean onScroll(ScrollEvent event) {
                 Log.i(IMapView.LOGTAG, System.currentTimeMillis() + " onScroll " + event.getX() + "," + event.getY());
-                updateInfo();
                 return true;
             }
             @Override
             public boolean onZoom(ZoomEvent event) {
                 Log.i(IMapView.LOGTAG, System.currentTimeMillis() + " onZoom " + event.getZoomLevel());
-                updateInfo();
                 return true;
             }
         });
@@ -108,7 +104,7 @@ public class AddPolygonActivity extends AddObjectActivity implements View.OnClic
     private void enablePainting() {
         panning = findViewById(R.id.enablePanning);
         panning.setOnClickListener(this);
-        panning.setBackgroundColor(Color.BLACK);
+        panning.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
         painting = findViewById(R.id.enablePainting);
         painting.setOnClickListener(this);
         paintingSurface = findViewById(R.id.paintingSurface);
@@ -116,24 +112,17 @@ public class AddPolygonActivity extends AddObjectActivity implements View.OnClic
         paintingSurface.setMode(PaintingSurface.Mode.Polygon);
     }
 
-    private void updateInfo() {
-        IGeoPoint mapCenter = mMapView.getMapCenter();
-        textViewCurrentLocation.setText(mapCenter.getLatitude() + "," +
-                mapCenter.getLongitude()
-                + ",zoom=" + mMapView.getZoomLevelDouble() + ",angle=" + mMapView.getMapOrientation() + "\nBounds: " + mMapView.getBoundingBox().toString());
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.enablePanning:
                 paintingSurface.setVisibility(View.GONE);
-                panning.setBackgroundColor(Color.BLACK);
+                panning.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
                 painting.setBackgroundColor(Color.TRANSPARENT);
                 break;
             case R.id.enablePainting:
                 paintingSurface.setVisibility(View.VISIBLE);
-                painting.setBackgroundColor(Color.BLACK);
+                painting.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
                 panning.setBackgroundColor(Color.TRANSPARENT);
                 break;
 
@@ -142,7 +131,6 @@ public class AddPolygonActivity extends AddObjectActivity implements View.OnClic
                 if (angle > 360)
                     angle = 360 - angle;
                 mMapView.setMapOrientation(angle);
-                updateInfo();
             }
             break;
             case R.id.btnRotateRight: {
@@ -150,7 +138,6 @@ public class AddPolygonActivity extends AddObjectActivity implements View.OnClic
                 if (angle < 0)
                     angle += 360f;
                 mMapView.setMapOrientation(angle);
-                updateInfo();
             }
             break;
         }
@@ -182,5 +169,11 @@ public class AddPolygonActivity extends AddObjectActivity implements View.OnClic
         Log.d("info", "AddPolygonActivity is updating user position");
     }
 
+    @Override
+    public void editObject(View view){
+        Intent intent = new Intent(this, EditInformationActivity.class);
+        intent.putExtra("name", "Edit Polygon");
+        startActivity(intent);
+    }
 
 }

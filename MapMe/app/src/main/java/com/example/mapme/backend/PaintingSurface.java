@@ -1,6 +1,5 @@
 package com.example.mapme.backend;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,9 +11,9 @@ import android.graphics.Point;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.mapme.activities.AddObjectActivity;
-import com.example.mapme.activities.AddPolylineActivity;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -136,21 +135,22 @@ public class PaintingSurface extends View {
                         line.setInfoWindow(
                                 new BasicInfoWindow(org.osmdroid.library.R.layout.bonuspack_bubble, mapView));
                         line.getOutlinePaint().setColor(color);
-                        line.setTitle("This is a polyline" + (asPath ? " as Path" : ""));
+                        line.setTitle("New polyline" + (asPath ? " as Path" : ""));
                         line.setPoints(geoPoints);
                         line.showInfoWindow();
                         line.getOutlinePaint().setStrokeCap(Paint.Cap.ROUND);
                         currentActivity.showPopupWindow(mapView);
                         //example below
-                        /*
+
                         line.setOnClickListener(new Polyline.OnClickListener() {
                             @Override
                             public boolean onClick(Polyline polyline, MapView mapView, GeoPoint eventPos) {
                                 Toast.makeText(mapView.getContext(), "polyline with " + polyline.getPoints().size() + "pts was tapped", Toast.LENGTH_LONG).show();
+                                currentActivity.showPopupWindow(mapView);
                                 return false;
                             }
                         });
-                        */
+
 
                         if (withArrows) {
                             final Paint arrowPaint = new Paint();
@@ -180,7 +180,7 @@ public class PaintingSurface extends View {
                                 new BasicInfoWindow(org.osmdroid.library.R.layout.bonuspack_bubble, mapView));
                         polygon.getFillPaint().setColor(Color.argb(75, 255, 0, 0));
                         polygon.setPoints(geoPoints);
-                        polygon.setTitle("A sample polygon");
+                        polygon.setTitle("New polygon");
                         polygon.showInfoWindow();
                         currentActivity.showPopupWindow(mapView);
                         if (withArrows) {
