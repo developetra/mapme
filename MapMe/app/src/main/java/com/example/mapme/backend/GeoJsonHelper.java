@@ -42,5 +42,4 @@ public class GeoJsonHelper {
         return localFile;
     }
 
-
 }

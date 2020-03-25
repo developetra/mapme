@@ -26,7 +26,7 @@ public class AddObjectActivity extends AppCompatActivity {
         View popupView = inflater.inflate(R.layout.popup_add_information, null);
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        boolean focusable = true; // lets taps outside the popup also dismiss it
+        boolean focusable = true;
         popupWindow = new PopupWindow(popupView, width, height, focusable);
         popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
     }
@@ -35,7 +35,7 @@ public class AddObjectActivity extends AppCompatActivity {
         popupWindow.dismiss();
     }
 
-    public void editObject(View view){
+    public void editObject(View view) {
         Intent intent = new Intent(this, EditInformationActivity.class);
         startActivity(intent);
     }

@@ -6,19 +6,16 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.location.Location;
-import android.os.IBinder;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import com.example.mapme.R;
 import com.example.mapme.backend.AppService;
 import com.example.mapme.backend.PaintingSurface;
 
-
-import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.api.IMapView;
 import org.osmdroid.events.MapListener;
@@ -166,6 +163,7 @@ public class AddPolygonActivity extends AddObjectActivity implements View.OnClic
         userGeoPoint.setLatitude(location.getLatitude());
         userGeoPoint.setLongitude(location.getLongitude());
         userMarker.setPosition(userGeoPoint);
+        mMapView.invalidate();
         Log.d("info", "AddPolygonActivity is updating user position");
     }
 

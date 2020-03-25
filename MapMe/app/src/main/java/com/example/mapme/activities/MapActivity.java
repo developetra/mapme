@@ -103,9 +103,7 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
 
         // test
         this.addAdditionalLayer();
-        //geoJsonHelper.writeGeoJSON(this, geoJSON);
 
-        //overpassHelper.newQuery();
     }
 
     public void onResume() {
@@ -168,6 +166,7 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
         userGeoPoint.setLongitude(location.getLongitude());
         userMarker.setPosition(userGeoPoint);
         mapController.setCenter(userGeoPoint);
+        mMapView.invalidate();
         Log.d("info", "MapActivity is updating user position");
     }
 
