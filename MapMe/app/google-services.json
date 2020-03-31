@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "136782090839",
+    "firebase_url": "https://mapme-b48e9.firebaseio.com",
+    "project_id": "mapme-b48e9",
+    "storage_bucket": "mapme-b48e9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:136782090839:android:e690f51c946462ed430912",
+        "android_client_info": {
+          "package_name": "com.example.mapme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "136782090839-j3q5frnh6h27o43tq7o7gnbj5gl1vlfu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mapme",
+            "certificate_hash": "94fed3ed2c7dd525bec522cf02e271551d13c37c"
+          }
+        },
+        {
+          "client_id": "136782090839-rvgf2pe5f49aqq8vlp2th1uprlb3m73a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6YylkQ5WPFk6qMSq9EgaXNnLDXcyHtRY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "136782090839-rvgf2pe5f49aqq8vlp2th1uprlb3m73a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

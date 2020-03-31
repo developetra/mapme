@@ -16,15 +16,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
-import com.cocoahero.android.geojson.Point;
-import com.cocoahero.android.geojson.Polygon;
 import com.example.mapme.R;
 import com.example.mapme.backend.AppService;
 import com.example.mapme.backend.GeoJsonHelper;
 import com.example.mapme.backend.OverpassHelper;
 
-
-import org.json.JSONObject;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.api.IMapView;
 import org.osmdroid.bonuspack.kml.KmlDocument;
@@ -33,10 +29,8 @@ import org.osmdroid.config.Configuration;
 import org.osmdroid.events.MapListener;
 import org.osmdroid.events.ScrollEvent;
 import org.osmdroid.events.ZoomEvent;
-import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
-import org.osmdroid.util.MapTileIndex;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.FolderOverlay;
 import org.osmdroid.views.overlay.Marker;
@@ -102,7 +96,7 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
         Log.d("info", "Service bound to Maps");
 
         // test
-        this.addAdditionalLayer();
+        addAdditionalLayer();
 
     }
 
@@ -171,6 +165,12 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
     }
 
     public void addMarker(View view) {
+
+        // TEST
+        //File file = geoJsonHelper.writeGeoJSON(myOverLay);
+        appService.uploadFile();
+
+
         Intent intent = new Intent(this, AddMarkerActivity.class);
         intent.putExtra("mapCenterLatitude", mMapView.getMapCenter().getLatitude());
         intent.putExtra("mapCenterLongitude", mMapView.getMapCenter().getLongitude());
@@ -233,6 +233,5 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
         mMapView.getOverlays().add(myOverLay);
         mMapView.invalidate();
         Log.d("info", "Additional layer was added");
-        geoJsonHelper.writeGeoJSON(myOverLay);
     }
 }
