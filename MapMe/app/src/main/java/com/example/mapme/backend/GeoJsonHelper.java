@@ -35,10 +35,14 @@ public class GeoJsonHelper {
         KmlDocument kmlDocument = new KmlDocument();
         kmlDocument.mKmlRoot.addOverlay(overlay, kmlDocument);
         File localFile = kmlDocument.getDefaultPathForAndroid("test.json");
+        kmlDocument.saveAsGeoJSON(localFile);
+
+        // TEST with StringWriter
         Writer writer = new StringWriter();
         kmlDocument.saveAsGeoJSON(writer);
         String s = writer.toString();
         Log.d("info", "GeoJSON successfully saved:" + s);
+
         return localFile;
     }
 
