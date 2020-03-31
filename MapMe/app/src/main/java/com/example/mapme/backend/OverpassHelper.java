@@ -1,5 +1,6 @@
 package com.example.mapme.backend;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import hu.supercluster.overpasser.adapter.OverpassQueryResult;
@@ -10,7 +11,10 @@ import static hu.supercluster.overpasser.library.output.OutputFormat.JSON;
 
 public class OverpassHelper {
 
-    public OverpassQueryResult search(final LatLngBounds bounds) {
+    public OverpassQueryResult search(LatLng southwest, LatLng northeast) {
+
+        LatLngBounds bounds = new LatLngBounds(southwest, northeast);
+
         OverpassQuery query = new OverpassQuery()
                 .format(JSON)
                 .timeout(30)
