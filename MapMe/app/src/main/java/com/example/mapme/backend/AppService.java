@@ -162,19 +162,19 @@ public class AppService extends Service {
 
     }
 
-    private void downloadFile(){
+    public void downloadFile(){
         File localFile = null;
         try {
             localFile = File.createTempFile("test", "geojson");
         } catch (IOException e) {
             e.printStackTrace();
         }
+        final File finalLocalFile = localFile;
         fileRef.getFile(localFile)
                 .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                        // Successfully downloaded data to local file
-                        // ...
+                        Log.d("info", "Successfully downloaded file: " + finalLocalFile.getAbsolutePath());
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override

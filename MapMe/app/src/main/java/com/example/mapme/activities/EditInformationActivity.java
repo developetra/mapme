@@ -1,16 +1,13 @@
 package com.example.mapme.activities;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.mapme.R;
-
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Polygon;
 
 public class EditInformationActivity extends AppCompatActivity {
 
@@ -31,6 +28,5 @@ public class EditInformationActivity extends AppCompatActivity {
         String input01 = ((EditText)findViewById(R.id.input01)).getText().toString();
         String input02 = ((EditText)findViewById(R.id.input02)).getText().toString();
         String input03 = ((EditText)findViewById(R.id.input03)).getText().toString();
-
     }
 }
