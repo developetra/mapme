@@ -62,8 +62,11 @@ public class AppService extends Service {
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference counterRef = database.getReference("counter");
     private DatabaseReference objectRef = database.getReference("objects");
+    private ArrayList<String> objects = new ArrayList<String>();
 
     private GeoJsonHelper geoJsonHelper = new GeoJsonHelper();
+
+    // ===== Getter & Setter
 
     public Location getUserPosition() {
         return userPosition;
@@ -71,6 +74,11 @@ public class AppService extends Service {
 
     public void setUserPosition(Location userPosition) {
         this.userPosition = userPosition;
+    }
+
+    public ArrayList<String> getObjects() {
+        getDataFromDatabase();
+        return this.objects;
     }
 
     @Override
@@ -247,6 +255,25 @@ public class AppService extends Service {
 
     public void incrementCounter(){
         counterRef.child("counter").setValue(counter+1);
+    }
+
+    public void getDataFromDatabase(){
+        objectRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                objects.clear();
+                for (int i = 0; i < counter; i++){
+                    String s = (String) dataSnapshot.child("object").child(String.valueOf(i)).child("geometry").getValue();
+                    objects.add(s);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // ...
+            }
+        });
     }
 
 

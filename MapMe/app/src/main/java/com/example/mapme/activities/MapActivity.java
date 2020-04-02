@@ -36,6 +36,8 @@ import org.osmdroid.views.overlay.FolderOverlay;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 
+import java.util.ArrayList;
+
 public class MapActivity extends Activity implements View.OnClickListener, AppService.AppServiceListener {
 
     protected MapView mMapView = null;
@@ -48,7 +50,7 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
     private ImageButton btnRotateLeft, btnRotateRight;
     private GeoJsonHelper geoJsonHelper = new GeoJsonHelper();
     private OverpassHelper overpassHelper = new OverpassHelper();
-
+    private ArrayList<String> objects = new ArrayList<String>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -94,17 +96,15 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
         bindService(bindIntent, appServiceConnection, Context.BIND_AUTO_CREATE);
         Log.d("info", "created Maps");
         Log.d("info", "Service bound to Maps");
-
-        // test
-        addAdditionalLayer();
-
     }
 
+    @Override
     public void onResume() {
         super.onResume();
         mMapView.onResume();
     }
 
+    @Override
     public void onPause() {
         super.onPause();
         mMapView.onPause();
@@ -146,6 +146,7 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
             appServiceBound = true;
             appService.registerListener(MapActivity.this);
             serviceConnected = true;
+            addAdditionalLayer();
         }
 
         @Override
@@ -227,15 +228,20 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
     }
 
     private void addAdditionalLayer() {
-        String jsonString = geoJsonHelper.readGeoJSON(this);
         KmlDocument kmlDocument = new KmlDocument();
-        kmlDocument.parseGeoJSON(jsonString);
-        Drawable defaultMarker = getResources().getDrawable(R.drawable.pin);
-        Bitmap defaultBitmap = ((BitmapDrawable) defaultMarker).getBitmap();
-        Style defaultStyle = new Style(defaultBitmap, 0x901010AA, 3.0f, 0x20AA1010);
-        FolderOverlay myOverLay = (FolderOverlay) kmlDocument.mKmlRoot.buildOverlay(mMapView, defaultStyle, null, kmlDocument);
-        mMapView.getOverlays().add(myOverLay);
-        mMapView.invalidate();
-        Log.d("info", "Additional layer was added");
+        objects = appService.getObjects();
+        if (!objects.isEmpty()){
+            for (String s : objects){
+                Log.d("info", "GeoObject from database: " + s);
+                kmlDocument.parseGeoJSON(s);
+            }
+            Drawable defaultMarker = getResources().getDrawable(R.drawable.pin);
+            Bitmap defaultBitmap = ((BitmapDrawable) defaultMarker).getBitmap();
+            Style defaultStyle = new Style(defaultBitmap, 0x901010AA, 3.0f, 0x20AA1010);
+            FolderOverlay myOverLay = (FolderOverlay) kmlDocument.mKmlRoot.buildOverlay(mMapView, defaultStyle, null, kmlDocument);
+            mMapView.getOverlays().add(myOverLay);
+            mMapView.invalidate();
+            Log.d("info", "Additional layer was added");
+        }
     }
 }
