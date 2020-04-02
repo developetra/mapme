@@ -21,7 +21,7 @@ public class EditInformationActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.textView)).setText(name);
     }
 
-    private void save (View view){
+    public void save (View view){
         String property01 = ((EditText)findViewById(R.id.property01)).getText().toString();
         String property02 = ((EditText)findViewById(R.id.property02)).getText().toString();
         String property03 = ((EditText)findViewById(R.id.property03)).getText().toString();

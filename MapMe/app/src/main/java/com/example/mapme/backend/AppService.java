@@ -17,15 +17,20 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import org.osmdroid.views.overlay.Polygon;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -46,6 +51,9 @@ public class AppService extends Service {
     private StorageReference fileRef;
     private UploadTask uploadTask;
 
+    // ===== Firebase Database
+    FirebaseDatabase database;
+
     private GeoJsonHelper geoJsonHelper = new GeoJsonHelper();
 
     public Location getUserPosition() {
@@ -59,6 +67,7 @@ public class AppService extends Service {
     @Override
     public void onCreate() {
         storageRef = FirebaseStorage.getInstance().getReference();
+        database = FirebaseDatabase.getInstance();
         initLocationManager();
         Log.d("info", "AppService started");
         super.onCreate();
@@ -184,5 +193,21 @@ public class AppService extends Service {
             }
         });
     }
+
+    public void saveToDatabase(){
+        DatabaseReference myRef = database.getReference("message1");
+        Polygon polygon = new Polygon();
+        GeoObject object = new GeoObject(polygon);
+        HashMap<String,String> hashmap = new HashMap<>();
+        hashmap.put("name", "petra");
+        hashmap.put("oneway", "yes");
+        object.setProperties(hashmap);
+        myRef.setValue(object);
+    }
+
+
+
+
+
 
 }

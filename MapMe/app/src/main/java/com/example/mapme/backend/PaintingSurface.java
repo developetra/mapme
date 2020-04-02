@@ -86,7 +86,7 @@ public class PaintingSurface extends View {
     }
 
     public void init(AddObjectActivity activity, MapView mapView) {
-        this.currentActivity = activity;
+        currentActivity = activity;
         this.mapView = mapView;
     }
 

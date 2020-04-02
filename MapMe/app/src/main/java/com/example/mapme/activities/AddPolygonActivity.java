@@ -22,7 +22,7 @@ public class AddPolygonActivity extends AddObjectActivity {
         enablePainting();
 
         // bind to service
-        Intent bindIntent = new Intent(AddPolygonActivity.this, AppService.class);
+        Intent bindIntent = new Intent(this, AppService.class);
         bindService(bindIntent, appServiceConnection, Context.BIND_AUTO_CREATE);
         Log.d("info", "Service bound to AddPolygonActivity");
     }

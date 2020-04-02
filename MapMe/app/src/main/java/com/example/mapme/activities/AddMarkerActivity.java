@@ -23,7 +23,7 @@ public class AddMarkerActivity extends AddObjectActivity implements View.OnLongC
         enableRotation();
         disablePainting();
 
-        IconPlottingOverlay plotter = new IconPlottingOverlay(this, this.getResources().getDrawable(R.drawable.marker_default));
+        IconPlottingOverlay plotter = new IconPlottingOverlay(this, getResources().getDrawable(R.drawable.marker_default));
         mMapView.getOverlayManager().add(plotter);
 
         // bind to service
@@ -33,8 +33,8 @@ public class AddMarkerActivity extends AddObjectActivity implements View.OnLongC
     }
 
     @Override
-    public boolean onLongClick(View v) {
-        showPopupWindow(v);
+    public boolean onLongClick(View view) {
+        showPopupWindow(view);
         return true;
     }
 
