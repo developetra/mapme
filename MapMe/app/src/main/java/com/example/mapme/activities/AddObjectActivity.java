@@ -18,7 +18,6 @@ import android.widget.PopupWindow;
 
 import com.example.mapme.R;
 import com.example.mapme.backend.AppService;
-import com.example.mapme.backend.GeoObject;
 import com.example.mapme.backend.PaintingSurface;
 
 import org.osmdroid.api.IMapController;
@@ -47,6 +46,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
     protected boolean appServiceBound;
     private boolean serviceConnected = false;
     private PopupWindow popupWindow;
+    public String currentGeoObjectId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -175,7 +175,8 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
         Log.d("info", "Updating user position");
     }
 
-    public void showPopupWindow(View view) {
+    public void showPopupWindow(View view, String id) {
+        currentGeoObjectId = id;
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.popup_edit_information, null);
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
@@ -191,10 +192,11 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
 
     public void editObject(View view) {
         Intent intent = new Intent(this, EditInformationActivity.class);
+        intent.putExtra("id", currentGeoObjectId);
         startActivity(intent);
     }
 
-    public void saveToDatabase(OverlayWithIW geometry){
-        appService.saveToDatabase(geometry);
+    public String saveToDatabase(OverlayWithIW geometry){
+        return appService.saveToDatabase(geometry);
     }
 }

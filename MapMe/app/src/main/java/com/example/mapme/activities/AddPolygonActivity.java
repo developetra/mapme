@@ -31,6 +31,7 @@ public class AddPolygonActivity extends AddObjectActivity {
     public void editObject(View view){
         Intent intent = new Intent(this, EditInformationActivity.class);
         intent.putExtra("name", "Edit Polygon");
+        intent.putExtra("id", currentGeoObjectId);
         startActivity(intent);
     }
 

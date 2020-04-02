@@ -34,7 +34,6 @@ public class AddMarkerActivity extends AddObjectActivity implements View.OnLongC
 
     @Override
     public boolean onLongClick(View view) {
-        showPopupWindow(view);
         return true;
     }
 
@@ -42,6 +41,7 @@ public class AddMarkerActivity extends AddObjectActivity implements View.OnLongC
     public void editObject(View view){
         Intent intent = new Intent(this, EditInformationActivity.class);
         intent.putExtra("name", "Edit Marker");
+        intent.putExtra("id", currentGeoObjectId);
         startActivity(intent);
     }
 

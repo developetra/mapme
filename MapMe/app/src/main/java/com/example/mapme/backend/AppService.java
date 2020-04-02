@@ -76,6 +76,7 @@ public class AppService extends Service {
     @Override
     public void onCreate() {
         initLocationManager();
+        updateInRealtime();
         Log.d("info", "AppService started");
         super.onCreate();
     }
@@ -201,7 +202,7 @@ public class AppService extends Service {
         });
     }
 
-    public void setUpDatabase(){
+    public void resetDatabase(){
         // delete old database entries
         counter = 0;
         counterRef.child("counter").setValue(counter);
@@ -223,7 +224,7 @@ public class AppService extends Service {
         objectRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
+                // update map!
             }
             @Override
             public void onCancelled(DatabaseError error) {
@@ -232,10 +233,12 @@ public class AppService extends Service {
         });
     }
 
-    public void saveToDatabase(OverlayWithIW geometry){
+    public String saveToDatabase(OverlayWithIW geometry){
+        String id = String.valueOf(counter +1);
         GeoObject object = new GeoObject(geometry);
-        objectRef.child(String.valueOf(counter +1)).setValue(object);
+        objectRef.child(id).setValue(object);
         incrementCounter();
+        return id;
     }
 
     public void editObject(String id, HashMap<String,String> hashmap){

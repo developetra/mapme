@@ -223,7 +223,7 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
     }
 
     public void resetDatabase(View view){
-        appService.setUpDatabase();
+        appService.resetDatabase();
     }
 
     private void addAdditionalLayer() {

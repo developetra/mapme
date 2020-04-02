@@ -42,7 +42,6 @@ public class PaintingSurface extends View {
     public enum Mode {
         Polyline,
         Polygon,
-        PolygonHole,
         PolylineAsPath
     }
 
@@ -139,38 +138,17 @@ public class PaintingSurface extends View {
                         line.setPoints(geoPoints);
                         line.showInfoWindow();
                         line.getOutlinePaint().setStrokeCap(Paint.Cap.ROUND);
-                        currentActivity.saveToDatabase(line);
-                        currentActivity.showPopupWindow(mapView);
+                        String polylineId = currentActivity.saveToDatabase(line);
+                        currentActivity.showPopupWindow(mapView, polylineId);
                         //example below
 
                         line.setOnClickListener(new Polyline.OnClickListener() {
                             @Override
                             public boolean onClick(Polyline polyline, MapView mapView, GeoPoint eventPos) {
                                 Toast.makeText(mapView.getContext(), "polyline with " + polyline.getPoints().size() + "pts was tapped", Toast.LENGTH_LONG).show();
-                                currentActivity.showPopupWindow(mapView);
                                 return false;
                             }
                         });
-
-
-                        if (withArrows) {
-                            final Paint arrowPaint = new Paint();
-                            arrowPaint.setColor(color);
-                            arrowPaint.setStrokeWidth(10.0f);
-                            arrowPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-                            arrowPaint.setAntiAlias(true);
-                            final Path arrowPath = new Path(); // a simple arrow towards the right
-                            arrowPath.moveTo(-10, -10);
-                            arrowPath.lineTo(10, 0);
-                            arrowPath.lineTo(-10, 10);
-                            arrowPath.close();
-                            final List<MilestoneManager> managers = new ArrayList<>();
-                            managers.add(new MilestoneManager(
-                                    new MilestonePixelDistanceLister(50, 50),
-                                    new MilestonePathDisplayer(0, true, arrowPath, arrowPaint)
-                            ));
-                            line.setMilestoneManagers(managers);
-                        }
                         line.setSubDescription(line.getBounds().toString());
                         mapView.getOverlayManager().add(line);
                         lastPolygon = null;
@@ -183,8 +161,8 @@ public class PaintingSurface extends View {
                         polygon.setPoints(geoPoints);
                         polygon.setTitle("New polygon");
                         polygon.showInfoWindow();
-                        currentActivity.saveToDatabase(polygon);
-                        currentActivity.showPopupWindow(mapView);
+                        String polygonId = currentActivity.saveToDatabase(polygon);
+                        currentActivity.showPopupWindow(mapView, polygonId);
                         if (withArrows) {
                             final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), org.osmdroid.library.R.drawable.round_navigation_white_48);
                             final List<MilestoneManager> managers = new ArrayList<>();
@@ -199,20 +177,12 @@ public class PaintingSurface extends View {
                             public boolean onClick(Polygon polygon, MapView mapView, GeoPoint eventPos) {
                                 lastPolygon = polygon;
                                 polygon.onClickDefault(polygon, mapView, eventPos);
-                                currentActivity.showPopupWindow(mapView);
                                 return false;
                             }
                         });
                         //polygon.setSubDescription(BoundingBox.fromGeoPoints(polygon.getPoints()).toString());
                         mapView.getOverlayManager().add(polygon);
                         lastPolygon = polygon;
-                        break;
-                    case PolygonHole:
-                        if (lastPolygon != null) {
-                            List<List<GeoPoint>> holes = new ArrayList<>();
-                            holes.add(geoPoints);
-                            lastPolygon.setHoles(holes);
-                        }
                         break;
                 }
 
