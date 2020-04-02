@@ -18,6 +18,7 @@ import android.widget.PopupWindow;
 
 import com.example.mapme.R;
 import com.example.mapme.backend.AppService;
+import com.example.mapme.backend.GeoObject;
 import com.example.mapme.backend.PaintingSurface;
 
 import org.osmdroid.api.IMapController;
@@ -28,6 +29,7 @@ import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.OverlayWithIW;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 
 /**
@@ -190,5 +192,9 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
     public void editObject(View view) {
         Intent intent = new Intent(this, EditInformationActivity.class);
         startActivity(intent);
+    }
+
+    public void saveToDatabase(OverlayWithIW geometry){
+        appService.saveToDatabase(geometry);
     }
 }

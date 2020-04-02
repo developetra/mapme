@@ -20,7 +20,6 @@ import com.example.mapme.R;
 import com.example.mapme.backend.AppService;
 import com.example.mapme.backend.GeoJsonHelper;
 import com.example.mapme.backend.OverpassHelper;
-import com.google.android.gms.maps.model.LatLng;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.api.IMapView;
@@ -168,14 +167,9 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
     public void addMarker(View view) {
 
         // TEST
-        //File file = geoJsonHelper.writeGeoJSON(myOverLay);
-        //appService.uploadFile();
-        //appService.downloadFile();
         //LatLng southwest = new LatLng(10.889227665894623, 49.89466815021896);
         //LatLng northeast = new LatLng(10.889316401189319, 49.89461834496722);
         //overpassHelper.search(southwest, northeast);
-        appService.saveToDatabase();
-
 
         Intent intent = new Intent(this, AddMarkerActivity.class);
         intent.putExtra("mapCenterLatitude", mMapView.getMapCenter().getLatitude());
@@ -226,6 +220,10 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
                 mMapView.setMapOrientation(angle);
             }
         }
+    }
+
+    public void resetDatabase(View view){
+        appService.setUpDatabase();
     }
 
     private void addAdditionalLayer() {

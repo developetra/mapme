@@ -17,14 +17,20 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.OverlayWithIW;
 import org.osmdroid.views.overlay.Polygon;
+import org.osmdroid.views.overlay.Polyline;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,7 +58,10 @@ public class AppService extends Service {
     private UploadTask uploadTask;
 
     // ===== Firebase Database
-    FirebaseDatabase database;
+    private long counter = 0;
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference counterRef = database.getReference("counter");
+    private DatabaseReference objectRef = database.getReference("objects");
 
     private GeoJsonHelper geoJsonHelper = new GeoJsonHelper();
 
@@ -66,8 +75,6 @@ public class AppService extends Service {
 
     @Override
     public void onCreate() {
-        storageRef = FirebaseStorage.getInstance().getReference();
-        database = FirebaseDatabase.getInstance();
         initLocationManager();
         Log.d("info", "AppService started");
         super.onCreate();
@@ -194,20 +201,50 @@ public class AppService extends Service {
         });
     }
 
-    public void saveToDatabase(){
-        DatabaseReference myRef = database.getReference("message1");
-        Polygon polygon = new Polygon();
-        GeoObject object = new GeoObject(polygon);
-        HashMap<String,String> hashmap = new HashMap<>();
-        hashmap.put("name", "petra");
-        hashmap.put("oneway", "yes");
-        object.setProperties(hashmap);
-        myRef.setValue(object);
+    public void setUpDatabase(){
+        // delete old database entries
+        counter = 0;
+        counterRef.child("counter").setValue(counter);
+        objectRef.setValue(null);
+        updateInRealtime();
     }
 
+    public void updateInRealtime(){
+        counterRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                counter = (long) dataSnapshot.child("counter").getValue();
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.w("info", "Failed to read value.", error.toException());
+            }
+        });
+        objectRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
 
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.w("info", "Failed to read value.", error.toException());
+            }
+        });
+    }
 
+    public void saveToDatabase(OverlayWithIW geometry){
+        GeoObject object = new GeoObject(geometry);
+        objectRef.child(String.valueOf(counter +1)).setValue(object);
+        incrementCounter();
+    }
 
+    public void editObject(String id, HashMap<String,String> hashmap){
+        objectRef.child(id).child("properties").setValue(hashmap);
+    }
+
+    public void incrementCounter(){
+        counterRef.child("counter").setValue(counter+1);
+    }
 
 
 }

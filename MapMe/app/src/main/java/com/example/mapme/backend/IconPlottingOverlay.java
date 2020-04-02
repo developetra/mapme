@@ -55,6 +55,7 @@ public class IconPlottingOverlay extends Overlay {
 
             mapView.getOverlayManager().add(m);
             mapView.invalidate();
+            currentActivity.saveToDatabase(m);
             currentActivity.showPopupWindow(mapView);
             return true;
         }

@@ -9,18 +9,15 @@ import java.util.HashMap;
 
 public class GeoObject {
 
-    private static int idCounter = 0;
-    private final int id;
     private String geometry;
     private HashMap<String, String> properties;
 
-    public GeoObject(final OverlayWithIW geometry) {
-        this.id = idCounter++;
-        this.geometry = convertOverlayToString(geometry);
+    public GeoObject(){
+        // Default constructor required for calls to DataSnapshot.getValue(GeoObject.class)
     }
 
-    public int getId() {
-        return this.id;
+    public GeoObject(final OverlayWithIW geometry) {
+        this.geometry = convertOverlayToString(geometry);
     }
 
     public String getGeometry() {

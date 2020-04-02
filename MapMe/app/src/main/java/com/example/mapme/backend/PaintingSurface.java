@@ -139,6 +139,7 @@ public class PaintingSurface extends View {
                         line.setPoints(geoPoints);
                         line.showInfoWindow();
                         line.getOutlinePaint().setStrokeCap(Paint.Cap.ROUND);
+                        currentActivity.saveToDatabase(line);
                         currentActivity.showPopupWindow(mapView);
                         //example below
 
@@ -182,6 +183,7 @@ public class PaintingSurface extends View {
                         polygon.setPoints(geoPoints);
                         polygon.setTitle("New polygon");
                         polygon.showInfoWindow();
+                        currentActivity.saveToDatabase(polygon);
                         currentActivity.showPopupWindow(mapView);
                         if (withArrows) {
                             final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), org.osmdroid.library.R.drawable.round_navigation_white_48);
