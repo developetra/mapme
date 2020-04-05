@@ -28,7 +28,7 @@ public class AddPolygonActivity extends AddObjectActivity {
     }
 
     @Override
-    public void editObject(View view){
+    public void editObject(){
         Intent intent = new Intent(this, EditInformationActivity.class);
         intent.putExtra("name", "Edit Polygon");
         intent.putExtra("id", currentGeoObjectId);

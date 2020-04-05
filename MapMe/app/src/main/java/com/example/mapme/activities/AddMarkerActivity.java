@@ -38,7 +38,7 @@ public class AddMarkerActivity extends AddObjectActivity implements View.OnLongC
     }
 
     @Override
-    public void editObject(View view){
+    public void editObject(){
         Intent intent = new Intent(this, EditInformationActivity.class);
         intent.putExtra("name", "Edit Marker");
         intent.putExtra("id", currentGeoObjectId);

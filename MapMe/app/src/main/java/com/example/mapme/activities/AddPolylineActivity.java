@@ -28,7 +28,7 @@ public class AddPolylineActivity extends AddObjectActivity {
     }
 
     @Override
-    public void editObject(View view){
+    public void editObject(){
         Intent intent = new Intent(this, EditInformationActivity.class);
         intent.putExtra("name", "Edit Polyline");
         intent.putExtra("id", currentGeoObjectId);

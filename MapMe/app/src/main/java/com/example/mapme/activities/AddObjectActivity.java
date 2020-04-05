@@ -1,6 +1,8 @@
 package com.example.mapme.activities;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
@@ -175,22 +177,27 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
         Log.d("info", "Updating user position");
     }
 
-    public void showPopupWindow(View view, String id) {
+    public void showInfo(View view, String id) {
         currentGeoObjectId = id;
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.popup_edit_information, null);
-        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        boolean focusable = true;
-        popupWindow = new PopupWindow(popupView, width, height, focusable);
-        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+        AlertDialog.Builder infoDialog = new AlertDialog.Builder(AddObjectActivity.this);
+        infoDialog.setTitle("GeoObject");
+        infoDialog.setMessage("The GeoObject has been saved.");
+        infoDialog.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        infoDialog.setNeutralButton("Edit",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        editObject();
+                    }
+                });
+        infoDialog.show();
     }
 
-    public void closePopupWindow(View view) {
-        popupWindow.dismiss();
-    }
-
-    public void editObject(View view) {
+    public void editObject() {
         Intent intent = new Intent(this, EditInformationActivity.class);
         intent.putExtra("id", currentGeoObjectId);
         startActivity(intent);

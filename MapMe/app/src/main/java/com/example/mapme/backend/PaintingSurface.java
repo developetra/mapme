@@ -139,7 +139,7 @@ public class PaintingSurface extends View {
                         line.showInfoWindow();
                         line.getOutlinePaint().setStrokeCap(Paint.Cap.ROUND);
                         String polylineId = currentActivity.saveToDatabase(line);
-                        currentActivity.showPopupWindow(mapView, polylineId);
+                        currentActivity.showInfo(mapView, polylineId);
                         //example below
 
                         line.setOnClickListener(new Polyline.OnClickListener() {
@@ -162,7 +162,7 @@ public class PaintingSurface extends View {
                         polygon.setTitle("New polygon");
                         polygon.showInfoWindow();
                         String polygonId = currentActivity.saveToDatabase(polygon);
-                        currentActivity.showPopupWindow(mapView, polygonId);
+                        currentActivity.showInfo(mapView, polygonId);
                         if (withArrows) {
                             final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), org.osmdroid.library.R.drawable.round_navigation_white_48);
                             final List<MilestoneManager> managers = new ArrayList<>();

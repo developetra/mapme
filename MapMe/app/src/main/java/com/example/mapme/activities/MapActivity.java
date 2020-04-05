@@ -1,8 +1,10 @@
 package com.example.mapme.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
@@ -13,8 +15,12 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 
 import com.example.mapme.R;
 import com.example.mapme.backend.AppService;
@@ -48,6 +54,7 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
     private Marker userMarker;
     private IMapController mapController;
     private ImageButton btnRotateLeft, btnRotateRight;
+    private PopupWindow popupWindow;
     private GeoJsonHelper geoJsonHelper = new GeoJsonHelper();
     private OverpassHelper overpassHelper = new OverpassHelper();
     private ArrayList<String> objects = new ArrayList<String>();
@@ -223,7 +230,27 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
         }
     }
 
-    public void resetDatabase(View view){
+    public void showInfoResetDatabase(View view) {
+        AlertDialog.Builder infoDialog = new AlertDialog.Builder(MapActivity.this);
+        infoDialog.setTitle("Reset Database");
+        infoDialog.setMessage("Do you really want to reset the database? All previously saved data will be lost. ");
+        infoDialog.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        infoDialog.setNeutralButton("Reset",
+                new DialogInterface.OnClickListener() {
+                      public void onClick(DialogInterface dialog, int id) {
+                          resetDatabase();
+                          dialog.cancel();
+                      }
+                 });
+        infoDialog.show();
+    }
+
+    public void resetDatabase(){
         appService.resetDatabase();
     }
 
