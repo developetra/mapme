@@ -269,6 +269,8 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
             mMapView.getOverlays().add(myOverLay);
             mMapView.invalidate();
             Log.d("info", "Additional layer was added");
+        } else{
+            Log.d("info", "Additional layer could not be added");
         }
     }
 }
