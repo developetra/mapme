@@ -52,6 +52,14 @@ public class EditInformationActivity extends AppCompatActivity implements AppSer
         bindService(bindIntent, appServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        // bind to service
+        Intent bindIntent = new Intent(this, AppService.class);
+        bindService(bindIntent, appServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
     /**
      * AppService Connection.
      */
@@ -98,6 +106,15 @@ public class EditInformationActivity extends AppCompatActivity implements AppSer
         }
         // save properties to database
         appService.editObject(currentGeoObjectId, properties);
+        this.finish();
+    }
+
+    /**
+     * Cancel and go back to previous activity.
+     * @param view
+     */
+    public void cancel(View view){
+        this.finish();
     }
 
     /**
@@ -112,7 +129,7 @@ public class EditInformationActivity extends AppCompatActivity implements AppSer
         // property field
         EditText editTextProperty = new EditText(this);
         editTextProperty.setWidth(500);
-        TableRow.LayoutParams paramsProperty = new TableRow.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
+        TableRow.LayoutParams paramsProperty = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT);
         paramsProperty.setMargins(8, 8, 8, 8);
         tableRow.addView(editTextProperty, paramsProperty);
         //input field

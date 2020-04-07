@@ -2,6 +2,7 @@ package com.example.mapme.activities;
 
 import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -43,6 +44,14 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
     protected boolean appServiceBound;
     private boolean serviceConnected = false;
     public String currentGeoObjectId;
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        // bind to service
+        Intent bindIntent = new Intent(this, AppService.class);
+        bindService(bindIntent, appServiceConnection, Context.BIND_AUTO_CREATE);
+    }
 
     /**
      * Processes extras from intent and sets map position and user marker accordingly.

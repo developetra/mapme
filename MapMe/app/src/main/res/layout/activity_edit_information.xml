@@ -76,6 +76,7 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
                     android:background="@drawable/button"
+                    android:onClick="cancel"
                     android:shape="rectangle"
                     android:text="cancel"
                     android:textColor="#FFFFFF"
