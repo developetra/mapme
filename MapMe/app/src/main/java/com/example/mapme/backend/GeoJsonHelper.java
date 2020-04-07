@@ -13,14 +13,21 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Helper class for converting data to GeoJson.
+ */
 public class GeoJsonHelper {
 
-    public String readGeoJSON(Context context){
+    /**
+     * Converts given geoJson file into a String.
+     *
+     * @param context
+     * @return
+     */
+    public String readGeoJSON(Context context) {
         String geoJSONString = null;
         try {
             InputStream is = context.getAssets().open("database.geojson");
@@ -37,12 +44,19 @@ public class GeoJsonHelper {
         return geoJSONString;
     }
 
-    public File writeGeoJSON(Context context, Overlay overlay){
+    public File writeGeoJSON(Context context, Overlay overlay) {
         return writeGeoJSON(context, overlay, new HashMap<String, String>());
     }
 
-
-    public File writeGeoJSON(Context context, Overlay overlay, HashMap<String, String> properties){
+    /**
+     * Converts given overlay and properties into a geoJson file.
+     *
+     * @param context
+     * @param overlay
+     * @param properties
+     * @return
+     */
+    public File writeGeoJSON(Context context, Overlay overlay, HashMap<String, String> properties) {
 
         // Create a KML Document and add the overlay
         KmlDocument kmlDocument = new KmlDocument();

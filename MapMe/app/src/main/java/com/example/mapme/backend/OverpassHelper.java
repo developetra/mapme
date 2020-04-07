@@ -9,8 +9,18 @@ import hu.supercluster.overpasser.library.query.OverpassQuery;
 
 import static hu.supercluster.overpasser.library.output.OutputFormat.JSON;
 
+/**
+ * Helper class for overpass queries.
+ */
 public class OverpassHelper {
 
+    /**
+     * Creates new overpass query.
+     *
+     * @param southwest
+     * @param northeast
+     * @return
+     */
     public OverpassQueryResult search(LatLng southwest, LatLng northeast) {
 
         LatLngBounds bounds = new LatLngBounds(southwest, northeast);
@@ -34,6 +44,12 @@ public class OverpassHelper {
         return interpret(query.build());
     }
 
+    /**
+     * Interprets overpass query.
+     *
+     * @param query
+     * @return
+     */
     private OverpassQueryResult interpret(String query) {
         try {
             return OverpassServiceProvider.get().interpreter(query).execute().body();

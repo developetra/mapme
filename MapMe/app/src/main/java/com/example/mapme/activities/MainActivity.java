@@ -5,37 +5,28 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.support.annotation.NonNull;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 
 import com.example.mapme.R;
 import com.example.mapme.backend.AppService;
-import com.example.mapme.backend.GeoJsonHelper;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.FileDownloadTask;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
-import java.io.File;
-import java.io.IOException;
-
+/**
+ * MainActivity - Start screen when opening the app.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 5;
 
+    /**
+     * Initializes layout, requests permissions and starts appService.
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,14 +35,23 @@ public class MainActivity extends AppCompatActivity {
         startAppService();
     }
 
+    /**
+     * Opens new MapActivity.
+     *
+     * @param view
+     */
     public void startMap(View view) {
         startAppService();
         Intent intent = new Intent(this, MapActivity.class);
         startActivity(intent);
     }
 
+    /**
+     * Shows info dialog about app.
+     *
+     * @param view
+     */
     public void showInfo(View view) {
-
         AlertDialog.Builder infoDialog = new AlertDialog.Builder(MainActivity.this);
         infoDialog.setTitle("How MapMe works:");
         infoDialog.setMessage("MapMe is a collaborative tool for the acquisition and mapping of geospatial data. \n" +

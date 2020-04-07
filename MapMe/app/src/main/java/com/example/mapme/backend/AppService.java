@@ -23,14 +23,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
-import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.OverlayWithIW;
-import org.osmdroid.views.overlay.Polygon;
-import org.osmdroid.views.overlay.Polyline;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +35,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
+/**
+ * AppService - responsible for location manager, database access,
+ */
 public class AppService extends Service {
 
     // ===== Service
@@ -81,6 +79,9 @@ public class AppService extends Service {
         return this.objects;
     }
 
+    /**
+     * Initializes location manager and realtime database.
+     */
     @Override
     public void onCreate() {
         initLocationManager();
@@ -111,7 +112,7 @@ public class AppService extends Service {
     }
 
     /**
-     * App Service Listener Methods.
+     * App Service Listener methods.
      *
      * @param listener
      */
@@ -128,8 +129,7 @@ public class AppService extends Service {
     }
 
     /**
-     * Initialises LocationManager.
-     *
+     * Initializes locationManager.
      */
     private void initLocationManager() {
         Log.d("info", "LocationManager initialized");
@@ -143,12 +143,15 @@ public class AppService extends Service {
                     listener.updateUserPosition(location);
                 }
             }
+
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
             }
+
             @Override
             public void onProviderEnabled(String provider) {
             }
+
             @Override
             public void onProviderDisabled(String provider) {
             }
@@ -163,7 +166,10 @@ public class AppService extends Service {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MINIMUM_TIME_BETWEEN_UPDATE, MINIMUM_DISTANCING_FOR_UPDATE, locListener);
     }
 
-    public void uploadFile(){
+    /**
+     * Uploads file to firebase storage.
+     */
+    public void uploadFile() {
         try {
             InputStream is = getAssets().open("database.geojson");
             StorageReference fileRef = storageRef.child("database.geojson");
@@ -187,7 +193,10 @@ public class AppService extends Service {
 
     }
 
-    public void downloadFile(){
+    /**
+     * Downloads file from firebase storage.
+     */
+    public void downloadFile() {
         File localFile = null;
         try {
             localFile = File.createTempFile("test", "geojson");
@@ -210,7 +219,10 @@ public class AppService extends Service {
         });
     }
 
-    public void resetDatabase(){
+    /**
+     * Resets database.
+     */
+    public void resetDatabase() {
         // delete old database entries
         counter = 0;
         counterRef.child("counter").setValue(counter);
@@ -218,12 +230,16 @@ public class AppService extends Service {
         updateInRealtime();
     }
 
-    public void updateInRealtime(){
+    /**
+     * Initializes realtime database.
+     */
+    public void updateInRealtime() {
         counterRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 counter = (long) dataSnapshot.child("counter").getValue();
             }
+
             @Override
             public void onCancelled(DatabaseError error) {
                 Log.w("info", "Failed to read value.", error.toException());
@@ -234,6 +250,7 @@ public class AppService extends Service {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // update map!
             }
+
             @Override
             public void onCancelled(DatabaseError error) {
                 Log.w("info", "Failed to read value.", error.toException());
@@ -241,28 +258,46 @@ public class AppService extends Service {
         });
     }
 
-    public String saveToDatabase(OverlayWithIW geometry){
-        String id = String.valueOf(counter +1);
+    /**
+     * Saves given geometry to database.
+     *
+     * @param geometry
+     * @return
+     */
+    public String saveToDatabase(OverlayWithIW geometry) {
+        String id = String.valueOf(counter + 1);
         GeoObject object = new GeoObject(geometry);
         objectRef.child(id).setValue(object);
         incrementCounter();
         return id;
     }
 
-    public void editObject(String id, HashMap<String,String> hashmap){
+    /**
+     * Saves given properties to object.
+     *
+     * @param id
+     * @param hashmap
+     */
+    public void editObject(String id, HashMap<String, String> hashmap) {
         objectRef.child(id).child("properties").setValue(hashmap);
     }
 
-    public void incrementCounter(){
-        counterRef.child("counter").setValue(counter+1);
+    /**
+     * Increments counter in database.
+     */
+    public void incrementCounter() {
+        counterRef.child("counter").setValue(counter + 1);
     }
 
-    public void getDataFromDatabase(){
+    /**
+     * Gets data from database.
+     */
+    public void getDataFromDatabase() {
         objectRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 objects.clear();
-                for (int i = 0; i < counter; i++){
+                for (int i = 0; i < counter; i++) {
                     String s = (String) dataSnapshot.child("object").child(String.valueOf(i)).child("geometry").getValue();
                     objects.add(s);
                 }

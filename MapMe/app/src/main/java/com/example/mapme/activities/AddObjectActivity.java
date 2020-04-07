@@ -7,16 +7,11 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.location.Location;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 
 import com.example.mapme.R;
 import com.example.mapme.backend.AppService;
@@ -34,7 +29,7 @@ import org.osmdroid.views.overlay.OverlayWithIW;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 
 /**
- * AddObjectActivity - this abstract Activity provides all common methods for the AddMarker, AddPolygon and AddPolyline Activities.
+ * AddObjectActivity - this abstract Activity provides all common methods for AddMarker, AddPolygon and AddPolyline Activities.
  */
 public abstract class AddObjectActivity extends AppCompatActivity implements View.OnClickListener, AppService.AppServiceListener {
 
@@ -47,15 +42,11 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
     protected AppService appService;
     protected boolean appServiceBound;
     private boolean serviceConnected = false;
-    private PopupWindow popupWindow;
     public String currentGeoObjectId;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_object);
-    }
-
+    /**
+     * Processes extras from intent and sets map position and user marker accordingly.
+     */
     public void setMapPositionAndUserMarker() {
         IMapController mapController = mMapView.getController();
         // set map position
@@ -76,6 +67,9 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
         mMapView.getOverlays().add(userMarker);
     }
 
+    /**
+     * Enables rotation using icons or multitouch.
+     */
     public void enableRotation() {
         btnRotateLeft = findViewById(R.id.btnRotateLeft);
         btnRotateRight = findViewById(R.id.btnRotateRight);
@@ -101,7 +95,10 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
         mMapView.getOverlayManager().add(mRotationGestureOverlay);
     }
 
-    public void enablePainting() {
+    /**
+     * Enables painting by initialising painting surface and setting mode.
+     */
+    public void enablePainting(PaintingSurface.Mode mode) {
         panning = findViewById(R.id.enablePanning);
         panning.setOnClickListener(this);
         panning.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
@@ -109,9 +106,12 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
         painting.setOnClickListener(this);
         paintingSurface = findViewById(R.id.paintingSurface);
         paintingSurface.init(this, mMapView);
-        paintingSurface.setMode(PaintingSurface.Mode.Polygon);
+        paintingSurface.setMode(mode);
     }
 
+    /**
+     * Disables painting.
+     */
     public void disablePainting() {
         panning = findViewById(R.id.enablePanning);
         panning.setVisibility(View.GONE);
@@ -119,9 +119,14 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
         painting.setVisibility(View.GONE);
     }
 
+    /**
+     * OnClick listener for rotate and painting/panning icons.
+     *
+     * @param view
+     */
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
+    public void onClick(View view) {
+        switch (view.getId()) {
             case R.id.enablePanning:
                 paintingSurface.setVisibility(View.GONE);
                 panning.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
@@ -150,7 +155,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
     }
 
     /**
-     * AppService Connection
+     * AppService Connection.
      */
     public ServiceConnection appServiceConnection = new ServiceConnection() {
         @Override
@@ -160,6 +165,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
             appServiceBound = true;
             appService.registerListener(AddObjectActivity.this);
             serviceConnected = true;
+            Log.d("info", "Service bound to Activity");
         }
 
         @Override
@@ -168,6 +174,11 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
         }
     };
 
+    /**
+     * Updates user position on map.
+     *
+     * @param location
+     */
     @Override
     public void updateUserPosition(Location location) {
         userGeoPoint.setLatitude(location.getLatitude());
@@ -177,6 +188,12 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
         Log.d("info", "Updating user position");
     }
 
+    /**
+     * Shows info dialog to edit geoObject.
+     *
+     * @param view
+     * @param id
+     */
     public void showInfo(View view, String id) {
         currentGeoObjectId = id;
         AlertDialog.Builder infoDialog = new AlertDialog.Builder(AddObjectActivity.this);
@@ -197,13 +214,22 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
         infoDialog.show();
     }
 
+    /**
+     * Opens new EditInformationActivity for last saved geoObject.
+     */
     public void editObject() {
         Intent intent = new Intent(this, EditInformationActivity.class);
         intent.putExtra("id", currentGeoObjectId);
         startActivity(intent);
     }
 
-    public String saveToDatabase(OverlayWithIW geometry){
+    /**
+     * Calls appService to save geoObject to database.
+     *
+     * @param geometry
+     * @return
+     */
+    public String saveToDatabase(OverlayWithIW geometry) {
         return appService.saveToDatabase(geometry);
     }
 }

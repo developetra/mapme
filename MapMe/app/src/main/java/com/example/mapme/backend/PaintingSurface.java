@@ -23,21 +23,15 @@ import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.infowindow.BasicInfoWindow;
 import org.osmdroid.views.overlay.milestones.MilestoneBitmapDisplayer;
 import org.osmdroid.views.overlay.milestones.MilestoneManager;
-import org.osmdroid.views.overlay.milestones.MilestonePathDisplayer;
 import org.osmdroid.views.overlay.milestones.MilestonePixelDistanceLister;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Helper class for AddPolylineActivity and AddPolygonActivity.
+ */
 public class PaintingSurface extends View {
-
-    private AddObjectActivity currentActivity;
-
-    public void setMode(Mode mode) {
-        this.drawingMode = mode;
-    }
-
-    private Mode drawingMode = Mode.Polyline;
 
     public enum Mode {
         Polyline,
@@ -45,6 +39,8 @@ public class PaintingSurface extends View {
         PolylineAsPath
     }
 
+    private AddObjectActivity currentActivity;
+    private Mode drawingMode = Mode.Polyline;
     protected boolean withArrows = false;
     private Canvas mCanvas;
     private Path mPath;
@@ -56,7 +52,21 @@ public class PaintingSurface extends View {
     private GeoJsonHelper geoJsonHelper = new GeoJsonHelper();
     transient Polygon lastPolygon = null;
 
+    /**
+     * Sets drawing mode.
+     *
+     * @param mode
+     */
+    public void setMode(Mode mode) {
+        this.drawingMode = mode;
+    }
 
+    /**
+     * Constructor.
+     *
+     * @param context
+     * @param attrs
+     */
     public PaintingSurface(Context context, AttributeSet attrs) {
         super(context, attrs);
         mPath = new Path();
@@ -70,25 +80,48 @@ public class PaintingSurface extends View {
         mPaint.setStrokeWidth(12);
     }
 
-
+    /**
+     * Creates new canvas.
+     *
+     * @param w
+     * @param h
+     * @param oldw
+     * @param oldh
+     */
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         final Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        mCanvas = new Canvas(bitmap);
+        this.mCanvas = new Canvas(bitmap);
     }
 
-
+    /**
+     * Draws new path.
+     *
+     * @param canvas
+     */
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.drawPath(mPath, mPaint);
     }
 
+    /**
+     * Initializes painting surface.
+     *
+     * @param activity
+     * @param mapView
+     */
     public void init(AddObjectActivity activity, MapView mapView) {
         currentActivity = activity;
         this.mapView = mapView;
     }
 
+    /**
+     * Start painting.
+     *
+     * @param x
+     * @param y
+     */
     private void touch_start(float x, float y) {
         mPath.reset();
         mPath.moveTo(x, y);
@@ -96,6 +129,12 @@ public class PaintingSurface extends View {
         mY = y;
     }
 
+    /**
+     * While painting.
+     *
+     * @param x
+     * @param y
+     */
     private void touch_move(float x, float y) {
         float dx = Math.abs(x - mX);
         float dy = Math.abs(y - mY);
@@ -106,11 +145,14 @@ public class PaintingSurface extends View {
         }
     }
 
+    /**
+     * Finish painting.
+     */
     private void touch_up() {
         mPath.lineTo(mX, mY);
-        // commit the path to our offscreen
+        // commit path to offscreen
         mCanvas.drawPath(mPath, mPaint);
-        // kill this so we don't double draw
+        // reset mPath to not double draw
         mPath.reset();
         if (mapView != null) {
             Projection projection = mapView.getProjection();
@@ -121,16 +163,14 @@ public class PaintingSurface extends View {
                 GeoPoint iGeoPoint = (GeoPoint) projection.fromPixels(unrotatedPoint.x, unrotatedPoint.y);
                 geoPoints.add(iGeoPoint);
             }
-
             if (geoPoints.size() > 2) {
-                //only plot a line unless there's at least one item
+                // only plot a line unless there is at least one item
                 switch (drawingMode) {
                     case Polyline:
                     case PolylineAsPath:
                         final boolean asPath = drawingMode == Mode.PolylineAsPath;
                         final int color = Color.argb(100, 100, 100, 100);
                         final Polyline line = new Polyline(mapView);
-                        // line.usePath(true);
                         line.setInfoWindow(
                                 new BasicInfoWindow(org.osmdroid.library.R.layout.bonuspack_bubble, mapView));
                         line.getOutlinePaint().setColor(color);
@@ -140,8 +180,6 @@ public class PaintingSurface extends View {
                         line.getOutlinePaint().setStrokeCap(Paint.Cap.ROUND);
                         String polylineId = currentActivity.saveToDatabase(line);
                         currentActivity.showInfo(mapView, polylineId);
-                        //example below
-
                         line.setOnClickListener(new Polyline.OnClickListener() {
                             @Override
                             public boolean onClick(Polyline polyline, MapView mapView, GeoPoint eventPos) {
@@ -194,6 +232,12 @@ public class PaintingSurface extends View {
 
     }
 
+    /**
+     * Touch event.
+     *
+     * @param event
+     * @return
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
@@ -216,11 +260,13 @@ public class PaintingSurface extends View {
         return true;
     }
 
+    /**
+     * Destroy mapView and polygon.
+     */
     public void destroy() {
         mapView = null;
         this.lastPolygon = null;
     }
-
 
 }
 

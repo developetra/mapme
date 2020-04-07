@@ -15,12 +15,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 
 import com.example.mapme.R;
 import com.example.mapme.backend.AppService;
@@ -44,6 +40,9 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 
 import java.util.ArrayList;
 
+/**
+ * MapActivity - Activity that shows map with geoObjects, user position and menu items.
+ */
 public class MapActivity extends Activity implements View.OnClickListener, AppService.AppServiceListener {
 
     protected MapView mMapView = null;
@@ -54,23 +53,25 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
     private Marker userMarker;
     private IMapController mapController;
     private ImageButton btnRotateLeft, btnRotateRight;
-    private PopupWindow popupWindow;
     private GeoJsonHelper geoJsonHelper = new GeoJsonHelper();
     private OverpassHelper overpassHelper = new OverpassHelper();
     private ArrayList<String> objects = new ArrayList<String>();
 
+    /**
+     * Initializes layout and starts appServiceConnection.
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Context ctx = getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
-
         // inflate and create the mMapView
         setContentView(R.layout.activity_map);
         mMapView = (MapView) findViewById(R.id.map);
-
+        // set tile source
         mMapView.setTileSource(TileSourceFactory.MAPNIK);
-
 //        mMapView.setTileSource(new OnlineTileSourceBase("USGS Topo", 0, 18, 256, "",
 //                new String[] { "http://a.tile.stamen.com/toner/" }) {
 //            @Override
@@ -82,22 +83,18 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
 //                        + mImageFilenameEnding;
 //            }
 //        });
-
         mMapView.setMultiTouchControls(true);
         mapController = mMapView.getController();
         mapController.setZoom(17.0);
         userGeoPoint = new GeoPoint(49.89873, 10.90067);
         mapController.setCenter(userGeoPoint);
-
         // enable rotation
         enableRotation();
-
         // set user marker
         userMarker = new Marker(mMapView);
         userMarker.setIcon(getResources().getDrawable(R.drawable.position));
         userMarker.setPosition(userGeoPoint);
         mMapView.getOverlays().add(userMarker);
-
         // bind to service
         Intent bindIntent = new Intent(MapActivity.this, AppService.class);
         bindService(bindIntent, appServiceConnection, Context.BIND_AUTO_CREATE);
@@ -117,6 +114,9 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
         mMapView.onPause();
     }
 
+    /**
+     * Enables rotation using icons or multitouch.
+     */
     private void enableRotation() {
         btnRotateLeft = findViewById(R.id.btnRotateLeft);
         btnRotateRight = findViewById(R.id.btnRotateRight);
@@ -143,7 +143,7 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
     }
 
     /**
-     * App Service Connection
+     * App Service Connection.
      */
     private ServiceConnection appServiceConnection = new ServiceConnection() {
         @Override
@@ -162,6 +162,11 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
         }
     };
 
+    /**
+     * Updates user position on map.
+     *
+     * @param location
+     */
     @Override
     public void updateUserPosition(Location location) {
         userGeoPoint.setLatitude(location.getLatitude());
@@ -172,6 +177,11 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
         Log.d("info", "MapActivity is updating user position");
     }
 
+    /**
+     * Opens new AddMarkerActivity.
+     *
+     * @param view
+     */
     public void addMarker(View view) {
 
         // TEST
@@ -189,6 +199,11 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
         startActivity(intent);
     }
 
+    /**
+     * Opens new AddPolylineActivity.
+     *
+     * @param view
+     */
     public void addPolyline(View view) {
         Intent intent = new Intent(this, AddPolylineActivity.class);
         intent.putExtra("mapCenterLatitude", mMapView.getMapCenter().getLatitude());
@@ -200,6 +215,11 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
         startActivity(intent);
     }
 
+    /**
+     * Opens new AddPolygonActivity.
+     *
+     * @param view
+     */
     public void addPolygon(View view) {
         Intent intent = new Intent(this, AddPolygonActivity.class);
         intent.putExtra("mapCenterLatitude", mMapView.getMapCenter().getLatitude());
@@ -211,9 +231,14 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
         startActivity(intent);
     }
 
+    /**
+     * OnClick listener for rotate icons.
+     *
+     * @param view
+     */
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
+    public void onClick(View view) {
+        switch (view.getId()) {
             case R.id.btnRotateLeft: {
                 float angle = mMapView.getMapOrientation() + 10;
                 if (angle > 360)
@@ -230,6 +255,11 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
         }
     }
 
+    /**
+     * Shows info dialog to reset database.
+     *
+     * @param view
+     */
     public void showInfoResetDatabase(View view) {
         AlertDialog.Builder infoDialog = new AlertDialog.Builder(MapActivity.this);
         infoDialog.setTitle("Reset Database");
@@ -242,23 +272,29 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
                 });
         infoDialog.setNeutralButton("Reset",
                 new DialogInterface.OnClickListener() {
-                      public void onClick(DialogInterface dialog, int id) {
-                          resetDatabase();
-                          dialog.cancel();
-                      }
-                 });
+                    public void onClick(DialogInterface dialog, int id) {
+                        resetDatabase();
+                        dialog.cancel();
+                    }
+                });
         infoDialog.show();
     }
 
-    public void resetDatabase(){
+    /**
+     * Calls appService to reset database.
+     */
+    public void resetDatabase() {
         appService.resetDatabase();
     }
 
+    /**
+     * Adds layer with geoObjects from database to map.
+     */
     private void addAdditionalLayer() {
         KmlDocument kmlDocument = new KmlDocument();
         objects = appService.getObjects();
-        if (!objects.isEmpty()){
-            for (String s : objects){
+        if (!objects.isEmpty()) {
+            for (String s : objects) {
                 Log.d("info", "GeoObject from database: " + s);
                 kmlDocument.parseGeoJSON(s);
             }
@@ -269,7 +305,7 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
             mMapView.getOverlays().add(myOverLay);
             mMapView.invalidate();
             Log.d("info", "Additional layer was added");
-        } else{
+        } else {
             Log.d("info", "Additional layer could not be added");
         }
     }

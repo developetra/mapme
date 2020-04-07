@@ -10,10 +10,18 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Overlay;
 
+/**
+ * Helper class for AddMarkerActivity.
+ */
 public class IconPlottingOverlay extends Overlay {
     Drawable markerIcon;
     AddObjectActivity currentActivity;
 
+    /**
+     * Constructor.
+     * @param activity
+     * @param m
+     */
     public IconPlottingOverlay(AddObjectActivity activity,Drawable m) {
         super();
         markerIcon = m;
@@ -21,6 +29,12 @@ public class IconPlottingOverlay extends Overlay {
 
     }
 
+    /**
+     * Add overlay with marker to map.
+     * @param e
+     * @param mapView
+     * @return
+     */
     @Override
     public boolean onLongPress(final MotionEvent e, final MapView mapView) {
         if (markerIcon != null) {

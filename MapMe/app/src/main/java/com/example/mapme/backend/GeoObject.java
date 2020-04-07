@@ -7,25 +7,36 @@ import org.osmdroid.views.overlay.OverlayWithIW;
 
 import java.util.HashMap;
 
+/**
+ * Class GeoObject - Represents a geoObject that is defined by its geometry and properties.
+ */
 public class GeoObject {
 
     private String geometry;
     private HashMap<String, String> properties;
 
-    public GeoObject(){
+    /**
+     * Constructor
+     */
+
+    public GeoObject() {
         // Default constructor required for calls to DataSnapshot.getValue(GeoObject.class)
     }
 
     public GeoObject(final OverlayWithIW geometry) {
-        this.geometry = convertOverlayToString(geometry);
+        this.geometry = convertGeometryToGeoJson(geometry);
     }
+
+    /**
+     * Getter and Setter
+     */
 
     public String getGeometry() {
         return this.geometry;
     }
 
     public void setGeometry(final OverlayWithIW geometry) {
-        this.geometry = convertOverlayToString(geometry);
+        this.geometry = convertGeometryToGeoJson(geometry);
     }
 
     public HashMap<String, String> getProperties() {
@@ -36,7 +47,13 @@ public class GeoObject {
         this.properties = properties;
     }
 
-    public String convertOverlayToString(OverlayWithIW overlayWithIW){
+    /**
+     * Convert given geometry to a geoJson String.
+     *
+     * @param overlayWithIW
+     * @return
+     */
+    public String convertGeometryToGeoJson(OverlayWithIW overlayWithIW) {
         // Create a KML Document and add the overlay
         KmlDocument kmlDocument = new KmlDocument();
         kmlDocument.mKmlRoot.addOverlay(overlayWithIW, kmlDocument);
