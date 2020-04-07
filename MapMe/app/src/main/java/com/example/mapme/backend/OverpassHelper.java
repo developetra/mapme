@@ -1,5 +1,7 @@
 package com.example.mapme.backend;
 
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
@@ -17,31 +19,37 @@ public class OverpassHelper {
     /**
      * Creates new overpass query.
      *
-     * @param southwest
-     * @param northeast
+     * @param bounds
      * @return
      */
-    public OverpassQueryResult search(LatLng southwest, LatLng northeast) {
-
-        LatLngBounds bounds = new LatLngBounds(southwest, northeast);
-
+    public OverpassQueryResult search(LatLngBounds bounds) {
         OverpassQuery query = new OverpassQuery()
                 .format(JSON)
                 .timeout(30)
                 .filterQuery()
-                .node()
-                .amenity("parking")
-                .tagNot("access", "private")
-                .boundingBox(
-                        bounds.southwest.latitude,
-                        bounds.southwest.longitude,
-                        bounds.northeast.latitude,
-                        bounds.northeast.longitude
+                    .node()
+                    .boundingBox(
+                            bounds.southwest.latitude,
+                            bounds.southwest.longitude,
+                            bounds.northeast.latitude,
+                            bounds.northeast.longitude
                 )
                 .end()
                 .output(100);
 
-        return interpret(query.build());
+        OverpassQueryResult result = interpret(query.build());
+        int numberOfElements = result.elements.size();
+        Log.d("info", "overpass result number of elements: " + numberOfElements);
+        for (int i = 0; i< numberOfElements; i++){
+            OverpassQueryResult.Element e = result.elements.get(i);
+            String type = e.type;
+            String name = e.tags.name;
+            double lat = e.lat;
+            double lon = e.lon;
+            Log.d("info", "overpass result element: " + type + name + lat + lon);
+        }
+        Log.d("info", "overpass result: " + String.valueOf(result));
+        return result;
     }
 
     /**
@@ -53,10 +61,8 @@ public class OverpassHelper {
     private OverpassQueryResult interpret(String query) {
         try {
             return OverpassServiceProvider.get().interpreter(query).execute().body();
-
         } catch (Exception e) {
             e.printStackTrace();
-
             return new OverpassQueryResult();
         }
     }
