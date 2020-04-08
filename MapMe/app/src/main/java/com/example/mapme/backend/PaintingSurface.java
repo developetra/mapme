@@ -171,19 +171,16 @@ public class PaintingSurface extends View {
                         final boolean asPath = drawingMode == Mode.PolylineAsPath;
                         final int color = Color.argb(100, 100, 100, 100);
                         final Polyline line = new Polyline(mapView);
-                        line.setInfoWindow(
-                                new BasicInfoWindow(org.osmdroid.library.R.layout.bonuspack_bubble, mapView));
                         line.getOutlinePaint().setColor(color);
                         line.setTitle("New polyline" + (asPath ? " as Path" : ""));
                         line.setPoints(geoPoints);
-                        line.showInfoWindow();
                         line.getOutlinePaint().setStrokeCap(Paint.Cap.ROUND);
-                        String polylineId = currentActivity.saveToDatabase(line);
-                        currentActivity.showInfo(mapView, polylineId);
+                        line.setId(currentActivity.saveToDatabase(line));
+                        currentActivity.showInfo(mapView, line.getId());
                         line.setOnClickListener(new Polyline.OnClickListener() {
                             @Override
                             public boolean onClick(Polyline polyline, MapView mapView, GeoPoint eventPos) {
-                                Toast.makeText(mapView.getContext(), "polyline with " + polyline.getPoints().size() + "pts was tapped", Toast.LENGTH_LONG).show();
+                                currentActivity.showInfo(mapView, line.getId());
                                 return false;
                             }
                         });
@@ -193,14 +190,11 @@ public class PaintingSurface extends View {
                         break;
                     case Polygon:
                         Polygon polygon = new Polygon(mapView);
-                        polygon.setInfoWindow(
-                                new BasicInfoWindow(org.osmdroid.library.R.layout.bonuspack_bubble, mapView));
                         polygon.getFillPaint().setColor(Color.argb(75, 255, 0, 0));
                         polygon.setPoints(geoPoints);
                         polygon.setTitle("New polygon");
-                        polygon.showInfoWindow();
-                        String polygonId = currentActivity.saveToDatabase(polygon);
-                        currentActivity.showInfo(mapView, polygonId);
+                        polygon.setId(currentActivity.saveToDatabase(polygon));
+                        currentActivity.showInfo(mapView, polygon.getId());
                         if (withArrows) {
                             final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), org.osmdroid.library.R.drawable.round_navigation_white_48);
                             final List<MilestoneManager> managers = new ArrayList<>();
@@ -214,7 +208,7 @@ public class PaintingSurface extends View {
                             @Override
                             public boolean onClick(Polygon polygon, MapView mapView, GeoPoint eventPos) {
                                 lastPolygon = polygon;
-                                polygon.onClickDefault(polygon, mapView, eventPos);
+                                currentActivity.showInfo(mapView, polygon.getId());
                                 return false;
                             }
                         });

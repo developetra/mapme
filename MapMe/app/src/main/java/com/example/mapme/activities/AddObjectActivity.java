@@ -206,8 +206,8 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
     public void showInfo(View view, String id) {
         currentGeoObjectId = id;
         AlertDialog.Builder infoDialog = new AlertDialog.Builder(AddObjectActivity.this);
-        infoDialog.setTitle("GeoObject");
-        infoDialog.setMessage("The GeoObject has been saved.");
+        infoDialog.setTitle("GeoObject (Id: " + id + ")");
+        infoDialog.setMessage("The GeoObject has already been saved to the database. You can edit the information about the GeoObject.");
         infoDialog.setNegativeButton("Cancel",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
