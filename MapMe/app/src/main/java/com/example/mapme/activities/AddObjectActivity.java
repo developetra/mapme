@@ -241,4 +241,12 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
     public String saveToDatabase(OverlayWithIW geometry) {
         return appService.saveToDatabase(geometry);
     }
+
+    /**
+     * Go back to previous activity.
+     * @param view
+     */
+    public void back(View view){
+        this.finish();
+    }
 }
