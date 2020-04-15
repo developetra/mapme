@@ -19,6 +19,8 @@ import com.example.mapme.backend.OverpassHelper;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
+import hu.supercluster.overpasser.adapter.OverpassQueryResult;
+
 /**
  * MainActivity - Start screen when opening the app.
  */
@@ -61,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
         LatLng southwest = new LatLng(49.891999, 10.887844);
         LatLng northeast = new LatLng(49.895648, 10.889604);
         LatLngBounds bounds = new LatLngBounds(southwest, northeast);
-        overpassHelper.search(bounds);
+        OverpassQueryResult result = overpassHelper.search(bounds);
+        Log.d("info", "OverpassQueryResult: " + result.toString());
 
         AlertDialog.Builder infoDialog = new AlertDialog.Builder(MainActivity.this);
         infoDialog.setTitle("How MapMe works:");

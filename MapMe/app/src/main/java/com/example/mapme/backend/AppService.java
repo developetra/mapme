@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import com.example.mapme.activities.MapActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -75,7 +76,6 @@ public class AppService extends Service {
     }
 
     public ArrayList<String> getObjects() {
-        getDataFromDatabase();
         return this.objects;
     }
 
@@ -86,6 +86,7 @@ public class AppService extends Service {
     public void onCreate() {
         initLocationManager();
         updateInRealtime();
+        getDataFromDatabase();
         Log.d("info", "AppService started");
         super.onCreate();
     }
@@ -296,12 +297,13 @@ public class AppService extends Service {
         objectRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("info", "DataSnapshot: " + dataSnapshot);
                 objects.clear();
-                for (int i = 0; i < counter; i++) {
-                    String s = (String) dataSnapshot.child("object").child(String.valueOf(i)).child("geometry").getValue();
-                    objects.add(s);
+                for (DataSnapshot entry : dataSnapshot.getChildren()) {
+                    String geometry = entry.child("geometry").getValue(String.class);
+                    objects.add(geometry);
                 }
-
+                Log.d("info", "objects: " + objects);
             }
 
             @Override
@@ -310,6 +312,5 @@ public class AppService extends Service {
             }
         });
     }
-
 
 }

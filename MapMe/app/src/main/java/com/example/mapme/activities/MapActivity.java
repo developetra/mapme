@@ -20,9 +20,6 @@ import android.widget.ImageButton;
 
 import com.example.mapme.R;
 import com.example.mapme.backend.AppService;
-import com.example.mapme.backend.GeoJsonHelper;
-import com.example.mapme.backend.OverpassHelper;
-import com.google.android.gms.maps.model.LatLng;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.api.IMapView;
@@ -292,8 +289,8 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
      * Adds layer with geoObjects from database to map.
      */
     private void addAdditionalLayer() {
-        KmlDocument kmlDocument = new KmlDocument();
         objects = appService.getObjects();
+        KmlDocument kmlDocument = new KmlDocument();
         if (!objects.isEmpty()) {
             for (String s : objects) {
                 Log.d("info", "GeoObject from database: " + s);

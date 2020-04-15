@@ -2,7 +2,6 @@ package com.example.mapme.backend;
 
 import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import hu.supercluster.overpasser.adapter.OverpassQueryResult;
@@ -27,12 +26,12 @@ public class OverpassHelper {
                 .format(JSON)
                 .timeout(30)
                 .filterQuery()
-                    .node()
-                    .boundingBox(
-                            bounds.southwest.latitude,
-                            bounds.southwest.longitude,
-                            bounds.northeast.latitude,
-                            bounds.northeast.longitude
+                .node()
+                .boundingBox(
+                        bounds.southwest.latitude,
+                        bounds.southwest.longitude,
+                        bounds.northeast.latitude,
+                        bounds.northeast.longitude
                 )
                 .end()
                 .output(100);
@@ -40,7 +39,7 @@ public class OverpassHelper {
         OverpassQueryResult result = interpret(query.build());
         int numberOfElements = result.elements.size();
         Log.d("info", "overpass result number of elements: " + numberOfElements);
-        for (int i = 0; i< numberOfElements; i++){
+        for (int i = 0; i < numberOfElements; i++) {
             OverpassQueryResult.Element e = result.elements.get(i);
             String type = e.type;
             String name = e.tags.name;
@@ -59,12 +58,14 @@ public class OverpassHelper {
      * @return
      */
     private OverpassQueryResult interpret(String query) {
+        // Fix Overpasser bug
+        query = query.replace("\"", "");
+        query = query.substring(0, query.length() - 1);
         try {
             return OverpassServiceProvider.get().interpreter(query).execute().body();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.d("info", "Could not interpret OverpassQuery.");
             return new OverpassQueryResult();
         }
     }
 }
-
