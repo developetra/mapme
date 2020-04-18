@@ -1,18 +1,30 @@
 package com.example.mapme.backend;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import com.example.mapme.R;
+import com.google.firebase.database.DataSnapshot;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.maps.android.data.Geometry;
+import com.google.maps.android.data.geojson.GeoJsonFeature;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.osmdroid.bonuspack.kml.KmlDocument;
+import org.osmdroid.bonuspack.kml.Style;
+import org.osmdroid.views.overlay.FolderOverlay;
 import org.osmdroid.views.overlay.Overlay;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,6 +97,33 @@ public class GeoJsonHelper {
         Log.d("info", "GeoJSON successfully saved");
 
         return file;
+    }
+
+    public ArrayList<String> convertDataToGeoJson(DataSnapshot dataSnapshot){
+        ArrayList<String> objects = new ArrayList<String>();
+        for (DataSnapshot entry : dataSnapshot.getChildren()) {
+
+            String geometry = entry.child("geometry").getValue(String.class);
+            try {
+                // Convert String to GeoJson
+                JSONObject geojson = new JSONObject(geometry);
+
+                // Add additional properties to the geojson
+                JSONObject feature = (JSONObject) geojson.getJSONArray("features").get(0);
+                JSONObject featureProperies = feature.getJSONObject("properties");
+             
+                for (DataSnapshot property : entry.child("properties").getChildren()) {
+                    String key = property.getKey().toString();
+                    String value = property.getValue(String.class);
+                    featureProperies.put(key, value);
+                }
+                Log.d("info", "GeoJsonHelper object: " + geojson.toString());
+                objects.add(geojson.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return objects;
     }
 
 }

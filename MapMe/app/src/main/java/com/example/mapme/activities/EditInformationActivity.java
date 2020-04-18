@@ -153,4 +153,6 @@ public class EditInformationActivity extends AppCompatActivity implements AppSer
         inputFields.removeView(tableRow);
         inputCounter--;
     }
+
+    public void addAdditionalLayer() {}
 }

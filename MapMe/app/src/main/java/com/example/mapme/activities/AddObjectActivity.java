@@ -6,7 +6,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
@@ -20,14 +23,19 @@ import com.example.mapme.backend.PaintingSurface;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.api.IMapView;
+import org.osmdroid.bonuspack.kml.KmlDocument;
+import org.osmdroid.bonuspack.kml.Style;
 import org.osmdroid.events.MapListener;
 import org.osmdroid.events.ScrollEvent;
 import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.FolderOverlay;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.OverlayWithIW;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
+
+import java.util.ArrayList;
 
 /**
  * AddObjectActivity - this abstract Activity provides all common methods for AddMarker, AddPolygon and AddPolyline Activities.
@@ -44,6 +52,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
     protected boolean appServiceBound;
     private boolean serviceConnected = false;
     public String currentGeoObjectId;
+    private ArrayList<String> objects = new ArrayList<String>();
 
     @Override
     protected void onRestart() {
@@ -174,6 +183,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
             appServiceBound = true;
             appService.registerListener(AddObjectActivity.this);
             serviceConnected = true;
+            addAdditionalLayer();
             Log.d("info", "Service bound to Activity");
         }
 
@@ -248,5 +258,26 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
      */
     public void back(View view){
         this.finish();
+    }
+
+    public void addAdditionalLayer() {
+        mMapView.getOverlays().clear();
+        objects = appService.getObjects();
+        KmlDocument kmlDocument = new KmlDocument();
+        if (!objects.isEmpty()) {
+            for (String s : objects) {
+                Log.d("info", "GeoObject from database: " + s);
+                kmlDocument.parseGeoJSON(s);
+                Drawable defaultMarker = getResources().getDrawable(R.drawable.pin);
+                Bitmap defaultBitmap = ((BitmapDrawable) defaultMarker).getBitmap();
+                Style defaultStyle = new Style(defaultBitmap, 0x901010AA, 3.0f, 0x20AA1010);
+                FolderOverlay myOverLay = (FolderOverlay) kmlDocument.mKmlRoot.buildOverlay(mMapView, defaultStyle, null, kmlDocument);
+                mMapView.getOverlays().add(myOverLay);
+            }
+            mMapView.invalidate();
+            Log.d("info", "Additional layer was added");
+        } else {
+            Log.d("info", "Additional layer could not be added");
+        }
     }
 }

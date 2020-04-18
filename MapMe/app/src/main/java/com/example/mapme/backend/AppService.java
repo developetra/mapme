@@ -79,6 +79,7 @@ public class AppService extends Service {
         return this.objects;
     }
 
+
     /**
      * Initializes location manager and realtime database.
      */
@@ -127,6 +128,7 @@ public class AppService extends Service {
 
     public interface AppServiceListener {
         void updateUserPosition(Location location);
+        void addAdditionalLayer();
     }
 
     /**
@@ -249,12 +251,16 @@ public class AppService extends Service {
         objectRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // update map!
+                objects.clear();
+                objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
+                for (AppServiceListener listener : listeners) {
+                    listener.addAdditionalLayer();
+                }
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
-                Log.w("info", "Failed to read value.", error.toException());
+                Log.w("info", "Failed to update map.", error.toException());
             }
         });
     }
@@ -297,19 +303,15 @@ public class AppService extends Service {
         objectRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("info", "DataSnapshot: " + dataSnapshot);
                 objects.clear();
-                for (DataSnapshot entry : dataSnapshot.getChildren()) {
-                    String geometry = entry.child("geometry").getValue(String.class);
-                    objects.add(geometry);
-                }
-                Log.d("info", "objects: " + objects);
+                objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // ...
             }
+
         });
     }
 

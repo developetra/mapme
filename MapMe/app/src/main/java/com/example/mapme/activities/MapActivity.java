@@ -288,19 +288,20 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
     /**
      * Adds layer with geoObjects from database to map.
      */
-    private void addAdditionalLayer() {
+    public void addAdditionalLayer() {
+        mMapView.getOverlays().clear();
         objects = appService.getObjects();
         KmlDocument kmlDocument = new KmlDocument();
         if (!objects.isEmpty()) {
             for (String s : objects) {
                 Log.d("info", "GeoObject from database: " + s);
                 kmlDocument.parseGeoJSON(s);
+                Drawable defaultMarker = getResources().getDrawable(R.drawable.pin);
+                Bitmap defaultBitmap = ((BitmapDrawable) defaultMarker).getBitmap();
+                Style defaultStyle = new Style(defaultBitmap, 0x901010AA, 3.0f, 0x20AA1010);
+                FolderOverlay myOverLay = (FolderOverlay) kmlDocument.mKmlRoot.buildOverlay(mMapView, defaultStyle, null, kmlDocument);
+                mMapView.getOverlays().add(myOverLay);
             }
-            Drawable defaultMarker = getResources().getDrawable(R.drawable.pin);
-            Bitmap defaultBitmap = ((BitmapDrawable) defaultMarker).getBitmap();
-            Style defaultStyle = new Style(defaultBitmap, 0x901010AA, 3.0f, 0x20AA1010);
-            FolderOverlay myOverLay = (FolderOverlay) kmlDocument.mKmlRoot.buildOverlay(mMapView, defaultStyle, null, kmlDocument);
-            mMapView.getOverlays().add(myOverLay);
             mMapView.invalidate();
             Log.d("info", "Additional layer was added");
         } else {

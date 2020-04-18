@@ -172,7 +172,7 @@ public class PaintingSurface extends View {
                         final int color = Color.argb(100, 100, 100, 100);
                         final Polyline line = new Polyline(mapView);
                         line.getOutlinePaint().setColor(color);
-                        line.setTitle("New polyline" + (asPath ? " as Path" : ""));
+                        line.setTitle("Polyline" + (asPath ? " as Path" : ""));
                         line.setPoints(geoPoints);
                         line.getOutlinePaint().setStrokeCap(Paint.Cap.ROUND);
                         line.setId(currentActivity.saveToDatabase(line));
@@ -192,7 +192,7 @@ public class PaintingSurface extends View {
                         Polygon polygon = new Polygon(mapView);
                         polygon.getFillPaint().setColor(Color.argb(75, 255, 0, 0));
                         polygon.setPoints(geoPoints);
-                        polygon.setTitle("New polygon");
+                        polygon.setTitle("Polygon");
                         polygon.setId(currentActivity.saveToDatabase(polygon));
                         currentActivity.showInfo(mapView, polygon.getId());
                         if (withArrows) {

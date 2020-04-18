@@ -63,7 +63,7 @@ public class IconPlottingOverlay extends Overlay {
             m.setPosition(pt);
             m.setIcon(markerIcon);
             m.setImage(markerIcon);
-            m.setTitle("A new marker");
+            m.setTitle("Marker");
             m.setSnippet("To add information and save to database press long on marker.");
             m.setSubDescription(pt.getLatitude() + "," + pt.getLongitude());
 
