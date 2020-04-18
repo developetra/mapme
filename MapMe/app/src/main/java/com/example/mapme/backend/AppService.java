@@ -290,6 +290,14 @@ public class AppService extends Service {
     }
 
     /**
+     * Deletes object from database.
+     * @param id
+     */
+    public void deleteObject(String id){
+        objectRef.child(id).removeValue();
+    }
+
+    /**
      * Increments counter in database.
      */
     public void incrementCounter() {

@@ -118,6 +118,15 @@ public class EditInformationActivity extends AppCompatActivity implements AppSer
     }
 
     /**
+     * Deletes the GeoObject.
+     * @param view
+     */
+    public void delete(View view){
+        appService.deleteObject(currentGeoObjectId);
+        this.finish();
+    }
+
+    /**
      * Adds new row with input fields to layout.
      *
      * @param view
