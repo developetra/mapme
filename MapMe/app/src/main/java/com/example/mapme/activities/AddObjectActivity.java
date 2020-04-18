@@ -36,6 +36,7 @@ import org.osmdroid.views.overlay.OverlayWithIW;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * AddObjectActivity - this abstract Activity provides all common methods for AddMarker, AddPolygon and AddPolyline Activities.
@@ -52,7 +53,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
     protected boolean appServiceBound;
     private boolean serviceConnected = false;
     public String currentGeoObjectId;
-    private ArrayList<String> objects = new ArrayList<String>();
+    private HashMap<String, String> objects = new HashMap<>();
 
     @Override
     protected void onRestart() {
@@ -265,9 +266,8 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
         objects = appService.getObjects();
         KmlDocument kmlDocument = new KmlDocument();
         if (!objects.isEmpty()) {
-            for (String s : objects) {
-                Log.d("info", "GeoObject from database: " + s);
-                kmlDocument.parseGeoJSON(s);
+            for (String key : objects.keySet()) {
+                kmlDocument.parseGeoJSON(objects.get(key));
                 Drawable defaultMarker = getResources().getDrawable(R.drawable.pin);
                 Bitmap defaultBitmap = ((BitmapDrawable) defaultMarker).getBitmap();
                 Style defaultStyle = new Style(defaultBitmap, 0x901010AA, 3.0f, 0x20AA1010);

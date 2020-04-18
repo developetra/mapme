@@ -61,7 +61,7 @@ public class AppService extends Service {
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference counterRef = database.getReference("counter");
     private DatabaseReference objectRef = database.getReference("objects");
-    private ArrayList<String> objects = new ArrayList<String>();
+    private HashMap<String, String> objects = new HashMap<>();
 
     private GeoJsonHelper geoJsonHelper = new GeoJsonHelper();
 
@@ -75,7 +75,7 @@ public class AppService extends Service {
         this.userPosition = userPosition;
     }
 
-    public ArrayList<String> getObjects() {
+    public HashMap<String, String> getObjects() {
         return this.objects;
     }
 

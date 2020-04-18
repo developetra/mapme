@@ -99,10 +99,10 @@ public class GeoJsonHelper {
         return file;
     }
 
-    public ArrayList<String> convertDataToGeoJson(DataSnapshot dataSnapshot){
-        ArrayList<String> objects = new ArrayList<String>();
-        for (DataSnapshot entry : dataSnapshot.getChildren()) {
+    public HashMap<String, String>  convertDataToGeoJson(DataSnapshot dataSnapshot){
+        HashMap<String, String> objects = new HashMap<>();
 
+        for (DataSnapshot entry : dataSnapshot.getChildren()) {
             String geometry = entry.child("geometry").getValue(String.class);
             try {
                 // Convert String to GeoJson
@@ -118,7 +118,7 @@ public class GeoJsonHelper {
                     featureProperies.put(key, value);
                 }
                 Log.d("info", "GeoJsonHelper object: " + geojson.toString());
-                objects.add(geojson.toString());
+                objects.put(entry.getKey(), geojson.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }

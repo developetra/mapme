@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 
@@ -37,6 +38,7 @@ import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * MapActivity - Activity that shows map with geoObjects, user position and menu items.
@@ -51,7 +53,7 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
     private Marker userMarker;
     private IMapController mapController;
     private ImageButton btnRotateLeft, btnRotateRight;
-    private ArrayList<String> objects = new ArrayList<String>();
+    private HashMap<String, String> objects = new HashMap<>();
 
     /**
      * Initializes layout and starts appServiceConnection.
@@ -293,13 +295,13 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
         objects = appService.getObjects();
         KmlDocument kmlDocument = new KmlDocument();
         if (!objects.isEmpty()) {
-            for (String s : objects) {
-                Log.d("info", "GeoObject from database: " + s);
-                kmlDocument.parseGeoJSON(s);
+            for (String key : objects.keySet()) {
+                kmlDocument.parseGeoJSON(objects.get(key));
                 Drawable defaultMarker = getResources().getDrawable(R.drawable.pin);
                 Bitmap defaultBitmap = ((BitmapDrawable) defaultMarker).getBitmap();
                 Style defaultStyle = new Style(defaultBitmap, 0x901010AA, 3.0f, 0x20AA1010);
                 FolderOverlay myOverLay = (FolderOverlay) kmlDocument.mKmlRoot.buildOverlay(mMapView, defaultStyle, null, kmlDocument);
+                //myOverLay.onLongPress(mMapView, android.view.MotionEvent);
                 mMapView.getOverlays().add(myOverLay);
             }
             mMapView.invalidate();
