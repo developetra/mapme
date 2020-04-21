@@ -2,12 +2,20 @@ package com.example.mapme.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.example.mapme.R;
 import com.example.mapme.backend.AppService;
 import com.example.mapme.backend.IconPlottingOverlay;
+
+import org.osmdroid.bonuspack.kml.KmlDocument;
+import org.osmdroid.bonuspack.kml.Style;
+import org.osmdroid.views.overlay.FolderOverlay;
 
 /**
  * AddMarkerActivity - Activity to add marker to the map.
@@ -55,6 +63,13 @@ public class AddMarkerActivity extends AddObjectActivity implements View.OnLongC
         intent.putExtra("name", "Edit Marker");
         intent.putExtra("id", currentGeoObjectId);
         startActivity(intent);
+    }
+
+    @Override
+    public void addAdditionalLayer() {
+        super.addAdditionalLayer();
+        IconPlottingOverlay plotter = new IconPlottingOverlay(this, getResources().getDrawable(R.drawable.marker_default));
+        mMapView.getOverlayManager().add(plotter);
     }
 
 }
