@@ -16,6 +16,8 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.example.mapme.activities.MapActivity;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -35,6 +37,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import hu.supercluster.overpasser.adapter.OverpassQueryResult;
 
 /**
  * AppService - responsible for location manager, database access,
@@ -64,6 +68,7 @@ public class AppService extends Service {
     private HashMap<String, String> objects = new HashMap<>();
 
     private GeoJsonHelper geoJsonHelper = new GeoJsonHelper();
+    private OverpassHelper overpassHelper = new OverpassHelper();
 
     // ===== Getter & Setter
 
@@ -71,12 +76,12 @@ public class AppService extends Service {
         return userPosition;
     }
 
-    public void setUserPosition(Location userPosition) {
-        this.userPosition = userPosition;
-    }
-
     public HashMap<String, String> getObjects() {
         return this.objects;
+    }
+
+    public void setUserPosition(Location userPosition) {
+        this.userPosition = userPosition;
     }
 
 
@@ -88,6 +93,10 @@ public class AppService extends Service {
         initLocationManager();
         updateInRealtime();
         getDataFromDatabase();
+
+        // TEST
+        getOverpassResult();
+
         Log.d("info", "AppService started");
         super.onCreate();
     }
@@ -128,6 +137,7 @@ public class AppService extends Service {
 
     public interface AppServiceListener {
         void updateUserPosition(Location location);
+
         void addAdditionalLayer();
     }
 
@@ -291,9 +301,10 @@ public class AppService extends Service {
 
     /**
      * Deletes object from database.
+     *
      * @param id
      */
-    public void deleteObject(String id){
+    public void deleteObject(String id) {
         objectRef.child(id).removeValue();
     }
 
@@ -321,6 +332,13 @@ public class AppService extends Service {
             }
 
         });
+    }
+
+    public void getOverpassResult() {
+        LatLngBounds bounds = new LatLngBounds(new LatLng(49.895987, 10.880654), new LatLng(49.899328, 10.885956));
+        OverpassHelper helper = new OverpassHelper();
+        OverpassQueryResult result = helper.search(bounds);
+        Log.d("info", "OverpassQueryResult: " + result.toString());
     }
 
 }

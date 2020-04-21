@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
@@ -37,7 +38,6 @@ import org.osmdroid.views.overlay.FolderOverlay;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -301,7 +301,7 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
                 Bitmap defaultBitmap = ((BitmapDrawable) defaultMarker).getBitmap();
                 Style defaultStyle = new Style(defaultBitmap, 0x901010AA, 3.0f, 0x20AA1010);
                 FolderOverlay myOverLay = (FolderOverlay) kmlDocument.mKmlRoot.buildOverlay(mMapView, defaultStyle, null, kmlDocument);
-                //myOverLay.onLongPress(mMapView, android.view.MotionEvent);
+                //myOverLay.onLongPress(MotionEvent.obtain(), mMapView);
                 mMapView.getOverlays().add(myOverLay);
             }
             mMapView.invalidate();
@@ -310,4 +310,15 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
             Log.d("info", "Additional layer could not be added");
         }
     }
+
+    final GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
+        public void onLongPress(MotionEvent e) {
+            Log.e("", "Longpress detected");
+        }
+    });
+
+    public boolean onTouchEvent(MotionEvent event) {
+        return gestureDetector.onTouchEvent(event);
+    }
+
 }

@@ -14,12 +14,6 @@ import android.view.View;
 
 import com.example.mapme.R;
 import com.example.mapme.backend.AppService;
-import com.example.mapme.backend.GeoJsonHelper;
-import com.example.mapme.backend.OverpassHelper;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-
-import hu.supercluster.overpasser.adapter.OverpassQueryResult;
 
 /**
  * MainActivity - Start screen when opening the app.
@@ -27,7 +21,6 @@ import hu.supercluster.overpasser.adapter.OverpassQueryResult;
 public class MainActivity extends AppCompatActivity {
 
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 5;
-    private OverpassHelper overpassHelper = new OverpassHelper();
 
     /**
      * Initializes layout, requests permissions and starts appService.
@@ -59,13 +52,6 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void showInfo(View view) {
-        // TEST
-        LatLng southwest = new LatLng(49.891999, 10.887844);
-        LatLng northeast = new LatLng(49.895648, 10.889604);
-        LatLngBounds bounds = new LatLngBounds(southwest, northeast);
-        OverpassQueryResult result = overpassHelper.search(bounds);
-        Log.d("info", "OverpassQueryResult: " + result.toString());
-
         AlertDialog.Builder infoDialog = new AlertDialog.Builder(MainActivity.this);
         infoDialog.setTitle("How MapMe works:");
         infoDialog.setMessage("MapMe is a collaborative tool for the acquisition and mapping of geospatial data. \n" +

@@ -35,7 +35,6 @@ import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.OverlayWithIW;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**

@@ -1,10 +1,5 @@
 package com.example.mapme.backend;
 
-import android.content.Intent;
-import android.view.View;
-
-import com.example.mapme.activities.EditInformationActivity;
-
 import org.osmdroid.bonuspack.kml.KmlFeature;
 import org.osmdroid.bonuspack.kml.KmlLineString;
 import org.osmdroid.bonuspack.kml.KmlPlacemark;
