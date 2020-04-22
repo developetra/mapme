@@ -44,6 +44,7 @@ public class EditInformationActivity extends AppCompatActivity implements AppSer
         setContentView(R.layout.activity_edit_information);
         Intent intent = getIntent();
         currentGeoObjectId = intent.getStringExtra("id");
+        Log.d("info", "Editing object with id: "+ currentGeoObjectId);
         String name = intent.getStringExtra("name");
         ((TextView) findViewById(R.id.textView)).setText(name);
         addInputField(findViewById(R.id.textView));

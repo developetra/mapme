@@ -22,8 +22,8 @@ public class CustomKmlFolder extends KmlFolder {
      * @param kmlDocument for Styles
      * @return the FolderOverlay built
      */
-    @Override public CustomOverlay buildOverlay(MapView map, Style defaultStyle, Styler styler, KmlDocument kmlDocument){
-        CustomOverlay folderOverlay = new CustomOverlay();
+    public CustomOverlay buildOverlay(MapView map, Style defaultStyle, Styler styler, KmlDocument kmlDocument, String id){
+        CustomOverlay folderOverlay = new CustomOverlay(id);
         folderOverlay.setName(mName);
         folderOverlay.setDescription(mDescription);
         for (KmlFeature k:mItems){

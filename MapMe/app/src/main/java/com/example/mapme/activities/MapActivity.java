@@ -307,8 +307,8 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
                 Style defaultStyle = new Style(defaultBitmap, 0x901010AA, 3.0f, 0x20AA1010);
                 CustomKmlFolder cKmlFolder = new CustomKmlFolder();
                 cKmlFolder.mItems = kmlDocument.mKmlRoot.mItems;
-//                CustomOverlay myOverLay = (CustomOverlay) kmlDocument.mKmlRoot.buildOverlay(mMapView, defaultStyle, null, kmlDocument);
-                CustomOverlay myOverLay = cKmlFolder.buildOverlay(mMapView, defaultStyle, null, kmlDocument);
+//              CustomOverlay myOverLay = (CustomOverlay) kmlDocument.mKmlRoot.buildOverlay(mMapView, defaultStyle, null, kmlDocument);
+                CustomOverlay myOverLay = cKmlFolder.buildOverlay(mMapView, defaultStyle, null, kmlDocument, key);
                 mMapView.getOverlays().add(myOverLay);
             }
             mMapView.invalidate();
