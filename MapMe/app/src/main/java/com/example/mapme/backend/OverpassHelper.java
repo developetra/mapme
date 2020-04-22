@@ -60,7 +60,8 @@ public class OverpassHelper {
     private OverpassQueryResult interpret(String query) {
         // Fix Overpasser bug
         query = query.replace("\"", "");
-        query = query.substring(0, query.length() - 1);
+        query = query.substring(0, query.length() - 1) + ";"; // TOOD: Important + ";"
+        Log.d("query","Query:" + query);
         try {
             return OverpassServiceProvider.get().interpreter(query).execute().body();
         } catch (Exception e) {
