@@ -22,6 +22,8 @@ import android.widget.ImageButton;
 
 import com.example.mapme.R;
 import com.example.mapme.backend.AppService;
+import com.example.mapme.widgets.CustomKmlFolder;
+import com.example.mapme.widgets.CustomOverlay;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.api.IMapView;
@@ -93,9 +95,7 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
         userMarker.setIcon(getResources().getDrawable(R.drawable.position));
         userMarker.setPosition(userGeoPoint);
         mMapView.getOverlays().add(userMarker);
-        // bind to service
-        Intent bindIntent = new Intent(MapActivity.this, AppService.class);
-        bindService(bindIntent, appServiceConnection, Context.BIND_AUTO_CREATE);
+
         Log.d("info", "created Maps");
         Log.d("info", "Service bound to Maps");
     }
@@ -103,21 +103,21 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
     @Override
     public void onResume() {
         super.onResume();
+
+        // bind to service
+        Intent bindIntent = new Intent(MapActivity.this, AppService.class);
+        bindService(bindIntent, appServiceConnection, Context.BIND_AUTO_CREATE);
+
         mMapView.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mMapView.onPause();
-    }
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        // bind to service
-        Intent bindIntent = new Intent(this, AppService.class);
-        bindService(bindIntent, appServiceConnection, Context.BIND_AUTO_CREATE);
+        unbindService(appServiceConnection);
+
+        mMapView.onPause();
     }
 
     /**
@@ -293,15 +293,17 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
     public void addAdditionalLayer() {
         mMapView.getOverlays().clear();
         objects = appService.getObjects();
+
         KmlDocument kmlDocument = new KmlDocument();
+
         if (!objects.isEmpty()) {
             for (String key : objects.keySet()) {
                 kmlDocument.parseGeoJSON(objects.get(key));
                 Drawable defaultMarker = getResources().getDrawable(R.drawable.pin);
                 Bitmap defaultBitmap = ((BitmapDrawable) defaultMarker).getBitmap();
                 Style defaultStyle = new Style(defaultBitmap, 0x901010AA, 3.0f, 0x20AA1010);
-                FolderOverlay myOverLay = (FolderOverlay) kmlDocument.mKmlRoot.buildOverlay(mMapView, defaultStyle, null, kmlDocument);
-                //myOverLay.onLongPress(MotionEvent.obtain(), mMapView);
+                CustomOverlay myOverLay = (CustomOverlay) kmlDocument.mKmlRoot.buildOverlay(mMapView, defaultStyle, null, kmlDocument);
+
                 mMapView.getOverlays().add(myOverLay);
             }
             mMapView.invalidate();
