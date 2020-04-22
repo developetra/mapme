@@ -24,10 +24,13 @@ import com.example.mapme.R;
 import com.example.mapme.backend.AppService;
 import com.example.mapme.widgets.CustomKmlFolder;
 import com.example.mapme.widgets.CustomOverlay;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.api.IMapView;
 import org.osmdroid.bonuspack.kml.KmlDocument;
+import org.osmdroid.bonuspack.kml.KmlGroundOverlay;
 import org.osmdroid.bonuspack.kml.Style;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.events.MapListener;
@@ -38,6 +41,7 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.FolderOverlay;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 
 import java.util.HashMap;
@@ -298,11 +302,18 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
 
         if (!objects.isEmpty()) {
             for (String key : objects.keySet()) {
+
+
                 kmlDocument.parseGeoJSON(objects.get(key));
+
                 Drawable defaultMarker = getResources().getDrawable(R.drawable.pin);
                 Bitmap defaultBitmap = ((BitmapDrawable) defaultMarker).getBitmap();
                 Style defaultStyle = new Style(defaultBitmap, 0x901010AA, 3.0f, 0x20AA1010);
-                CustomOverlay myOverLay = (CustomOverlay) kmlDocument.mKmlRoot.buildOverlay(mMapView, defaultStyle, null, kmlDocument);
+
+                CustomKmlFolder cKmlFolder = new CustomKmlFolder();
+                cKmlFolder.mItems = kmlDocument.mKmlRoot.mItems;
+//                CustomOverlay myOverLay = (CustomOverlay) kmlDocument.mKmlRoot.buildOverlay(mMapView, defaultStyle, null, kmlDocument);
+                CustomOverlay myOverLay = cKmlFolder.buildOverlay(mMapView, defaultStyle, null, kmlDocument);
 
                 mMapView.getOverlays().add(myOverLay);
             }
