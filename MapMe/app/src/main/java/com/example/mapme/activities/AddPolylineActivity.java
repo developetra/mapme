@@ -27,9 +27,6 @@ public class AddPolylineActivity extends AddObjectActivity {
         setMapPositionAndUserMarker();
         enableRotation();
         enablePainting(PaintingSurface.Mode.Polyline);
-        // bind to service
-        Intent bindIntent = new Intent(this, AppService.class);
-        bindService(bindIntent, appServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     /**

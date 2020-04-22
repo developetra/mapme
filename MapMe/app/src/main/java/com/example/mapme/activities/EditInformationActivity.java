@@ -47,19 +47,20 @@ public class EditInformationActivity extends AppCompatActivity implements AppSer
         String name = intent.getStringExtra("name");
         ((TextView) findViewById(R.id.textView)).setText(name);
         addInputField(findViewById(R.id.textView));
-        // bind to service
-        Intent bindIntent = new Intent(this, AppService.class);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Intent bindIntent = new Intent(EditInformationActivity.this, AppService.class);
         bindService(bindIntent, appServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
-        // bind to service
-        Intent bindIntent = new Intent(this, AppService.class);
-        bindService(bindIntent, appServiceConnection, Context.BIND_AUTO_CREATE);
+    public void onPause() {
+        super.onPause();
+        unbindService(appServiceConnection);
     }
-
     /**
      * AppService Connection.
      */
@@ -71,11 +72,13 @@ public class EditInformationActivity extends AppCompatActivity implements AppSer
             appServiceBound = true;
             appService.registerListener(EditInformationActivity.this);
             serviceConnected = true;
+            Log.d("info", "Service bound to EditInformationActivity");
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
             appServiceBound = false;
+            Log.d("info", "Service unbound to EditInformationActivity");
         }
     };
 

@@ -1,5 +1,6 @@
 package com.example.mapme.activities;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -55,11 +56,18 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
     private HashMap<String, String> objects = new HashMap<>();
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
-        // bind to service
-        Intent bindIntent = new Intent(this, AppService.class);
+    public void onResume() {
+        super.onResume();
+        Intent bindIntent = new Intent(AddObjectActivity.this, AppService.class);
         bindService(bindIntent, appServiceConnection, Context.BIND_AUTO_CREATE);
+        mMapView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        unbindService(appServiceConnection);
+        mMapView.onPause();
     }
 
     /**
@@ -184,12 +192,13 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
             appService.registerListener(AddObjectActivity.this);
             serviceConnected = true;
             addAdditionalLayer();
-            Log.d("info", "Service bound to Activity");
+            Log.d("info", "Service bound to AddObjectActivity");
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
             appServiceBound = false;
+            Log.d("info", "Service unbound to AddObjectActivity");
         }
     };
 

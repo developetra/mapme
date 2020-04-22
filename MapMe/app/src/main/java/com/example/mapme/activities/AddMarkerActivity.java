@@ -38,9 +38,6 @@ public class AddMarkerActivity extends AddObjectActivity implements View.OnLongC
         disablePainting();
         IconPlottingOverlay plotter = new IconPlottingOverlay(this, getResources().getDrawable(R.drawable.marker_default));
         mMapView.getOverlayManager().add(plotter);
-        // bind to service
-        Intent bindIntent = new Intent(this, AppService.class);
-        bindService(bindIntent, appServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     /**

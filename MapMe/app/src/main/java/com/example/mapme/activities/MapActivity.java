@@ -22,8 +22,6 @@ import android.widget.ImageButton;
 
 import com.example.mapme.R;
 import com.example.mapme.backend.AppService;
-import com.example.mapme.widgets.CustomKmlFolder;
-import com.example.mapme.widgets.CustomOverlay;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.api.IMapView;
@@ -95,28 +93,21 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
         userMarker.setIcon(getResources().getDrawable(R.drawable.position));
         userMarker.setPosition(userGeoPoint);
         mMapView.getOverlays().add(userMarker);
-
         Log.d("info", "created Maps");
-        Log.d("info", "Service bound to Maps");
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
-        // bind to service
         Intent bindIntent = new Intent(MapActivity.this, AppService.class);
         bindService(bindIntent, appServiceConnection, Context.BIND_AUTO_CREATE);
-
         mMapView.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
         unbindService(appServiceConnection);
-
         mMapView.onPause();
     }
 
@@ -160,11 +151,13 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
             appService.registerListener(MapActivity.this);
             serviceConnected = true;
             addAdditionalLayer();
+            Log.d("info", "Service bound to MapActivity");
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
             appServiceBound = false;
+            Log.d("info", "Service unbound to MapActivity");
         }
     };
 
@@ -302,7 +295,7 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
                 Drawable defaultMarker = getResources().getDrawable(R.drawable.pin);
                 Bitmap defaultBitmap = ((BitmapDrawable) defaultMarker).getBitmap();
                 Style defaultStyle = new Style(defaultBitmap, 0x901010AA, 3.0f, 0x20AA1010);
-                CustomOverlay myOverLay = (CustomOverlay) kmlDocument.mKmlRoot.buildOverlay(mMapView, defaultStyle, null, kmlDocument);
+                FolderOverlay myOverLay = (FolderOverlay) kmlDocument.mKmlRoot.buildOverlay(mMapView, defaultStyle, null, kmlDocument);
 
                 mMapView.getOverlays().add(myOverLay);
             }

@@ -27,9 +27,6 @@ public class AddPolygonActivity extends AddObjectActivity {
         setMapPositionAndUserMarker();
         enableRotation();
         enablePainting(PaintingSurface.Mode.Polygon);
-        // bind to service
-        Intent bindIntent = new Intent(this, AppService.class);
-        bindService(bindIntent, appServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     /**
