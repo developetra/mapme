@@ -21,6 +21,8 @@ import android.widget.ImageButton;
 import com.example.mapme.R;
 import com.example.mapme.backend.AppService;
 import com.example.mapme.backend.PaintingSurface;
+import com.example.mapme.widgets.CustomKmlFolder;
+import com.example.mapme.widgets.CustomOverlay;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.api.IMapView;
@@ -263,23 +265,28 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
 
     /**
      * Go back to previous activity.
+     *
      * @param view
      */
-    public void back(View view){
+    public void back(View view) {
         this.finish();
     }
 
     public void addAdditionalLayer() {
         mMapView.getOverlays().clear();
         objects = appService.getObjects();
+
         KmlDocument kmlDocument = new KmlDocument();
+
         if (!objects.isEmpty()) {
             for (String key : objects.keySet()) {
                 kmlDocument.parseGeoJSON(objects.get(key));
                 Drawable defaultMarker = getResources().getDrawable(R.drawable.pin);
                 Bitmap defaultBitmap = ((BitmapDrawable) defaultMarker).getBitmap();
                 Style defaultStyle = new Style(defaultBitmap, 0x901010AA, 3.0f, 0x20AA1010);
-                FolderOverlay myOverLay = (FolderOverlay) kmlDocument.mKmlRoot.buildOverlay(mMapView, defaultStyle, null, kmlDocument);
+                CustomKmlFolder cKmlFolder = new CustomKmlFolder();
+                cKmlFolder.mItems = kmlDocument.mKmlRoot.mItems;
+                CustomOverlay myOverLay = cKmlFolder.buildOverlay(mMapView, defaultStyle, null, kmlDocument, key);
                 mMapView.getOverlays().add(myOverLay);
             }
             mMapView.invalidate();
