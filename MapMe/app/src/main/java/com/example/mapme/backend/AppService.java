@@ -67,6 +67,7 @@ public class AppService extends Service {
     private DatabaseReference counterRef = database.getReference("counter");
     private DatabaseReference objectRef = database.getReference("objects");
     private HashMap<String, String> objects = new HashMap<>();
+    private DataSnapshot currentDataSnapshot;
 
     private GeoJsonHelper geoJsonHelper = new GeoJsonHelper();
     private OverpassHelper overpassHelper = new OverpassHelper();
@@ -85,6 +86,9 @@ public class AppService extends Service {
         this.userPosition = userPosition;
     }
 
+    public DataSnapshot getCurrentDataSnapshot() {
+        return this.currentDataSnapshot;
+    }
 
     /**
      * Initializes location manager and realtime database.
@@ -268,6 +272,7 @@ public class AppService extends Service {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 objects.clear();
                 objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
+                currentDataSnapshot = dataSnapshot;
                 for (AppServiceListener listener : listeners) {
                     listener.addAdditionalLayer();
                 }
@@ -325,10 +330,13 @@ public class AppService extends Service {
      */
     public void getDataFromDatabase() {
         objectRef.addListenerForSingleValueEvent(new ValueEventListener() {
+
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 objects.clear();
                 objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
+                currentDataSnapshot = dataSnapshot;
             }
 
             @Override

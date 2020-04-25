@@ -28,6 +28,9 @@ import com.example.mapme.widgets.CustomOverlay;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.api.IMapView;
 import org.osmdroid.bonuspack.kml.KmlDocument;
@@ -298,16 +301,12 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
 
         if (!objects.isEmpty()) {
             for (String key : objects.keySet()) {
-
-
                 kmlDocument.parseGeoJSON(objects.get(key));
-
                 Drawable defaultMarker = getResources().getDrawable(R.drawable.pin);
                 Bitmap defaultBitmap = ((BitmapDrawable) defaultMarker).getBitmap();
                 Style defaultStyle = new Style(defaultBitmap, 0x901010AA, 3.0f, 0x20AA1010);
                 CustomKmlFolder cKmlFolder = new CustomKmlFolder();
                 cKmlFolder.mItems = kmlDocument.mKmlRoot.mItems;
-//              CustomOverlay myOverLay = (CustomOverlay) kmlDocument.mKmlRoot.buildOverlay(mMapView, defaultStyle, null, kmlDocument);
                 CustomOverlay myOverLay = cKmlFolder.buildOverlay(mMapView, defaultStyle, null, kmlDocument, key);
                 mMapView.getOverlays().add(myOverLay);
             }
@@ -318,14 +317,5 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
         }
     }
 
-    final GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
-        public void onLongPress(MotionEvent e) {
-            Log.e("", "Longpress detected");
-        }
-    });
-
-    public boolean onTouchEvent(MotionEvent event) {
-        return gestureDetector.onTouchEvent(event);
-    }
 
 }

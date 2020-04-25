@@ -5,12 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.autofill.AutofillValue;
 import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -18,6 +21,11 @@ import android.widget.TextView;
 
 import com.example.mapme.R;
 import com.example.mapme.backend.AppService;
+import com.google.firebase.database.DataSnapshot;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 
@@ -31,6 +39,7 @@ public class EditInformationActivity extends AppCompatActivity implements AppSer
     private boolean serviceConnected = false;
     public String currentGeoObjectId = "";
     private int inputCounter = 0;
+    private DataSnapshot currentDataSnapshot;
 
     /**
      * Initializes layout and starts appServiceConnection.
@@ -46,8 +55,8 @@ public class EditInformationActivity extends AppCompatActivity implements AppSer
         currentGeoObjectId = intent.getStringExtra("id");
         Log.d("info", "Editing object with id: "+ currentGeoObjectId);
         String name = intent.getStringExtra("name");
-        ((TextView) findViewById(R.id.textView)).setText(name);
-        addInputField(findViewById(R.id.textView));
+        ((TextView) findViewById(R.id.textView)).setText(name + "(Id: " + currentGeoObjectId + ")");
+
     }
 
     @Override
@@ -74,6 +83,7 @@ public class EditInformationActivity extends AppCompatActivity implements AppSer
             appService.registerListener(EditInformationActivity.this);
             serviceConnected = true;
             Log.d("info", "Service bound to EditInformationActivity");
+            fillProperties();
         }
 
         @Override
@@ -135,18 +145,20 @@ public class EditInformationActivity extends AppCompatActivity implements AppSer
      *
      * @param view
      */
-    public void addInputField(View view) {
+    public void addInputField(View view, String property, String input) {
         TableLayout inputFields = findViewById(R.id.inputFields);
         TableRow tableRow = new TableRow(this);
         tableRow.setId(inputCounter++);
         // property field
         EditText editTextProperty = new EditText(this);
+        editTextProperty.setText(property);
         editTextProperty.setWidth(500);
         TableRow.LayoutParams paramsProperty = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT);
         paramsProperty.setMargins(8, 8, 8, 8);
         tableRow.addView(editTextProperty, paramsProperty);
         //input field
         EditText editTextInput = new EditText(this);
+        editTextInput.setText(input);
         editTextInput.setWidth(500);
         TableRow.LayoutParams paramsInput = new TableRow.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
         paramsInput.setMargins(8, 8, 8, 8);
@@ -168,4 +180,20 @@ public class EditInformationActivity extends AppCompatActivity implements AppSer
     }
 
     public void addAdditionalLayer() {}
+
+    public void fillProperties(){
+        currentDataSnapshot = appService.getCurrentDataSnapshot();
+
+        for (DataSnapshot entry : currentDataSnapshot.getChildren()) {
+            if (entry.getKey().equals(currentGeoObjectId)) {
+                for (DataSnapshot property : entry.child("properties").getChildren()) {
+                    String key = property.getKey().toString();
+                    String value = property.getValue(String.class);
+                    addInputField(findViewById(R.id.textView), key, value);
+                }
+            }
+        }
+        addInputField(findViewById(R.id.textView), "", "");
+
+    }
 }
