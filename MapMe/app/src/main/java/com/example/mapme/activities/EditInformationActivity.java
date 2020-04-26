@@ -167,6 +167,26 @@ public class EditInformationActivity extends AppCompatActivity implements AppSer
         inputFields.addView(tableRow);
     }
 
+    public void addInputField(View view) {
+        TableLayout inputFields = findViewById(R.id.inputFields);
+        TableRow tableRow = new TableRow(this);
+        tableRow.setId(inputCounter++);
+        // property field
+        EditText editTextProperty = new EditText(this);
+        editTextProperty.setWidth(500);
+        TableRow.LayoutParams paramsProperty = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT);
+        paramsProperty.setMargins(8, 8, 8, 8);
+        tableRow.addView(editTextProperty, paramsProperty);
+        //input field
+        EditText editTextInput = new EditText(this);
+        editTextInput.setWidth(500);
+        TableRow.LayoutParams paramsInput = new TableRow.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
+        paramsInput.setMargins(8, 8, 8, 8);
+        tableRow.addView(editTextInput, paramsInput);
+        // add tableRow to tableLayout
+        inputFields.addView(tableRow);
+    }
+
     /**
      * Removes one row of input fields from layout.
      *

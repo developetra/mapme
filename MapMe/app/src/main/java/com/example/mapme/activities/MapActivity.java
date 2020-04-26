@@ -234,6 +234,11 @@ public class MapActivity extends Activity implements View.OnClickListener, AppSe
         startActivity(intent);
     }
 
+    public void startDataActivity(View view) {
+        Intent intent = new Intent(this, DataActivity.class);
+        startActivity(intent);
+    }
+
     /**
      * OnClick listener for rotate icons.
      *

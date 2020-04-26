@@ -295,6 +295,12 @@ public class AppService extends Service {
         String id = String.valueOf(counter + 1);
         GeoObject object = new GeoObject(geometry);
         objectRef.child(id).setValue(object);
+
+        // add geometry type to properties
+        HashMap<String, String> properties = new HashMap<>();
+        properties.put("type", geometry.getTitle());
+        editObject(id, properties);
+
         incrementCounter();
         return id;
     }
