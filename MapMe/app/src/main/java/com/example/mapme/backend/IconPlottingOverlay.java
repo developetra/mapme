@@ -70,7 +70,7 @@ public class IconPlottingOverlay extends Overlay {
             mapView.getOverlayManager().add(m);
             mapView.invalidate();
             String markerId = currentActivity.saveToDatabase(m);
-            currentActivity.showInfoEditObject(mapView, markerId);
+            currentActivity.showInfoAddReferenceOrEditObject(mapView, markerId, m);
             return true;
         }
         return false;

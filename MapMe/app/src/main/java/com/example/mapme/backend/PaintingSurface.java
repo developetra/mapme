@@ -174,7 +174,7 @@ public class PaintingSurface extends View {
                         line.setPoints(geoPoints);
                         line.getOutlinePaint().setStrokeCap(Paint.Cap.ROUND);
                         line.setId(currentActivity.saveToDatabase(line));
-                        currentActivity.showInfoEditObject(mapView, line.getId());
+                        currentActivity.showInfoAddReferenceOrEditObject(mapView, line.getId(), line);
                         line.setOnClickListener(new Polyline.OnClickListener() {
                             @Override
                             public boolean onClick(Polyline polyline, MapView mapView, GeoPoint eventPos) {
