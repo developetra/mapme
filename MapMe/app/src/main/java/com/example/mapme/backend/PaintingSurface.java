@@ -11,7 +11,6 @@ import android.graphics.Point;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.mapme.activities.AddObjectActivity;
 
@@ -20,7 +19,6 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.Polygon;
 import org.osmdroid.views.overlay.Polyline;
-import org.osmdroid.views.overlay.infowindow.BasicInfoWindow;
 import org.osmdroid.views.overlay.milestones.MilestoneBitmapDisplayer;
 import org.osmdroid.views.overlay.milestones.MilestoneManager;
 import org.osmdroid.views.overlay.milestones.MilestonePixelDistanceLister;
@@ -176,11 +174,11 @@ public class PaintingSurface extends View {
                         line.setPoints(geoPoints);
                         line.getOutlinePaint().setStrokeCap(Paint.Cap.ROUND);
                         line.setId(currentActivity.saveToDatabase(line));
-                        currentActivity.showInfo(mapView, line.getId());
+                        currentActivity.showInfoEditObject(mapView, line.getId());
                         line.setOnClickListener(new Polyline.OnClickListener() {
                             @Override
                             public boolean onClick(Polyline polyline, MapView mapView, GeoPoint eventPos) {
-                                currentActivity.showInfo(mapView, line.getId());
+                                currentActivity.showInfoEditObject(mapView, line.getId());
                                 return false;
                             }
                         });
@@ -194,7 +192,7 @@ public class PaintingSurface extends View {
                         polygon.setPoints(geoPoints);
                         polygon.setTitle("Polygon");
                         polygon.setId(currentActivity.saveToDatabase(polygon));
-                        currentActivity.showInfo(mapView, polygon.getId());
+                        currentActivity.showInfoAddReferenceOrEditObject(mapView, polygon.getId(), polygon);
                         if (withArrows) {
                             final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), org.osmdroid.library.R.drawable.round_navigation_white_48);
                             final List<MilestoneManager> managers = new ArrayList<>();
@@ -208,7 +206,7 @@ public class PaintingSurface extends View {
                             @Override
                             public boolean onClick(Polygon polygon, MapView mapView, GeoPoint eventPos) {
                                 lastPolygon = polygon;
-                                currentActivity.showInfo(mapView, polygon.getId());
+                                currentActivity.showInfoEditObject(mapView, polygon.getId());
                                 return false;
                             }
                         });

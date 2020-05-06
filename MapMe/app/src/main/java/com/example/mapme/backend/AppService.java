@@ -16,9 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-import com.example.mapme.activities.MapActivity;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -30,6 +28,7 @@ import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import org.osmdroid.util.BoundingBox;
 import org.osmdroid.views.overlay.OverlayWithIW;
 
 import java.io.File;
@@ -99,12 +98,10 @@ public class AppService extends Service {
         updateInRealtime();
         getDataFromDatabase();
 
-        // TEST
         // TODO: Do not run request in main thread:
         // https://stackoverflow.com/questions/6343166/how-to-fix-android-os-networkonmainthreadexception
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        getOverpassResult();
 
         Log.d("info", "AppService started");
         super.onCreate();
@@ -299,7 +296,7 @@ public class AppService extends Service {
         // add geometry type to properties
         HashMap<String, String> properties = new HashMap<>();
         properties.put("type", geometry.getTitle());
-        editObject(id, properties);
+        editObjectProperties(id, properties);
 
         incrementCounter();
         return id;
@@ -311,8 +308,20 @@ public class AppService extends Service {
      * @param id
      * @param hashmap
      */
-    public void editObject(String id, HashMap<String, String> hashmap) {
+    public void editObjectProperties(String id, HashMap<String, String> hashmap) {
         objectRef.child(id).child("properties").setValue(hashmap);
+    }
+
+    /**
+     * Adds given properties to object.
+     *
+     * @param id
+     * @param hashmap
+     */
+    public void addObjectProperties(String id, HashMap<String, String> hashmap) {
+        for (String key : hashmap.keySet()){
+            objectRef.child(id).child("properties").child(key).setValue(hashmap.get(key));
+        }
     }
 
     /**
@@ -353,11 +362,11 @@ public class AppService extends Service {
         });
     }
 
-    public void getOverpassResult() {
-        LatLngBounds bounds = new LatLngBounds(new LatLng(49.895987, 10.880654), new LatLng(49.899328, 10.885956));
-        OverpassHelper helper = new OverpassHelper();
-        OverpassQueryResult result = helper.search(bounds);
+    public OverpassQueryResult getOverpassResult(OverlayWithIW geometry) {
+        BoundingBox bounds = geometry.getBounds();
+        OverpassQueryResult result = overpassHelper.search(new LatLng(bounds.getCenterLatitude(), bounds.getCenterLongitude()));
         Log.d("info", "OverpassQueryResult: " + result.toString());
+        return result;
     }
 
 }

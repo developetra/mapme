@@ -19,6 +19,7 @@ import org.osmdroid.bonuspack.kml.KmlDocument;
 import org.osmdroid.bonuspack.kml.Style;
 import org.osmdroid.views.overlay.FolderOverlay;
 import org.osmdroid.views.overlay.Overlay;
+import org.osmdroid.views.overlay.OverlayWithIW;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -124,6 +125,16 @@ public class GeoJsonHelper {
             }
         }
         return objects;
+    }
+
+    public String convertOverlayToGeoJson(OverlayWithIW geometry){
+        // Create a KML Document and add the overlay
+        KmlDocument kmlDocument = new KmlDocument();
+        kmlDocument.mKmlRoot.addOverlay(geometry, kmlDocument);
+
+        // Convert KML to GeoJson
+        JsonObject geojson = kmlDocument.mKmlRoot.asGeoJSON(true);
+        return null;
     }
 
 }

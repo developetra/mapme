@@ -5,15 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.autofill.AutofillValue;
 import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -22,10 +19,6 @@ import android.widget.TextView;
 import com.example.mapme.R;
 import com.example.mapme.backend.AppService;
 import com.google.firebase.database.DataSnapshot;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 
@@ -119,7 +112,7 @@ public class EditInformationActivity extends AppCompatActivity implements AppSer
             Log.d("info", "property + input " + property + input);
         }
         // save properties to database
-        appService.editObject(currentGeoObjectId, properties);
+        appService.editObjectProperties(currentGeoObjectId, properties);
         this.finish();
     }
 

@@ -1,6 +1,5 @@
 package com.example.mapme.activities;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -33,12 +32,13 @@ import org.osmdroid.events.ScrollEvent;
 import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.FolderOverlay;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.OverlayWithIW;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 
 import java.util.HashMap;
+
+import hu.supercluster.overpasser.adapter.OverpassQueryResult;
 
 /**
  * AddObjectActivity - this abstract Activity provides all common methods for AddMarker, AddPolygon and AddPolyline Activities.
@@ -224,11 +224,69 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
      * @param view
      * @param id
      */
-    public void showInfo(View view, String id) {
+    public void showInfoEditObject(View view, String id) {
         currentGeoObjectId = id;
         AlertDialog.Builder infoDialog = new AlertDialog.Builder(AddObjectActivity.this);
         infoDialog.setTitle("GeoObject (Id: " + id + ")");
         infoDialog.setMessage("The GeoObject has already been saved to the database. You can edit the information about the GeoObject.");
+        infoDialog.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        infoDialog.setNeutralButton("Edit",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        editObject();
+                    }
+                });
+        infoDialog.show();
+    }
+
+    /**
+     * Shows info dialog to add reference or edit geoObject.
+     *
+     * @param view
+     * @param objectId
+     */
+    public void showInfoAddReferenceOrEditObject(View view, final String objectId, final OverlayWithIW geometry) {
+        currentGeoObjectId = objectId;
+        AlertDialog.Builder infoDialog = new AlertDialog.Builder(AddObjectActivity.this);
+        infoDialog.setTitle("GeoObject (Id: " + objectId + ")");
+        infoDialog.setMessage("The GeoObject has already been saved to the database. You can either add a reference to an existing object or edit the information about the GeoObject.");
+        infoDialog.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        infoDialog.setNeutralButton("Edit",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        editObject();
+                    }
+                });
+        infoDialog.setPositiveButton("Add Reference",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        addLayerWithOverpassResult(appService.getOverpassResult(geometry), objectId);
+                    }
+                });
+        infoDialog.show();
+    }
+
+    /**
+     * Shows info dialog when reference was added.
+     *
+     * @param view
+     * @param id
+     */
+    public void showInfoReferenceAdded(View view, String id) {
+        currentGeoObjectId = id;
+        AlertDialog.Builder infoDialog = new AlertDialog.Builder(AddObjectActivity.this);
+        infoDialog.setTitle("GeoObject (Id: " + id + ")");
+        infoDialog.setMessage("The reference was added to the GeoObject. You can now edit the information about the GeoObject.");
         infoDialog.setNegativeButton("Cancel",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -294,5 +352,38 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
         } else {
             Log.d("info", "Additional layer could not be added");
         }
+    }
+
+    public void addLayerWithOverpassResult(OverpassQueryResult result, final String objectId) {
+        int numberOfElements = result.elements.size();
+        Log.d("info", "overpass result number of elements: " + numberOfElements);
+        for (int i = 0; i < numberOfElements; i++) {
+            final OverpassQueryResult.Element e = result.elements.get(i);
+            GeoPoint geoPoint = new GeoPoint(e.lat, e.lon);
+            Marker marker = new Marker(mMapView);
+            marker.setPosition(geoPoint);
+            marker.setTitle(e.tags.name);
+            marker.setIcon(getDrawable(R.drawable.pin));
+            marker.setOnMarkerClickListener(
+                    new Marker.OnMarkerClickListener() {
+                        @Override
+                        public boolean onMarkerClick(Marker marker, MapView mapView) {
+                            // add reference to database
+                            HashMap<String, String> properties = new HashMap<>();
+                            properties.put("reference", String.valueOf(e.id));
+                            appService.addObjectProperties(objectId, properties);
+                            // show info
+                            showInfoReferenceAdded(mMapView, objectId);
+                            return false;
+                        }
+                    });
+            mMapView.getOverlays().add(marker);
+            marker.showInfoWindow();
+            Log.d("info", "Layer with OverpassQueryResult was added");
+        }
+        // enable panning
+        paintingSurface.setVisibility(View.GONE);
+        panning.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+        painting.setBackgroundColor(Color.TRANSPARENT);
     }
 }

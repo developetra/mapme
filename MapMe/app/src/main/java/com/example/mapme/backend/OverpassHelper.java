@@ -2,7 +2,9 @@ package com.example.mapme.backend;
 
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.maps.android.SphericalUtil;
 
 import hu.supercluster.overpasser.adapter.OverpassQueryResult;
 import hu.supercluster.overpasser.adapter.OverpassServiceProvider;
@@ -18,15 +20,17 @@ public class OverpassHelper {
     /**
      * Creates new overpass query.
      *
-     * @param bounds
+     * @param center
      * @return
      */
-    public OverpassQueryResult search(LatLngBounds bounds) {
+    public OverpassQueryResult search(LatLng center) {
+        LatLngBounds bounds = toBounds(center, 50);
         OverpassQuery query = new OverpassQuery()
                 .format(JSON)
                 .timeout(30)
                 .filterQuery()
                 .node()
+                .tag("name")
                 .boundingBox(
                         bounds.southwest.latitude,
                         bounds.southwest.longitude,
@@ -34,7 +38,7 @@ public class OverpassHelper {
                         bounds.northeast.longitude
                 )
                 .end()
-                .output(100);
+                .output(500);
 
         OverpassQueryResult result = interpret(query.build());
         int numberOfElements = result.elements.size();
@@ -68,5 +72,18 @@ public class OverpassHelper {
             Log.d("info", "Could not interpret OverpassQuery.");
             return new OverpassQueryResult();
         }
+    }
+
+    /**
+     * Creates LatLngBounds from given LatLng with a given radius.
+     * @param center
+     * @param radiusInMeters
+     * @return
+     */
+    public LatLngBounds toBounds(LatLng center, double radiusInMeters) {
+        double distanceFromCenterToCorner = radiusInMeters * Math.sqrt(2.0);
+        LatLng southwestCorner = SphericalUtil.computeOffset(center, distanceFromCenterToCorner, 225.0);
+        LatLng northeastCorner = SphericalUtil.computeOffset(center, distanceFromCenterToCorner, 45.0);
+        return new LatLngBounds(southwestCorner, northeastCorner);
     }
 }

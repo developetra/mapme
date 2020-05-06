@@ -6,14 +6,12 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Typeface;
 import android.location.Location;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -21,10 +19,6 @@ import android.widget.TextView;
 import com.example.mapme.R;
 import com.example.mapme.backend.AppService;
 import com.google.firebase.database.DataSnapshot;
-
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Polyline;
 
 public class DataActivity extends AppCompatActivity implements AppService.AppServiceListener {
 
@@ -134,7 +128,7 @@ public class DataActivity extends AppCompatActivity implements AppService.AppSer
                     tableRowProperties.addView(textViewProperties);
                     inputFields.addView(tableRowProperties);
                 }
-            // empty row
+            // empty rows
             TableRow emptyRow1 = new TableRow(this);
             TextView emptytextView1 = new TextView(this);
             emptytextView1.setText(" ");
@@ -145,7 +139,6 @@ public class DataActivity extends AppCompatActivity implements AppService.AppSer
             emptytextView2.setText(" ");
             emptyRow2.addView(emptytextView2);
             inputFields.addView(emptyRow2);
-
         }
     }
 
