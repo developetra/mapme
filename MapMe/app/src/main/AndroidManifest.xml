@@ -19,21 +19,21 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".activities.MainActivity">
+        <activity android:name=".view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.MapActivity" />
-        <activity android:name=".activities.AddObjectActivity" />
-        <activity android:name=".activities.AddMarkerActivity" />
-        <activity android:name=".activities.AddPolylineActivity" />
-        <activity android:name=".activities.AddPolygonActivity" />
-        <activity android:name=".activities.EditInformationActivity" />
-        <activity android:name=".activities.DataActivity"/>
+        <activity android:name=".view.MapActivity" />
+        <activity android:name=".view.AddObjectActivity" />
+        <activity android:name=".view.AddMarkerActivity" />
+        <activity android:name=".view.AddPolylineActivity" />
+        <activity android:name=".view.AddPolygonActivity" />
+        <activity android:name=".view.EditInformationActivity" />
+        <activity android:name=".view.DataActivity"/>
         <service
-            android:name=".backend.AppService"
+            android:name=".model.AppService"
             android:enabled="true"
             android:permission="android.permission.BIND_MAIN_SERVICE" />
     </application>

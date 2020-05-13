@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import com.example.mapme.activities.EditInformationActivity;
+import com.example.mapme.view.EditInformationActivity;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
