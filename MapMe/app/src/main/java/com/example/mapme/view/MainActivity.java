@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -14,13 +15,21 @@ import android.view.View;
 
 import com.example.mapme.R;
 import com.example.mapme.model.AppService;
+import com.example.mapme.presenter.MainPresenter;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 /**
  * MainActivity - Start screen when opening the app.
  */
 public class MainActivity extends AppCompatActivity {
 
+    private MainPresenter presenter;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 5;
+    private FirebaseAuth mAuth;
 
     /**
      * Initializes layout, requests permissions and starts appService.
@@ -29,10 +38,25 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        presenter = new MainPresenter(this);
         super.onCreate(savedInstanceState);
+
+        //firebase auth
+        mAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_main);
         requestPermission();
         startAppService();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            // do your stuff
+        } else {
+            signInAnonymously();
+        }
     }
 
     /**
@@ -54,8 +78,7 @@ public class MainActivity extends AppCompatActivity {
     public void showInfo(View view) {
         AlertDialog.Builder infoDialog = new AlertDialog.Builder(MainActivity.this);
         infoDialog.setTitle("How MapMe works:");
-        infoDialog.setMessage("MapMe is a collaborative tool for the acquisition and mapping of geospatial data. \n" +
-                "You can draw markers, polylines or polygons directly on the screen. ");
+        infoDialog.setMessage(presenter.getInfoText());
         infoDialog.setNeutralButton("Ok",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -90,5 +113,20 @@ public class MainActivity extends AppCompatActivity {
         Log.d("info", "Starting AppService");
         Intent serviceIntent = new Intent(getApplicationContext(), AppService.class);
         startService(serviceIntent);
+    }
+
+    private void signInAnonymously() {
+        mAuth.signInAnonymously().addOnSuccessListener(this, new OnSuccessListener<AuthResult>() {
+            @Override
+            public void onSuccess(AuthResult authResult) {
+                // do your stuff
+            }
+        })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Log.e("info", "signInAnonymously:FAILURE", exception);
+                    }
+                });
     }
 }

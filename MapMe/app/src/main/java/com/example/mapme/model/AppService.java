@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -24,6 +25,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -52,6 +54,7 @@ public class AppService extends Service {
     private Location userPosition = null;
 
     // ===== Firebase Storage
+    private FirebaseStorage storage;
     private StorageReference storageRef;
     private StorageReference fileRef;
     private UploadTask uploadTask;
@@ -93,6 +96,7 @@ public class AppService extends Service {
         initLocationManager();
         updateInRealtime();
         getDataFromDatabase();
+        storage = FirebaseStorage.getInstance();
 
         // TODO: Do not run request in main thread:
         // https://stackoverflow.com/questions/6343166/how-to-fix-android-os-networkonmainthreadexception
@@ -185,36 +189,35 @@ public class AppService extends Service {
      * Uploads file to firebase storage.
      */
     public void uploadFile() {
-        try {
-            InputStream is = getAssets().open("database.geojson");
-            StorageReference fileRef = storageRef.child("database.geojson");
+        Log.i("info", currentDataSnapshot.toString());
+        String file = geoJsonHelper.exportDataAsGeoJson(this, currentDataSnapshot);
+        byte[] data = file.getBytes();
 
-            uploadTask = fileRef.putStream(is);
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle unsuccessful uploads
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                    // ...
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        StorageReference storageRef = storage.getReference();
+        StorageReference fileRef = storageRef.child("database.geojson");
+        uploadTask = fileRef.putBytes(data);
 
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.i("info", "File upload not successful.");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Log.i("info", "File upload successful!!! :-)");
+            }
+        });
     }
+
 
     /**
      * Downloads file from firebase storage.
      */
-    public void downloadFile() {
+    public File downloadFile() {
         File localFile = null;
         try {
-            localFile = File.createTempFile("test", "geojson");
+            localFile = File.createTempFile("database", "geojson");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -232,6 +235,7 @@ public class AppService extends Service {
                 // ...
             }
         });
+        return localFile;
     }
 
     /**

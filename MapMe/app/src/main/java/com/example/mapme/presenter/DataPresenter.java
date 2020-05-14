@@ -28,4 +28,9 @@ public class DataPresenter implements AppService.AppServiceListener {
     public void deleteObject(String id){
         activity.appService.deleteObject(id);
     }
+
+    public void saveToCloud(){
+        activity.appService.uploadFile();
+        activity.showInfoUploadSuccessful();
+    }
 }

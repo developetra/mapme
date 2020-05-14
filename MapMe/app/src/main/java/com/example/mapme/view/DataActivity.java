@@ -1,7 +1,9 @@
 package com.example.mapme.view;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Typeface;
@@ -77,6 +79,13 @@ public class DataActivity extends AppCompatActivity {
         this.finish();
     }
 
+    /**
+     * Cancel and go back to previous activity.
+     * @param view
+     */
+    public void saveToCloud(View view){
+        presenter.saveToCloud();
+    }
 
     public void displayData(DataSnapshot dataSnapshot){
         TableLayout inputFields = findViewById(R.id.inputFields);
@@ -139,4 +148,23 @@ public class DataActivity extends AppCompatActivity {
         intent.putExtra("id", id);
         startActivity(intent);
     }
+
+    /**
+     * Shows info dialog to reset database.
+     *
+     * @param view
+     */
+    public void showInfoUploadSuccessful() {
+        AlertDialog.Builder infoDialog = new AlertDialog.Builder(DataActivity.this);
+        infoDialog.setTitle("Success");
+        infoDialog.setMessage("Database was saved to Firebase Storage. ");
+        infoDialog.setNegativeButton("Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        infoDialog.show();
+    }
+
 }
