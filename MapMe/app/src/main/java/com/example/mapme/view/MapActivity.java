@@ -1,6 +1,5 @@
 package com.example.mapme.view;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -14,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -43,7 +43,7 @@ import java.util.HashMap;
 /**
  * MapActivity - Activity that shows map with geoObjects, user position and menu items.
  */
-public class MapActivity extends Activity implements View.OnClickListener {
+public class MapActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final int LINE_COLOR = Color.parseColor("#F34E2B");
     public static final int FILL_COLOR = Color.parseColor("#90F28A74");
