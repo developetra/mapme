@@ -51,8 +51,8 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
     protected MapView mMapView;
     private Marker userMarker;
     private ImageButton btnRotateLeft, btnRotateRight;
-    private ImageButton painting, panning;
-    private PaintingSurface paintingSurface;
+    public ImageButton painting, panning;
+    public PaintingSurface paintingSurface;
     public AppService appService;
     protected boolean appServiceBound;
     private boolean serviceConnected = false;

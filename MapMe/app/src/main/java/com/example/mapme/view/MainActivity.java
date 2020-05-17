@@ -40,9 +40,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         presenter = new MainPresenter(this);
         super.onCreate(savedInstanceState);
-
-        //firebase auth
-        mAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_main);
         requestPermission();
         startAppService();
@@ -51,12 +48,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user != null) {
-            // do your stuff
-        } else {
-            signInAnonymously();
-        }
     }
 
     /**
@@ -114,19 +105,5 @@ public class MainActivity extends AppCompatActivity {
         Intent serviceIntent = new Intent(getApplicationContext(), AppService.class);
         startService(serviceIntent);
     }
-
-    private void signInAnonymously() {
-        mAuth.signInAnonymously().addOnSuccessListener(this, new OnSuccessListener<AuthResult>() {
-            @Override
-            public void onSuccess(AuthResult authResult) {
-                // do your stuff
-            }
-        })
-                .addOnFailureListener(this, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        Log.e("info", "signInAnonymously:FAILURE", exception);
-                    }
-                });
-    }
+    
 }
