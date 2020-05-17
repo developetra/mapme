@@ -1,19 +1,33 @@
 package com.example.mapme.model;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+
 
 public class AppServiceTest {
 
-    @Test
-    public void getUserPosition() {
+    AppService appService;
+
+    @Before
+    public void setUp() throws Exception {
+        appService = new AppService();
+    }
+
+    @After
+    public void tearDown() throws Exception {
     }
 
     @Test
-    public void setUserPosition() {
+    public void testSetGetUserPosition() {
     }
 
     @Test
     public void getObjects() {
+    }
+
+    @Test
+    public void getCurrentDataSnapshot() {
     }
 
     @Test
@@ -57,7 +71,15 @@ public class AppServiceTest {
     }
 
     @Test
-    public void editObject() {
+    public void editObjectProperties() {
+    }
+
+    @Test
+    public void addObjectProperties() {
+    }
+
+    @Test
+    public void deleteObject() {
     }
 
     @Test

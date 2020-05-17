@@ -80,7 +80,7 @@ public class OverpassHelper {
      * @param radiusInMeters
      * @return
      */
-    public LatLngBounds toBounds(LatLng center, double radiusInMeters) {
+    private LatLngBounds toBounds(LatLng center, double radiusInMeters) {
         double distanceFromCenterToCorner = radiusInMeters * Math.sqrt(2.0);
         LatLng southwestCorner = SphericalUtil.computeOffset(center, distanceFromCenterToCorner, 225.0);
         LatLng northeastCorner = SphericalUtil.computeOffset(center, distanceFromCenterToCorner, 45.0);

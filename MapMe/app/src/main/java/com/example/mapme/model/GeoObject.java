@@ -53,7 +53,7 @@ public class GeoObject {
      * @param overlayWithIW
      * @return
      */
-    public String convertGeometryToGeoJson(OverlayWithIW overlayWithIW) {
+    private String convertGeometryToGeoJson(OverlayWithIW overlayWithIW) {
         // Create a KML Document and add the overlay
         KmlDocument kmlDocument = new KmlDocument();
         kmlDocument.mKmlRoot.addOverlay(overlayWithIW, kmlDocument);

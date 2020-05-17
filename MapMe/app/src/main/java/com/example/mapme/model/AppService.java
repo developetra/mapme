@@ -39,7 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * AppService - responsible for location manager, database access,
+ * AppService - responsible for location manager, database & storage access.
  */
 public class AppService extends Service {
 
