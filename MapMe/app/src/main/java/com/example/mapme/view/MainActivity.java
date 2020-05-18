@@ -29,25 +29,14 @@ public class MainActivity extends AppCompatActivity {
 
     private MainPresenter presenter;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 5;
-    private FirebaseAuth mAuth;
 
-    /**
-     * Initializes layout, requests permissions and starts appService.
-     *
-     * @param savedInstanceState
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        presenter = new MainPresenter(this);
         super.onCreate(savedInstanceState);
+        presenter = new MainPresenter(this);
         setContentView(R.layout.activity_main);
         requestPermission();
         startAppService();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
     }
 
     /**
@@ -56,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void startMap(View view) {
-        startAppService();
         Intent intent = new Intent(this, MapActivity.class);
         startActivity(intent);
     }
@@ -70,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder infoDialog = new AlertDialog.Builder(MainActivity.this);
         infoDialog.setTitle("How MapMe works:");
         infoDialog.setMessage(presenter.getInfoText());
-        infoDialog.setNeutralButton("Ok",
+        infoDialog.setPositiveButton("Ok",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
@@ -101,9 +89,9 @@ public class MainActivity extends AppCompatActivity {
      * Starts AppService.
      */
     private void startAppService() {
-        Log.d("info", "Starting AppService");
+        Log.i("info", "Starting AppService.");
         Intent serviceIntent = new Intent(getApplicationContext(), AppService.class);
         startService(serviceIntent);
     }
-    
+
 }

@@ -18,10 +18,10 @@ import static hu.supercluster.overpasser.library.output.OutputFormat.JSON;
 public class OverpassHelper {
 
     /**
-     * Creates new overpass query.
+     * Creates new overpass query to search for geoObjects within 50m radius.
      *
      * @param center
-     * @return
+     * @return OverpassQueryResult
      */
     public OverpassQueryResult search(LatLng center) {
         LatLngBounds bounds = toBounds(center, 50);
@@ -39,19 +39,17 @@ public class OverpassHelper {
                 )
                 .end()
                 .output(500);
-
         OverpassQueryResult result = interpret(query.build());
         int numberOfElements = result.elements.size();
-        Log.d("info", "overpass result number of elements: " + numberOfElements);
+        Log.i("info", "Overpass result - number of elements: " + numberOfElements);
         for (int i = 0; i < numberOfElements; i++) {
             OverpassQueryResult.Element e = result.elements.get(i);
             String type = e.type;
             String name = e.tags.name;
             double lat = e.lat;
             double lon = e.lon;
-            Log.d("info", "overpass result element: " + type + name + lat + lon);
+            Log.i("info", "Overpass result - element: " + type + name + lat + lon);
         }
-        Log.d("info", "overpass result: " + String.valueOf(result));
         return result;
     }
 
@@ -62,20 +60,21 @@ public class OverpassHelper {
      * @return
      */
     private OverpassQueryResult interpret(String query) {
-        // Fix Overpasser bug
+        // fix Overpasser bug
         query = query.replace("\"", "");
-        query = query.substring(0, query.length() - 1) + ";"; // TOOD: Important + ";"
-        Log.d("query","Query:" + query);
+        query = query.substring(0, query.length() - 1) + ";";
+        Log.i("info", "Overpass query: " + query);
         try {
             return OverpassServiceProvider.get().interpreter(query).execute().body();
         } catch (Exception e) {
-            Log.d("info", "Could not interpret OverpassQuery.");
+            Log.w("info", "Could not interpret OverpassQuery.");
             return new OverpassQueryResult();
         }
     }
 
     /**
      * Creates LatLngBounds from given LatLng with a given radius.
+     *
      * @param center
      * @param radiusInMeters
      * @return
@@ -86,4 +85,5 @@ public class OverpassHelper {
         LatLng northeastCorner = SphericalUtil.computeOffset(center, distanceFromCenterToCorner, 45.0);
         return new LatLngBounds(southwestCorner, northeastCorner);
     }
+
 }

@@ -45,35 +45,25 @@ import java.util.HashMap;
  */
 public class MapActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public static final int LINE_COLOR = Color.parseColor("#F34E2B");
-    public static final int FILL_COLOR = Color.parseColor("#90F28A74");
+    private MapPresenter presenter;
     public AppService appService;
     protected boolean appServiceBound;
     private boolean serviceConnected = false;
-
-    private MapPresenter presenter;
-
     protected MapView mMapView = null;
     private Marker userMarker;
     private IMapController mapController;
     private ImageButton btnRotateLeft, btnRotateRight;
+    public static final int LINE_COLOR = Color.parseColor("#F34E2B");
+    public static final int FILL_COLOR = Color.parseColor("#90F28A74");
 
-
-    /**
-     * Initializes layout and starts appServiceConnection.
-     *
-     * @param savedInstanceState
-     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         presenter = new MapPresenter(this);
         Context ctx = getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
-        // inflate and create the mMapView
         setContentView(R.layout.activity_map);
         mMapView = (MapView) findViewById(R.id.map);
-        // set tile source
         mMapView.setTileSource(TileSourceFactory.MAPNIK);
 //        mMapView.setTileSource(new OnlineTileSourceBase("USGS Topo", 0, 18, 256, "",
 //                new String[] { "http://a.tile.stamen.com/toner/" }) {
@@ -89,15 +79,11 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         mMapView.setMultiTouchControls(true);
         mapController = mMapView.getController();
         mapController.setZoom(17.0);
-
-        // enable rotation
         enableRotation();
-        // set user marker
         userMarker = new Marker(mMapView);
         userMarker.setIcon(getResources().getDrawable(R.drawable.position));
         presenter.setUserPosition();
         mMapView.getOverlays().add(userMarker);
-        Log.d("info", "created Maps");
     }
 
     @Override
@@ -114,6 +100,28 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         unbindService(appServiceConnection);
         mMapView.onPause();
     }
+
+    /**
+     * App Service Connection.
+     */
+    private ServiceConnection appServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            AppService.LocalBinder binder = (AppService.LocalBinder) service;
+            appService = binder.getService();
+            appServiceBound = true;
+            appService.registerListener(presenter);
+            serviceConnected = true;
+            presenter.getData();
+            Log.i("info", "Service bound to MapActivity.");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            appServiceBound = false;
+            Log.i("info", "Service unbound to MapActivity.");
+        }
+    };
 
     /**
      * Enables rotation using icons or multitouch.
@@ -144,26 +152,28 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     /**
-     * App Service Connection.
+     * OnClick listener for rotate icons.
+     *
+     * @param view
      */
-    private ServiceConnection appServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            AppService.LocalBinder binder = (AppService.LocalBinder) service;
-            appService = binder.getService();
-            appServiceBound = true;
-            appService.registerListener(presenter);
-            serviceConnected = true;
-            presenter.dataChanged();
-            Log.i("info", "Service bound to MapActivity");
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btnRotateLeft: {
+                float angle = mMapView.getMapOrientation() + 10;
+                if (angle > 360)
+                    angle = 360 - angle;
+                mMapView.setMapOrientation(angle);
+            }
+            break;
+            case R.id.btnRotateRight: {
+                float angle = mMapView.getMapOrientation() - 10;
+                if (angle < 0)
+                    angle += 360f;
+                mMapView.setMapOrientation(angle);
+            }
         }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            appServiceBound = false;
-            Log.i("info", "Service unbound to MapActivity");
-        }
-    };
+    }
 
     /**
      * Updates user position on map.
@@ -174,8 +184,34 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         userMarker.setPosition(userGeoPoint);
         mapController.setCenter(userGeoPoint);
         mMapView.invalidate();
-        Log.d("info", "MapActivity is updating user position");
+        Log.i("info", "MapActivity is updating user position.");
     }
+
+    /**
+     * Shows info dialog to reset database.
+     *
+     * @param view
+     */
+    public void showInfoResetDatabase(View view) {
+        AlertDialog.Builder infoDialog = new AlertDialog.Builder(MapActivity.this);
+        infoDialog.setTitle("Reset Database");
+        infoDialog.setMessage("Do you really want to reset the database? All previously saved data will be lost. ");
+        infoDialog.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        infoDialog.setNeutralButton("Reset",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        presenter.resetDatabase();
+                        dialog.cancel();
+                    }
+                });
+        infoDialog.show();
+    }
+
 
     /**
      * Opens new AddMarkerActivity.
@@ -225,58 +261,14 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         startActivity(intent);
     }
 
+    /**
+     * Opens new DataActivity.
+     *
+     * @param view
+     */
     public void startDataActivity(View view) {
         Intent intent = new Intent(this, DataActivity.class);
         startActivity(intent);
-    }
-
-    /**
-     * OnClick listener for rotate icons.
-     *
-     * @param view
-     */
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.btnRotateLeft: {
-                float angle = mMapView.getMapOrientation() + 10;
-                if (angle > 360)
-                    angle = 360 - angle;
-                mMapView.setMapOrientation(angle);
-            }
-            break;
-            case R.id.btnRotateRight: {
-                float angle = mMapView.getMapOrientation() - 10;
-                if (angle < 0)
-                    angle += 360f;
-                mMapView.setMapOrientation(angle);
-            }
-        }
-    }
-
-    /**
-     * Shows info dialog to reset database.
-     *
-     * @param view
-     */
-    public void showInfoResetDatabase(View view) {
-        AlertDialog.Builder infoDialog = new AlertDialog.Builder(MapActivity.this);
-        infoDialog.setTitle("Reset Database");
-        infoDialog.setMessage("Do you really want to reset the database? All previously saved data will be lost. ");
-        infoDialog.setNegativeButton("Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-        infoDialog.setNeutralButton("Reset",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        presenter.resetDatabase();
-                        dialog.cancel();
-                    }
-                });
-        infoDialog.show();
     }
 
     /**
@@ -302,6 +294,5 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
             Log.i("info", "Additional layer could not be added to MapActivity.");
         }
     }
-
 
 }

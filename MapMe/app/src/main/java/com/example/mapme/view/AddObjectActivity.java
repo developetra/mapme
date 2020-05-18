@@ -26,7 +26,6 @@ import com.example.mapme.widgets.CustomKmlFolder;
 import com.example.mapme.widgets.CustomOverlay;
 
 import org.osmdroid.api.IMapController;
-import org.osmdroid.api.IMapView;
 import org.osmdroid.bonuspack.kml.KmlDocument;
 import org.osmdroid.bonuspack.kml.Style;
 import org.osmdroid.events.MapListener;
@@ -48,16 +47,17 @@ import hu.supercluster.overpasser.adapter.OverpassQueryResult;
 public abstract class AddObjectActivity extends AppCompatActivity implements View.OnClickListener {
 
     public AddObjectPresenter presenter;
+    public AppService appService;
+    protected boolean appServiceBound;
+    private boolean serviceConnected = false;
     protected MapView mMapView;
     private Marker userMarker;
     private ImageButton btnRotateLeft, btnRotateRight;
     public ImageButton painting, panning;
     public PaintingSurface paintingSurface;
-    public AppService appService;
-    protected boolean appServiceBound;
-    private boolean serviceConnected = false;
     public String currentGeoObjectId;
-
+    public static final int LINE_COLOR = Color.parseColor("#F34E2B");
+    public static final int FILL_COLOR = Color.parseColor("#90F28A74");
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,11 +81,32 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
     }
 
     /**
+     * AppService Connection.
+     */
+    public ServiceConnection appServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            AppService.LocalBinder binder = (AppService.LocalBinder) service;
+            appService = binder.getService();
+            appServiceBound = true;
+            appService.registerListener(presenter);
+            serviceConnected = true;
+            presenter.getData();
+            Log.i("info", "Service bound to AddObjectActivity.");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            appServiceBound = false;
+            Log.i("info", "Service unbound to AddObjectActivity.");
+        }
+    };
+
+    /**
      * Processes extras from intent and sets map position and user marker accordingly.
      */
     public void setMapPositionAndUserMarker() {
         IMapController mapController = mMapView.getController();
-        // set map position
         Intent intent = getIntent();
         double mapCenterLatitude = intent.getDoubleExtra("mapCenterLatitude", 49.89873);
         double mapCenterLongitude = intent.getDoubleExtra("mapCenterLongitude", 10.90067);
@@ -95,7 +116,6 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
         GeoPoint startPoint = new GeoPoint(mapCenterLatitude, mapCenterLongitude);
         mapController.setCenter(startPoint);
         mapController.setZoom(zoomLevel);
-        // set user marker
         userMarker = new Marker(mMapView);
         userMarker.setIcon(getResources().getDrawable(R.drawable.position));
         userMarker.setPosition(new GeoPoint(userGeoPointLatitude, userGeoPointLongitude));
@@ -117,13 +137,11 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
         mMapView.setMapListener(new MapListener() {
             @Override
             public boolean onScroll(ScrollEvent event) {
-                Log.i(IMapView.LOGTAG, System.currentTimeMillis() + " onScroll " + event.getX() + "," + event.getY());
                 return true;
             }
 
             @Override
             public boolean onZoom(ZoomEvent event) {
-                Log.i(IMapView.LOGTAG, System.currentTimeMillis() + " onZoom " + event.getZoomLevel());
                 return true;
             }
         });
@@ -190,28 +208,6 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
     }
 
     /**
-     * AppService Connection.
-     */
-    public ServiceConnection appServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            AppService.LocalBinder binder = (AppService.LocalBinder) service;
-            appService = binder.getService();
-            appServiceBound = true;
-            appService.registerListener(presenter);
-            serviceConnected = true;
-            presenter.dataChanged();
-            Log.d("info", "Service bound to AddObjectActivity");
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            appServiceBound = false;
-            Log.d("info", "Service unbound to AddObjectActivity");
-        }
-    };
-
-    /**
      * Updates user position on map.
      *
      * @param userGeoPoint
@@ -219,7 +215,35 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
     public void updateUserPosition(GeoPoint userGeoPoint) {
         userMarker.setPosition(userGeoPoint);
         mMapView.invalidate();
-        Log.d("info", "Updating user position");
+        Log.i("info", "Updating user position.");
+    }
+
+    /**
+     * Opens new EditInformationActivity for last saved geoObject.
+     */
+    public void startEditObjectActivity() {
+        Intent intent = new Intent(this, EditInformationActivity.class);
+        intent.putExtra("id", currentGeoObjectId);
+        startActivity(intent);
+    }
+
+    /**
+     * Calls presenter to save geoObject to database.
+     *
+     * @param geometry
+     * @return
+     */
+    public String saveToDatabase(OverlayWithIW geometry) {
+        return presenter.saveToDatabase(geometry);
+    }
+
+    /**
+     * Go back to previous activity.
+     *
+     * @param view
+     */
+    public void back(View view) {
+        this.finish();
     }
 
     /**
@@ -307,7 +331,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
     }
 
     /**
-     * Shows info dialog when reference was added.
+     * Shows info dialog when OverpassResult was empty.
      *
      * @param id
      */
@@ -331,35 +355,11 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
         infoDialog.show();
     }
 
-
     /**
-     * Opens new EditInformationActivity for last saved geoObject.
-     */
-    public void startEditObjectActivity() {
-        Intent intent = new Intent(this, EditInformationActivity.class);
-        intent.putExtra("id", currentGeoObjectId);
-        startActivity(intent);
-    }
-
-    /**
-     * Calls appService to save geoObject to database.
+     * Adds additional layer with geoObjects to map.
      *
-     * @param geometry
-     * @return
+     * @param objects
      */
-    public String saveToDatabase(OverlayWithIW geometry) {
-        return presenter.saveToDatabase(geometry);
-    }
-
-    /**
-     * Go back to previous activity.
-     *
-     * @param view
-     */
-    public void back(View view) {
-        this.finish();
-    }
-
     public void addAdditionalLayer(HashMap<String, String> objects) {
         mMapView.getOverlays().clear();
         KmlDocument kmlDocument = new KmlDocument();
@@ -369,49 +369,51 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
                 kmlDocument.parseGeoJSON(objects.get(key));
                 Drawable defaultMarker = getResources().getDrawable(R.drawable.pin);
                 Bitmap defaultBitmap = ((BitmapDrawable) defaultMarker).getBitmap();
-                Style defaultStyle = new Style(defaultBitmap, 0x901010AA, 3.0f, 0x20AA1010);
+                Style defaultStyle = new Style(defaultBitmap, LINE_COLOR, 3.0f, FILL_COLOR);
                 CustomKmlFolder cKmlFolder = new CustomKmlFolder();
                 cKmlFolder.mItems = kmlDocument.mKmlRoot.mItems;
                 CustomOverlay myOverLay = cKmlFolder.buildOverlay(mMapView, defaultStyle, null, kmlDocument, key);
                 mMapView.getOverlays().add(myOverLay);
             }
             mMapView.invalidate();
-            Log.d("info", "Additional layer was added");
+            Log.i("info", "Additional layer was added.");
         } else {
-            Log.d("info", "Additional layer could not be added");
+            Log.i("info", "Additional layer could not be added.");
         }
     }
 
+    /**
+     * Adds additional layer with OverpassResult to map.
+     *
+     * @param result
+     * @param numberOfElements
+     * @param objectId
+     */
     public void addLayerWithOverpassResult(OverpassQueryResult result, int numberOfElements, final String objectId) {
         for (int i = 0; i < numberOfElements; i++) {
             final OverpassQueryResult.Element e = result.elements.get(i);
             GeoPoint geoPoint = new GeoPoint(e.lat, e.lon);
-
             Marker marker = new Marker(mMapView);
             marker.setPosition(geoPoint);
             marker.setTitle(e.tags.name);
             marker.setTextIcon(e.tags.name);
-            //marker.setIcon(getDrawable(R.drawable.pin));
             marker.setOnMarkerClickListener(
                     new Marker.OnMarkerClickListener() {
                         @Override
                         public boolean onMarkerClick(Marker marker, MapView mapView) {
-                            // add reference to database
                             HashMap<String, String> properties = new HashMap<>();
                             properties.put("reference", String.valueOf(e.id));
                             presenter.addObjectProperties(objectId, properties);
-                            // show info
                             showInfoReferenceAdded(mMapView, objectId);
                             return false;
                         }
                     });
             mMapView.getOverlays().add(marker);
             marker.showInfoWindow();
-            Log.d("info", "Layer with OverpassQueryResult was added");
+            Log.i("info", "Layer with OverpassQueryResult was added.");
         }
-        // enable panning
-        paintingSurface.setVisibility(View.GONE);
         panning.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
         painting.setBackgroundColor(Color.TRANSPARENT);
     }
+
 }

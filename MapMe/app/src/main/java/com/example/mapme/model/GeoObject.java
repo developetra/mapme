@@ -16,33 +16,52 @@ public class GeoObject {
     private HashMap<String, String> properties;
 
     /**
-     * Constructor
+     * Default Constructor. (required for calls to DataSnapshot.getValue(GeoObject.class))
      */
-
     public GeoObject() {
-        // Default constructor required for calls to DataSnapshot.getValue(GeoObject.class)
     }
 
+    /**
+     * Constructor.
+     *
+     * @param geometry
+     */
     public GeoObject(final OverlayWithIW geometry) {
         this.geometry = convertGeometryToGeoJson(geometry);
     }
 
     /**
-     * Getter and Setter
+     * Get Geometry.
+     *
+     * @return geometry
      */
-
     public String getGeometry() {
         return this.geometry;
     }
 
+    /**
+     * Set Geometry.
+     *
+     * @param geometry
+     */
     public void setGeometry(final OverlayWithIW geometry) {
         this.geometry = convertGeometryToGeoJson(geometry);
     }
 
+    /**
+     * Get properties.
+     *
+     * @return properties
+     */
     public HashMap<String, String> getProperties() {
         return this.properties;
     }
 
+    /**
+     * Set properties.
+     *
+     * @param properties
+     */
     public void setProperties(final HashMap<String, String> properties) {
         this.properties = properties;
     }
@@ -51,15 +70,12 @@ public class GeoObject {
      * Convert given geometry to a geoJson String.
      *
      * @param overlayWithIW
-     * @return
+     * @return geometry as geoJsonString
      */
     private String convertGeometryToGeoJson(OverlayWithIW overlayWithIW) {
-        // Create a KML Document and add the overlay
         KmlDocument kmlDocument = new KmlDocument();
         kmlDocument.mKmlRoot.addOverlay(overlayWithIW, kmlDocument);
-        // Convert KML to GeoJson
         JsonObject geojson = kmlDocument.mKmlRoot.asGeoJSON(true);
-        // Convert GeoJson to String
         String geometry = geojson.toString();
         return geometry;
     }

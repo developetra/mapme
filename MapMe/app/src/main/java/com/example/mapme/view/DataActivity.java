@@ -22,12 +22,15 @@ import com.example.mapme.model.AppService;
 import com.example.mapme.presenter.DataPresenter;
 import com.google.firebase.database.DataSnapshot;
 
+/**
+ * DataActivity - Activity to display data from database.
+ */
 public class DataActivity extends AppCompatActivity {
 
+    private DataPresenter presenter;
     public AppService appService;
     protected boolean appServiceBound;
     private boolean serviceConnected = false;
-    private DataPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,41 +63,48 @@ public class DataActivity extends AppCompatActivity {
             appServiceBound = true;
             appService.registerListener(presenter);
             serviceConnected = true;
-            Log.d("info", "Service bound to DataActivity");
-            presenter.dataChanged();
+            Log.i("info", "Service bound to DataActivity.");
+            presenter.getData();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
             appServiceBound = false;
-            Log.d("info", "Service unbound to DataActivity");
+            Log.i("info", "Service unbound to DataActivity.");
         }
     };
 
     /**
      * Cancel and go back to previous activity.
+     *
      * @param view
      */
-    public void cancel(View view){
+    public void cancel(View view) {
         this.finish();
     }
 
     /**
-     * Cancel and go back to previous activity.
+     * Calls presenter to save file to firebase storage.
+     *
      * @param view
      */
-    public void saveToCloud(View view){
+    public void saveToCloud(View view) {
         presenter.saveToCloud();
     }
 
-    public void displayData(DataSnapshot dataSnapshot){
+    /**
+     * Displays data from database.
+     *
+     * @param dataSnapshot
+     */
+    public void displayData(DataSnapshot dataSnapshot) {
         TableLayout inputFields = findViewById(R.id.inputFields);
         inputFields.removeAllViews();
         for (final DataSnapshot entry : dataSnapshot.getChildren()) {
             // id and type
             TableRow tableRowObject = new TableRow(this);
             TextView textViewObject = new TextView(this);
-            textViewObject.setText(entry.getKey() + "   " +entry.child("properties").child("type").getValue() + "                                                      ");
+            textViewObject.setText(entry.getKey() + "   " + entry.child("properties").child("type").getValue() + "                                                      ");
             textViewObject.setTypeface(null, Typeface.BOLD);
             tableRowObject.addView(textViewObject);
             // edit button
@@ -120,14 +130,14 @@ public class DataActivity extends AppCompatActivity {
             inputFields.addView(tableRowObject);
             // properties
             for (DataSnapshot property : entry.child("properties").getChildren()) {
-                    TableRow tableRowProperties = new TableRow(this);
-                    String key = property.getKey().toString();
-                    String value = property.getValue(String.class);
-                    TextView textViewProperties = new TextView(this);
-                    textViewProperties.setText("     " + key + " - " + value);
-                    tableRowProperties.addView(textViewProperties);
-                    inputFields.addView(tableRowProperties);
-                }
+                TableRow tableRowProperties = new TableRow(this);
+                String key = property.getKey().toString();
+                String value = property.getValue(String.class);
+                TextView textViewProperties = new TextView(this);
+                textViewProperties.setText("     " + key + " - " + value);
+                tableRowProperties.addView(textViewProperties);
+                inputFields.addView(tableRowProperties);
+            }
             // empty rows
             TableRow emptyRow1 = new TableRow(this);
             TextView emptytextView1 = new TextView(this);
@@ -142,7 +152,10 @@ public class DataActivity extends AppCompatActivity {
         }
     }
 
-    public void startEditObjectActivity(String id){
+    /**
+     * Opens new EditInformationActivity for geoObject with given id.
+     */
+    public void startEditObjectActivity(String id) {
         Intent intent = new Intent(this, EditInformationActivity.class);
         intent.putExtra("name", "Edit Object");
         intent.putExtra("id", id);
@@ -150,9 +163,7 @@ public class DataActivity extends AppCompatActivity {
     }
 
     /**
-     * Shows info dialog to reset database.
-     *
-     * @param view
+     * Shows info dialog when upload is completed.
      */
     public void showInfoUploadSuccessful() {
         AlertDialog.Builder infoDialog = new AlertDialog.Builder(DataActivity.this);

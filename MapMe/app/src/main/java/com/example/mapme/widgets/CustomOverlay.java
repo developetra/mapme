@@ -13,20 +13,32 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.FolderOverlay;
 
+/**
+ * Class CustomOverlay - Is used to show geoObjects on map.
+ */
 public class CustomOverlay extends FolderOverlay {
 
     private final String currentGeoObjectId;
 
-    public CustomOverlay(String id){
+    /**
+     * Constructor.
+     *
+     * @param id
+     */
+    public CustomOverlay(String id) {
         this.currentGeoObjectId = id;
     }
 
-
+    /**
+     * Opens info dialog to edit geoObject when pressing on it.
+     *
+     * @param e
+     * @param mapView
+     * @return
+     */
     @Override
     public boolean onLongPress(final MotionEvent e, final MapView mapView) {
-        // TODO:
-        if(hitTest(e, mapView)) {
-
+        if (hitTest(e, mapView)) {
             AlertDialog.Builder infoDialog = new AlertDialog.Builder(mapView.getContext());
             infoDialog.setTitle("GeoObject (Id: " + currentGeoObjectId + ")");
             infoDialog.setMessage("Do you want to edit the GeoObject?");
@@ -44,7 +56,6 @@ public class CustomOverlay extends FolderOverlay {
                             intent.putExtra("name", "Edit Object");
                             intent.putExtra("id", currentGeoObjectId);
                             activity.startActivity(intent);
-                            Log.d("Overlay", "onLongPress "+activity);
                         }
                     });
             infoDialog.show();
@@ -53,8 +64,15 @@ public class CustomOverlay extends FolderOverlay {
         return false;
     }
 
-    protected boolean hitTest(final MotionEvent e, final MapView mapView){
-        GeoPoint pt = (GeoPoint) mapView.getProjection().fromPixels((int) e.getX(), (int) e.getY(), null);
-        return this.getBounds().contains(pt);
+    /**
+     * Checks if geoObject was hit.
+     *
+     * @param e
+     * @param mapView
+     * @return
+     */
+    protected boolean hitTest(final MotionEvent e, final MapView mapView) {
+        GeoPoint geoPoint = (GeoPoint) mapView.getProjection().fromPixels((int) e.getX(), (int) e.getY(), null);
+        return this.getBounds().contains(geoPoint);
     }
 }

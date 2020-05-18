@@ -8,7 +8,8 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -24,22 +25,18 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import org.osmdroid.views.overlay.OverlayWithIW;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 /**
- * AppService - responsible for location manager, database & storage access.
+ * AppService - responsible for location manager, connectivity manager, database & storage access.
  */
 public class AppService extends Service {
 
@@ -53,11 +50,8 @@ public class AppService extends Service {
     protected LocationManager locationManager;
     private Location userPosition = null;
 
-    // ===== Firebase Storage
-    private FirebaseStorage storage;
-    private StorageReference storageRef;
-    private StorageReference fileRef;
-    private UploadTask uploadTask;
+    // ===== Internet Connection
+    private ConnectivityManager connectivityManager;
 
     // ===== Firebase Database
     private long counter = 0;
@@ -67,50 +61,75 @@ public class AppService extends Service {
     private HashMap<String, String> objects = new HashMap<>();
     private DataSnapshot currentDataSnapshot;
 
+    // ===== Firebase Storage
+    private FirebaseStorage storage;
+    private StorageReference storageRef;
+    private StorageReference fileRef;
+    private UploadTask uploadTask;
+
+    // ===== Helper
     private GeoJsonHelper geoJsonHelper = new GeoJsonHelper();
 
-
-    // ===== Getter & Setter
-
+    /**
+     * Get position of user.
+     *
+     * @return userPosition
+     */
     public Location getUserPosition() {
         return userPosition;
     }
 
-    public HashMap<String, String> getObjects() {
-        return this.objects;
-    }
-
+    /**
+     * Set position of user.
+     *
+     * @param userPosition
+     */
     public void setUserPosition(Location userPosition) {
         this.userPosition = userPosition;
     }
 
+    /**
+     * Get objects.
+     *
+     * @return objects
+     */
+    public HashMap<String, String> getObjects() {
+        return this.objects;
+    }
+
+    /**
+     * Get current dataSnapshot.
+     *
+     * @return currentDataSnapshot
+     */
     public DataSnapshot getCurrentDataSnapshot() {
         return this.currentDataSnapshot;
     }
 
     /**
-     * Initializes location manager and realtime database.
+     * onCreate.
      */
     @Override
     public void onCreate() {
-        initLocationManager();
-        updateInRealtime();
-        getDataFromDatabase();
-        storage = FirebaseStorage.getInstance();
+        super.onCreate();
 
         // TODO: Do not run request in main thread:
         // https://stackoverflow.com/questions/6343166/how-to-fix-android-os-networkonmainthreadexception
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-
-        Log.d("info", "AppService started");
-        super.onCreate();
     }
 
+    /**
+     * Initializes location manager, connectivity manager, firebase storage & realtime database.
+     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         initLocationManager();
-        Log.d("info", "AppService started");
+        connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        getDataFromDatabase();
+        updateInRealtime();
+        storage = FirebaseStorage.getInstance();
+        Log.i("info", "AppService started.");
         return Service.START_NOT_STICKY;
     }
 
@@ -129,10 +148,14 @@ public class AppService extends Service {
     }
 
     /**
-     * App Service Listener methods.
-     *
-     * @param listener
+     * App Service Listener & listener methods.
      */
+    public interface AppServiceListener {
+        void updateUserPosition(Location location);
+
+        void dataChanged(DataSnapshot dataSnapshot, HashMap<String, String> objects);
+    }
+
     public void registerListener(AppServiceListener listener) {
         listeners.add(listener);
     }
@@ -141,22 +164,16 @@ public class AppService extends Service {
         listeners.remove(listener);
     }
 
-    public interface AppServiceListener {
-        void updateUserPosition(Location location);
-
-        void dataChanged();
-    }
-
     /**
      * Initializes locationManager.
      */
     private void initLocationManager() {
-        Log.d("info", "LocationManager initialized");
+        Log.i("info", "LocationManager initialized.");
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         LocationListener locListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                Log.d("info", "Location changed");
+                Log.i("info", "Location changed.");
                 userPosition = location;
                 for (AppServiceListener listener : listeners) {
                     listener.updateUserPosition(location);
@@ -179,74 +196,41 @@ public class AppService extends Service {
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this,
                         Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Log.d("info", "Permission not given!");
+            Log.i("info", "Permission to access location not given.");
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MINIMUM_TIME_BETWEEN_UPDATE, MINIMUM_DISTANCING_FOR_UPDATE, locListener);
     }
 
     /**
-     * Uploads file to firebase storage.
+     * Checks internet connection.
+     *
+     * @return boolean
      */
-    public void uploadFile() {
-        Log.i("info", currentDataSnapshot.toString());
-        String file = geoJsonHelper.exportDataAsGeoJson(this, currentDataSnapshot);
-        byte[] data = file.getBytes();
-
-        StorageReference storageRef = storage.getReference();
-        StorageReference fileRef = storageRef.child("database.geojson");
-        uploadTask = fileRef.putBytes(data);
-
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.i("info", "File upload not successful.");
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Log.i("info", "File upload successful!!! :-)");
-            }
-        });
-    }
-
-
-    /**
-     * Downloads file from firebase storage.
-     */
-    public File downloadFile() {
-        File localFile = null;
-        try {
-            localFile = File.createTempFile("database", "geojson");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        final File finalLocalFile = localFile;
-        fileRef.getFile(localFile)
-                .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                        Log.d("info", "Successfully downloaded file: " + finalLocalFile.getAbsolutePath());
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle failed download
-                // ...
-            }
-        });
-        return localFile;
+    public boolean checkInternetConnection() {
+        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+        return (activeNetwork != null && activeNetwork.isConnectedOrConnecting());
     }
 
     /**
-     * Resets database.
+     * Gets data from database.
      */
-    public void resetDatabase() {
-        // delete old database entries
-        counter = 0;
-        counterRef.child("counter").setValue(counter);
-        objectRef.setValue(null);
-        updateInRealtime();
+    public void getDataFromDatabase() {
+        objectRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                currentDataSnapshot = dataSnapshot;
+                objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
+                for (AppServiceListener listener : listeners) {
+                    listener.dataChanged(currentDataSnapshot, objects);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("info", "Failed to load data from database.", databaseError.toException());
+            }
+        });
     }
 
     /**
@@ -267,11 +251,10 @@ public class AppService extends Service {
         objectRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                objects.clear();
-                objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
                 currentDataSnapshot = dataSnapshot;
+                objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
                 for (AppServiceListener listener : listeners) {
-                    listener.dataChanged();
+                    listener.dataChanged(currentDataSnapshot, objects);
                 }
             }
 
@@ -286,18 +269,15 @@ public class AppService extends Service {
      * Saves given geometry to database.
      *
      * @param geometry
-     * @return
+     * @return id
      */
     public String saveToDatabase(OverlayWithIW geometry) {
         String id = String.valueOf(counter + 1);
         GeoObject object = new GeoObject(geometry);
         objectRef.child(id).setValue(object);
-
-        // add geometry type to properties
         HashMap<String, String> properties = new HashMap<>();
         properties.put("type", geometry.getTitle());
         editObjectProperties(id, properties);
-
         incrementCounter();
         return id;
     }
@@ -319,7 +299,7 @@ public class AppService extends Service {
      * @param hashmap
      */
     public void addObjectProperties(String id, HashMap<String, String> hashmap) {
-        for (String key : hashmap.keySet()){
+        for (String key : hashmap.keySet()) {
             objectRef.child(id).child("properties").child(key).setValue(hashmap.get(key));
         }
     }
@@ -334,6 +314,16 @@ public class AppService extends Service {
     }
 
     /**
+     * Resets database.
+     */
+    public void resetDatabase() {
+        counter = 0;
+        counterRef.child("counter").setValue(counter);
+        objectRef.setValue(null);
+        updateInRealtime();
+    }
+
+    /**
      * Increments counter in database.
      */
     public void incrementCounter() {
@@ -341,27 +331,25 @@ public class AppService extends Service {
     }
 
     /**
-     * Gets data from database.
+     * Uploads file to firebase storage.
      */
-    public void getDataFromDatabase() {
-        objectRef.addListenerForSingleValueEvent(new ValueEventListener() {
-
-
+    public void uploadFile() {
+        String file = geoJsonHelper.convertDataToGeoJsonString(this, currentDataSnapshot);
+        byte[] data = file.getBytes();
+        StorageReference storageRef = storage.getReference();
+        StorageReference fileRef = storageRef.child("database.geojson");
+        uploadTask = fileRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                objects.clear();
-                objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
-                currentDataSnapshot = dataSnapshot;
+            public void onFailure(@NonNull Exception exception) {
+                Log.i("info", "File upload not successful. :-(");
             }
-
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // ...
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Log.i("info", "File upload successful! :-)");
             }
-
         });
     }
-
-
 
 }

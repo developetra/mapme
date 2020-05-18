@@ -19,30 +19,24 @@ public class GeoJsonHelper {
      * Converts given dataSnapshot into hashmap with geoJson objects.
      *
      * @param dataSnapshot
-     * @return
+     * @return geoJsonHashmap
      */
-    public HashMap<String, String>  convertDataToGeoJson(DataSnapshot dataSnapshot){
+    public HashMap<String, String> convertDataToGeoJson(DataSnapshot dataSnapshot) {
         HashMap<String, String> objects = new HashMap<>();
-
         for (DataSnapshot entry : dataSnapshot.getChildren()) {
             String geometry = entry.child("geometry").getValue(String.class);
             try {
-                // Convert String to GeoJson
                 JSONObject geojson = new JSONObject(geometry);
-
-                // Add additional properties to the geojson
                 JSONObject feature = (JSONObject) geojson.getJSONArray("features").get(0);
                 JSONObject featureProperies = feature.getJSONObject("properties");
-             
                 for (DataSnapshot property : entry.child("properties").getChildren()) {
-                    String key = property.getKey().toString();
+                    String key = property.getKey();
                     String value = property.getValue(String.class);
                     featureProperies.put(key, value);
                 }
-                Log.d("info", "GeoJsonHelper object: " + geojson.toString());
                 objects.put(entry.getKey(), geojson.toString());
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.w("info", "Data entry could not be converted to geoJson.");
             }
         }
         return objects;
@@ -53,9 +47,9 @@ public class GeoJsonHelper {
      *
      * @param context
      * @param dataSnapshot
-     * @return
+     * @return geoJsonString
      */
-    public String exportDataAsGeoJson(Context context, DataSnapshot dataSnapshot){
+    public String convertDataToGeoJsonString(Context context, DataSnapshot dataSnapshot) {
         HashMap<String, String> objects = convertDataToGeoJson(dataSnapshot);
         JSONObject combined = new JSONObject();
         int counter = 1;
@@ -64,12 +58,10 @@ public class GeoJsonHelper {
                 try {
                     combined.put(String.valueOf(counter++), objects.get(key));
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Log.w("info", "Data entries could not be combined to geoJson.");
                 }
-
             }
         }
-        String data = combined.toString();
-        return data;
+        return combined.toString();
     }
 }

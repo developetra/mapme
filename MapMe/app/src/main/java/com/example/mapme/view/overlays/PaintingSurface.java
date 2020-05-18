@@ -34,21 +34,18 @@ public class PaintingSurface extends View {
 
     public enum Mode {
         Polyline,
-        Polygon,
-        PolylineAsPath
+        Polygon
     }
 
     private AddObjectActivity currentActivity;
     private Mode drawingMode = Mode.Polyline;
-    protected boolean withArrows = false;
-    private Canvas mCanvas;
-    private Path mPath;
+    private Canvas canvas;
+    private Path path;
     private MapView mapView;
-    private List<Point> pts = new ArrayList<>();
-    private final Paint mPaint;
+    private List<Point> points = new ArrayList<>();
+    private final Paint paint;
     private float mX, mY;
     private static final float TOUCH_TOLERANCE = 4;
-    private GeoJsonHelper geoJsonHelper = new GeoJsonHelper();
     transient Polygon lastPolygon = null;
 
     /**
@@ -68,15 +65,15 @@ public class PaintingSurface extends View {
      */
     public PaintingSurface(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mPath = new Path();
-        mPaint = new Paint();
-        mPaint.setAntiAlias(true);
-        mPaint.setDither(true);
-        mPaint.setColor(0xFFFF0000);
-        mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeJoin(Paint.Join.ROUND);
-        mPaint.setStrokeCap(Paint.Cap.ROUND);
-        mPaint.setStrokeWidth(12);
+        path = new Path();
+        paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setDither(true);
+        paint.setColor(0xFFFF0000);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeJoin(Paint.Join.ROUND);
+        paint.setStrokeCap(Paint.Cap.ROUND);
+        paint.setStrokeWidth(12);
     }
 
     /**
@@ -91,7 +88,7 @@ public class PaintingSurface extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         final Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        this.mCanvas = new Canvas(bitmap);
+        this.canvas = new Canvas(bitmap);
     }
 
     /**
@@ -101,7 +98,7 @@ public class PaintingSurface extends View {
      */
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.drawPath(mPath, mPaint);
+        canvas.drawPath(path, paint);
     }
 
     /**
@@ -122,8 +119,8 @@ public class PaintingSurface extends View {
      * @param y
      */
     private void touch_start(float x, float y) {
-        mPath.reset();
-        mPath.moveTo(x, y);
+        path.reset();
+        path.moveTo(x, y);
         mX = x;
         mY = y;
     }
@@ -138,40 +135,35 @@ public class PaintingSurface extends View {
         float dx = Math.abs(x - mX);
         float dy = Math.abs(y - mY);
         if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
-            mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
+            path.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
             mX = x;
             mY = y;
         }
     }
 
     /**
-     * Finish painting.
+     * Save object when finish painting.
      */
     private void touch_up() {
-        mPath.lineTo(mX, mY);
-        // commit path to offscreen
-        mCanvas.drawPath(mPath, mPaint);
-        // reset mPath to not double draw
-        mPath.reset();
+        path.lineTo(mX, mY);
+        canvas.drawPath(path, paint);
+        path.reset();
         if (mapView != null) {
             Projection projection = mapView.getProjection();
             ArrayList<GeoPoint> geoPoints = new ArrayList<>();
             final Point unrotatedPoint = new Point();
-            for (int i = 0; i < pts.size(); i++) {
-                projection.unrotateAndScalePoint(pts.get(i).x, pts.get(i).y, unrotatedPoint);
+            for (int i = 0; i < points.size(); i++) {
+                projection.unrotateAndScalePoint(points.get(i).x, points.get(i).y, unrotatedPoint);
                 GeoPoint iGeoPoint = (GeoPoint) projection.fromPixels(unrotatedPoint.x, unrotatedPoint.y);
                 geoPoints.add(iGeoPoint);
             }
             if (geoPoints.size() > 2) {
-                // only plot a line unless there is at least one item
                 switch (drawingMode) {
                     case Polyline:
-                    case PolylineAsPath:
-                        final boolean asPath = drawingMode == Mode.PolylineAsPath;
                         final int color = Color.argb(100, 100, 100, 100);
                         final Polyline line = new Polyline(mapView);
                         line.getOutlinePaint().setColor(color);
-                        line.setTitle("Polyline" + (asPath ? " as Path" : ""));
+                        line.setTitle("Polyline");
                         line.setPoints(geoPoints);
                         line.getOutlinePaint().setStrokeCap(Paint.Cap.ROUND);
                         line.setId(currentActivity.saveToDatabase(line));
@@ -183,7 +175,6 @@ public class PaintingSurface extends View {
                                 return false;
                             }
                         });
-                        line.setSubDescription(line.getBounds().toString());
                         mapView.getOverlayManager().add(line);
                         lastPolygon = null;
                         break;
@@ -194,15 +185,6 @@ public class PaintingSurface extends View {
                         polygon.setTitle("Polygon");
                         polygon.setId(currentActivity.saveToDatabase(polygon));
                         currentActivity.showInfoAddReferenceOrEditObject(mapView, polygon.getId(), polygon);
-                        if (withArrows) {
-                            final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), org.osmdroid.library.R.drawable.round_navigation_white_48);
-                            final List<MilestoneManager> managers = new ArrayList<>();
-                            managers.add(new MilestoneManager(
-                                    new MilestonePixelDistanceLister(20, 200),
-                                    new MilestoneBitmapDisplayer(90, true, bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2)
-                            ));
-                            polygon.setMilestoneManagers(managers);
-                        }
                         polygon.setOnClickListener(new Polygon.OnClickListener() {
                             @Override
                             public boolean onClick(Polygon polygon, MapView mapView, GeoPoint eventPos) {
@@ -211,18 +193,14 @@ public class PaintingSurface extends View {
                                 return false;
                             }
                         });
-                        //polygon.setSubDescription(BoundingBox.fromGeoPoints(polygon.getPoints()).toString());
                         mapView.getOverlayManager().add(polygon);
                         lastPolygon = polygon;
                         break;
                 }
-
                 mapView.invalidate();
             }
         }
-
-        pts.clear();
-
+        points.clear();
     }
 
     /**
@@ -235,7 +213,7 @@ public class PaintingSurface extends View {
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
         float y = event.getY();
-        pts.add(new Point((int) x, (int) y));
+        points.add(new Point((int) x, (int) y));
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 touch_start(x, y);
