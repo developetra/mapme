@@ -1,6 +1,7 @@
 package com.example.mapme.view;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 
@@ -23,7 +24,7 @@ public class AddPolylineActivity extends AddObjectActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_object);
-        mMapView = findViewById(R.id.map);
+        mapView = findViewById(R.id.map);
         setMapPositionAndUserMarker();
         enableRotation();
         enablePainting(PaintingSurface.Mode.Polyline);
@@ -38,6 +39,19 @@ public class AddPolylineActivity extends AddObjectActivity {
         intent.putExtra("name", "Edit Polyline");
         intent.putExtra("id", currentGeoObjectId);
         startActivity(intent);
+    }
+
+    /**
+     * Shows info dialog when OverpassResult was empty and sets mode back to mapmode.
+     *
+     * @param id
+     */
+    @Override
+    public void showInfoEmptyOverpassResult(String id) {
+        super.showInfoEmptyOverpassResult(id);
+        paintingSurface.setVisibility(View.GONE);
+        panning.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+        painting.setBackgroundColor(Color.TRANSPARENT);
     }
 
     /**

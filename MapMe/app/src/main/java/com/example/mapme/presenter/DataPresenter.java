@@ -1,6 +1,7 @@
 package com.example.mapme.presenter;
 
 import android.location.Location;
+import android.util.Log;
 
 import com.example.mapme.model.AppService;
 import com.example.mapme.view.DataActivity;
@@ -38,12 +39,15 @@ public class DataPresenter implements AppService.AppServiceListener {
      * Updates data on display when database changes.
      *
      * @param dataSnapshot
-     * @param objects
      */
     @Override
-    public void dataChanged(DataSnapshot dataSnapshot, HashMap<String, String> objects) {
+    public void dataChanged(DataSnapshot dataSnapshot) {
         currentDataSnapshot = dataSnapshot;
-        activity.displayData(currentDataSnapshot);
+        if (currentDataSnapshot != null) {
+            activity.displayData(currentDataSnapshot);
+        } else {
+            Log.w("info", "Database is empty.");
+        }
     }
 
     /**
@@ -51,7 +55,12 @@ public class DataPresenter implements AppService.AppServiceListener {
      */
     public void getData() {
         currentDataSnapshot = this.activity.appService.getCurrentDataSnapshot();
-        activity.displayData(currentDataSnapshot);
+        if (currentDataSnapshot != null) {
+            activity.displayData(currentDataSnapshot);
+        } else {
+            Log.w("info", "Database is empty.");
+        }
+
     }
 
     /**

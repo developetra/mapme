@@ -23,12 +23,12 @@ public class AddMarkerActivity extends AddObjectActivity implements View.OnLongC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_object);
-        mMapView = findViewById(R.id.map);
+        mapView = findViewById(R.id.map);
         setMapPositionAndUserMarker();
         enableRotation();
         disablePainting();
         IconPlottingOverlay plotter = new IconPlottingOverlay(this, getResources().getDrawable(R.drawable.marker_default));
-        mMapView.getOverlayManager().add(plotter);
+        mapView.getOverlayManager().add(plotter);
     }
 
     /**
@@ -62,7 +62,7 @@ public class AddMarkerActivity extends AddObjectActivity implements View.OnLongC
     public void addAdditionalLayer(HashMap<String, String> objects) {
         super.addAdditionalLayer(objects);
         IconPlottingOverlay plotter = new IconPlottingOverlay(this, getResources().getDrawable(R.drawable.marker_default));
-        mMapView.getOverlayManager().add(plotter);
+        mapView.getOverlayManager().add(plotter);
     }
 
 }

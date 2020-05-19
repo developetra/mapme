@@ -1,6 +1,9 @@
 package com.example.mapme.view;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 
@@ -23,7 +26,7 @@ public class AddPolygonActivity extends AddObjectActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_object);
-        mMapView = findViewById(R.id.map);
+        mapView = findViewById(R.id.map);
         setMapPositionAndUserMarker();
         enableRotation();
         enablePainting(PaintingSurface.Mode.Polygon);
@@ -38,6 +41,19 @@ public class AddPolygonActivity extends AddObjectActivity {
         intent.putExtra("name", "Edit Polygon");
         intent.putExtra("id", currentGeoObjectId);
         startActivity(intent);
+    }
+
+    /**
+     * Shows info dialog when OverpassResult was empty and sets mode back to mapmode.
+     *
+     * @param id
+     */
+    @Override
+    public void showInfoEmptyOverpassResult(String id) {
+        super.showInfoEmptyOverpassResult(id);
+        paintingSurface.setVisibility(View.GONE);
+        panning.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+        painting.setBackgroundColor(Color.TRANSPARENT);
     }
 
     /**

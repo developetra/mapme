@@ -50,7 +50,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
     public AppService appService;
     protected boolean appServiceBound;
     private boolean serviceConnected = false;
-    protected MapView mMapView;
+    protected MapView mapView;
     private Marker userMarker;
     private ImageButton btnRotateLeft, btnRotateRight;
     public ImageButton painting, panning;
@@ -70,14 +70,14 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
         super.onResume();
         Intent bindIntent = new Intent(AddObjectActivity.this, AppService.class);
         bindService(bindIntent, appServiceConnection, Context.BIND_AUTO_CREATE);
-        mMapView.onResume();
+        mapView.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         unbindService(appServiceConnection);
-        mMapView.onPause();
+        mapView.onPause();
     }
 
     /**
@@ -106,7 +106,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
      * Processes extras from intent and sets map position and user marker accordingly.
      */
     public void setMapPositionAndUserMarker() {
-        IMapController mapController = mMapView.getController();
+        IMapController mapController = mapView.getController();
         Intent intent = getIntent();
         double mapCenterLatitude = intent.getDoubleExtra("mapCenterLatitude", 49.89873);
         double mapCenterLongitude = intent.getDoubleExtra("mapCenterLongitude", 10.90067);
@@ -116,10 +116,10 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
         GeoPoint startPoint = new GeoPoint(mapCenterLatitude, mapCenterLongitude);
         mapController.setCenter(startPoint);
         mapController.setZoom(zoomLevel);
-        userMarker = new Marker(mMapView);
+        userMarker = new Marker(mapView);
         userMarker.setIcon(getResources().getDrawable(R.drawable.position));
         userMarker.setPosition(new GeoPoint(userGeoPointLatitude, userGeoPointLongitude));
-        mMapView.getOverlays().add(userMarker);
+        mapView.getOverlays().add(userMarker);
     }
 
     /**
@@ -130,11 +130,11 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
         btnRotateRight = findViewById(R.id.btnRotateRight);
         btnRotateRight.setOnClickListener(this);
         btnRotateLeft.setOnClickListener(this);
-        mMapView = findViewById(R.id.map);
-        RotationGestureOverlay mRotationGestureOverlay = new RotationGestureOverlay(mMapView);
-        mRotationGestureOverlay.setEnabled(true);
-        mMapView.setMultiTouchControls(true);
-        mMapView.setMapListener(new MapListener() {
+        mapView = findViewById(R.id.map);
+        RotationGestureOverlay rotationGestureOverlay = new RotationGestureOverlay(mapView);
+        rotationGestureOverlay.setEnabled(true);
+        mapView.setMultiTouchControls(true);
+        mapView.setMapListener(new MapListener() {
             @Override
             public boolean onScroll(ScrollEvent event) {
                 return true;
@@ -145,7 +145,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
                 return true;
             }
         });
-        mMapView.getOverlayManager().add(mRotationGestureOverlay);
+        mapView.getOverlayManager().add(rotationGestureOverlay);
     }
 
     /**
@@ -158,7 +158,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
         painting = findViewById(R.id.enablePainting);
         painting.setOnClickListener(this);
         paintingSurface = findViewById(R.id.paintingSurface);
-        paintingSurface.init(this, mMapView);
+        paintingSurface.init(this, mapView);
         paintingSurface.setMode(mode);
     }
 
@@ -191,17 +191,17 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
                 panning.setBackgroundColor(Color.TRANSPARENT);
                 break;
             case R.id.btnRotateLeft: {
-                float angle = mMapView.getMapOrientation() + 10;
+                float angle = mapView.getMapOrientation() + 10;
                 if (angle > 360)
                     angle = 360 - angle;
-                mMapView.setMapOrientation(angle);
+                mapView.setMapOrientation(angle);
             }
             break;
             case R.id.btnRotateRight: {
-                float angle = mMapView.getMapOrientation() - 10;
+                float angle = mapView.getMapOrientation() - 10;
                 if (angle < 0)
                     angle += 360f;
-                mMapView.setMapOrientation(angle);
+                mapView.setMapOrientation(angle);
             }
             break;
         }
@@ -214,7 +214,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
      */
     public void updateUserPosition(GeoPoint userGeoPoint) {
         userMarker.setPosition(userGeoPoint);
-        mMapView.invalidate();
+        mapView.invalidate();
         Log.i("info", "Updating user position.");
     }
 
@@ -361,7 +361,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
      * @param objects
      */
     public void addAdditionalLayer(HashMap<String, String> objects) {
-        mMapView.getOverlays().clear();
+        mapView.getOverlays().clear();
         KmlDocument kmlDocument = new KmlDocument();
 
         if (!objects.isEmpty()) {
@@ -372,13 +372,13 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
                 Style defaultStyle = new Style(defaultBitmap, LINE_COLOR, 3.0f, FILL_COLOR);
                 CustomKmlFolder cKmlFolder = new CustomKmlFolder();
                 cKmlFolder.mItems = kmlDocument.mKmlRoot.mItems;
-                CustomOverlay myOverLay = cKmlFolder.buildOverlay(mMapView, defaultStyle, null, kmlDocument, key);
-                mMapView.getOverlays().add(myOverLay);
+                CustomOverlay myOverLay = cKmlFolder.buildOverlay(mapView, defaultStyle, null, kmlDocument, key);
+                mapView.getOverlays().add(myOverLay);
             }
-            mMapView.invalidate();
+            mapView.invalidate();
             Log.i("info", "Additional layer was added.");
         } else {
-            Log.i("info", "Additional layer could not be added.");
+            Log.i("info", "Additional layer could not be added or is empty.");
         }
     }
 
@@ -393,7 +393,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
         for (int i = 0; i < numberOfElements; i++) {
             final OverpassQueryResult.Element e = result.elements.get(i);
             GeoPoint geoPoint = new GeoPoint(e.lat, e.lon);
-            Marker marker = new Marker(mMapView);
+            Marker marker = new Marker(mapView);
             marker.setPosition(geoPoint);
             marker.setTitle(e.tags.name);
             marker.setTextIcon(e.tags.name);
@@ -404,12 +404,11 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
                             HashMap<String, String> properties = new HashMap<>();
                             properties.put("reference", String.valueOf(e.id));
                             presenter.addObjectProperties(objectId, properties);
-                            showInfoReferenceAdded(mMapView, objectId);
+                            showInfoReferenceAdded(AddObjectActivity.this.mapView, objectId);
                             return false;
                         }
                     });
-            mMapView.getOverlays().add(marker);
-            marker.showInfoWindow();
+            mapView.getOverlays().add(marker);
             Log.i("info", "Layer with OverpassQueryResult was added.");
         }
         panning.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));

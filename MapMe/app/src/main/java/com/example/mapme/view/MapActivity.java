@@ -25,7 +25,6 @@ import com.example.mapme.widgets.CustomKmlFolder;
 import com.example.mapme.widgets.CustomOverlay;
 
 import org.osmdroid.api.IMapController;
-import org.osmdroid.api.IMapView;
 import org.osmdroid.bonuspack.kml.KmlDocument;
 import org.osmdroid.bonuspack.kml.Style;
 import org.osmdroid.config.Configuration;
@@ -49,7 +48,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     public AppService appService;
     protected boolean appServiceBound;
     private boolean serviceConnected = false;
-    protected MapView mMapView = null;
+    protected MapView mapView = null;
     private Marker userMarker;
     private IMapController mapController;
     private ImageButton btnRotateLeft, btnRotateRight;
@@ -63,8 +62,8 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         Context ctx = getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
         setContentView(R.layout.activity_map);
-        mMapView = (MapView) findViewById(R.id.map);
-        mMapView.setTileSource(TileSourceFactory.MAPNIK);
+        mapView = (MapView) findViewById(R.id.map);
+        mapView.setTileSource(TileSourceFactory.MAPNIK);
 //        mMapView.setTileSource(new OnlineTileSourceBase("USGS Topo", 0, 18, 256, "",
 //                new String[] { "http://a.tile.stamen.com/toner/" }) {
 //            @Override
@@ -76,14 +75,14 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 //                        + mImageFilenameEnding;
 //            }
 //        });
-        mMapView.setMultiTouchControls(true);
-        mapController = mMapView.getController();
+        mapView.setMultiTouchControls(true);
+        mapController = mapView.getController();
         mapController.setZoom(17.0);
         enableRotation();
-        userMarker = new Marker(mMapView);
+        userMarker = new Marker(mapView);
         userMarker.setIcon(getResources().getDrawable(R.drawable.position));
         presenter.setUserPosition();
-        mMapView.getOverlays().add(userMarker);
+        mapView.getOverlays().add(userMarker);
     }
 
     @Override
@@ -91,14 +90,14 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         super.onResume();
         Intent bindIntent = new Intent(MapActivity.this, AppService.class);
         bindService(bindIntent, appServiceConnection, Context.BIND_AUTO_CREATE);
-        mMapView.onResume();
+        mapView.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         unbindService(appServiceConnection);
-        mMapView.onPause();
+        mapView.onPause();
     }
 
     /**
@@ -131,24 +130,22 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         btnRotateRight = findViewById(R.id.btnRotateRight);
         btnRotateRight.setOnClickListener(this);
         btnRotateLeft.setOnClickListener(this);
-        mMapView = findViewById(R.id.map);
-        RotationGestureOverlay mRotationGestureOverlay = new RotationGestureOverlay(mMapView);
-        mRotationGestureOverlay.setEnabled(true);
-        mMapView.setMultiTouchControls(true);
-        mMapView.setMapListener(new MapListener() {
+        mapView = findViewById(R.id.map);
+        RotationGestureOverlay rotationGestureOverlay = new RotationGestureOverlay(mapView);
+        rotationGestureOverlay.setEnabled(true);
+        mapView.setMultiTouchControls(true);
+        mapView.setMapListener(new MapListener() {
             @Override
             public boolean onScroll(ScrollEvent event) {
-                Log.i(IMapView.LOGTAG, System.currentTimeMillis() + " onScroll " + event.getX() + "," + event.getY());
                 return true;
             }
 
             @Override
             public boolean onZoom(ZoomEvent event) {
-                Log.i(IMapView.LOGTAG, System.currentTimeMillis() + " onZoom " + event.getZoomLevel());
                 return true;
             }
         });
-        mMapView.getOverlayManager().add(mRotationGestureOverlay);
+        mapView.getOverlayManager().add(rotationGestureOverlay);
     }
 
     /**
@@ -160,17 +157,17 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnRotateLeft: {
-                float angle = mMapView.getMapOrientation() + 10;
+                float angle = mapView.getMapOrientation() + 10;
                 if (angle > 360)
                     angle = 360 - angle;
-                mMapView.setMapOrientation(angle);
+                mapView.setMapOrientation(angle);
             }
             break;
             case R.id.btnRotateRight: {
-                float angle = mMapView.getMapOrientation() - 10;
+                float angle = mapView.getMapOrientation() - 10;
                 if (angle < 0)
                     angle += 360f;
-                mMapView.setMapOrientation(angle);
+                mapView.setMapOrientation(angle);
             }
         }
     }
@@ -183,7 +180,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     public void updateUserPosition(GeoPoint userGeoPoint) {
         userMarker.setPosition(userGeoPoint);
         mapController.setCenter(userGeoPoint);
-        mMapView.invalidate();
+        mapView.invalidate();
         Log.i("info", "MapActivity is updating user position.");
     }
 
@@ -220,10 +217,10 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
      */
     public void startAddMarkerActivity(View view) {
         Intent intent = new Intent(this, AddMarkerActivity.class);
-        intent.putExtra("mapCenterLatitude", mMapView.getMapCenter().getLatitude());
-        intent.putExtra("mapCenterLongitude", mMapView.getMapCenter().getLongitude());
-        intent.putExtra("zoomLevel", mMapView.getZoomLevelDouble());
-        intent.putExtra("orientation", mMapView.getMapOrientation());
+        intent.putExtra("mapCenterLatitude", mapView.getMapCenter().getLatitude());
+        intent.putExtra("mapCenterLongitude", mapView.getMapCenter().getLongitude());
+        intent.putExtra("zoomLevel", mapView.getZoomLevelDouble());
+        intent.putExtra("orientation", mapView.getMapOrientation());
         intent.putExtra("userGeoPointLatitude", presenter.userGeoPoint.getLatitude());
         intent.putExtra("userGeoPointLongitude", presenter.userGeoPoint.getLongitude());
         startActivity(intent);
@@ -236,10 +233,10 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
      */
     public void startAddPolylineActivity(View view) {
         Intent intent = new Intent(this, AddPolylineActivity.class);
-        intent.putExtra("mapCenterLatitude", mMapView.getMapCenter().getLatitude());
-        intent.putExtra("mapCenterLongitude", mMapView.getMapCenter().getLongitude());
-        intent.putExtra("zoomLevel", mMapView.getZoomLevelDouble());
-        intent.putExtra("orientation", mMapView.getMapOrientation());
+        intent.putExtra("mapCenterLatitude", mapView.getMapCenter().getLatitude());
+        intent.putExtra("mapCenterLongitude", mapView.getMapCenter().getLongitude());
+        intent.putExtra("zoomLevel", mapView.getZoomLevelDouble());
+        intent.putExtra("orientation", mapView.getMapOrientation());
         intent.putExtra("userGeoPointLatitude", presenter.userGeoPoint.getLatitude());
         intent.putExtra("userGeoPointLongitude", presenter.userGeoPoint.getLongitude());
         startActivity(intent);
@@ -252,10 +249,10 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
      */
     public void startAddPolygonActivity(View view) {
         Intent intent = new Intent(this, AddPolygonActivity.class);
-        intent.putExtra("mapCenterLatitude", mMapView.getMapCenter().getLatitude());
-        intent.putExtra("mapCenterLongitude", mMapView.getMapCenter().getLongitude());
-        intent.putExtra("zoomLevel", mMapView.getZoomLevelDouble());
-        intent.putExtra("orientation", mMapView.getMapOrientation());
+        intent.putExtra("mapCenterLatitude", mapView.getMapCenter().getLatitude());
+        intent.putExtra("mapCenterLongitude", mapView.getMapCenter().getLongitude());
+        intent.putExtra("zoomLevel", mapView.getZoomLevelDouble());
+        intent.putExtra("orientation", mapView.getMapOrientation());
         intent.putExtra("userGeoPointLatitude", presenter.userGeoPoint.getLatitude());
         intent.putExtra("userGeoPointLongitude", presenter.userGeoPoint.getLongitude());
         startActivity(intent);
@@ -275,7 +272,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
      * Adds layer with geoObjects from database to map.
      */
     public void addAdditionalLayer(HashMap<String, String> objects) {
-        mMapView.getOverlays().clear();
+        mapView.getOverlays().clear();
         KmlDocument kmlDocument = new KmlDocument();
         if (!objects.isEmpty()) {
             for (String key : objects.keySet()) {
@@ -285,13 +282,13 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
                 Style defaultStyle = new Style(defaultBitmap, LINE_COLOR, 3.0f, FILL_COLOR);
                 CustomKmlFolder cKmlFolder = new CustomKmlFolder();
                 cKmlFolder.mItems = kmlDocument.mKmlRoot.mItems;
-                CustomOverlay myOverLay = cKmlFolder.buildOverlay(mMapView, defaultStyle, null, kmlDocument, key);
-                mMapView.getOverlays().add(myOverLay);
+                CustomOverlay myOverLay = cKmlFolder.buildOverlay(mapView, defaultStyle, null, kmlDocument, key);
+                mapView.getOverlays().add(myOverLay);
             }
-            mMapView.invalidate();
+            mapView.invalidate();
             Log.i("info", "Additional layer was added to MapActivity.");
         } else {
-            Log.i("info", "Additional layer could not be added to MapActivity.");
+            Log.i("info", "Additional layer could not be added to MapActivity or is empty.");
         }
     }
 

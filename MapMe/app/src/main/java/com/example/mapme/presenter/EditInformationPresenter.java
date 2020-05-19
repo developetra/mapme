@@ -38,10 +38,9 @@ public class EditInformationPresenter implements AppService.AppServiceListener {
      * Saves dataSnapshot when database changes.
      *
      * @param dataSnapshot
-     * @param objects
      */
     @Override
-    public void dataChanged(DataSnapshot dataSnapshot, HashMap<String, String> objects) {
+    public void dataChanged(DataSnapshot dataSnapshot) {
         currentDataSnapshot = dataSnapshot;
     }
 

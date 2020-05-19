@@ -1,7 +1,9 @@
 package com.example.mapme.presenter;
 
 import android.location.Location;
+import android.util.Log;
 
+import com.example.mapme.model.GeoJsonHelper;
 import com.example.mapme.view.MapActivity;
 import com.example.mapme.model.AppService;
 import com.google.firebase.database.DataSnapshot;
@@ -16,7 +18,9 @@ import java.util.HashMap;
 public class MapPresenter implements AppService.AppServiceListener {
 
     private MapActivity activity;
+    private GeoJsonHelper geoJsonHelper = new GeoJsonHelper();
     public GeoPoint userGeoPoint;
+    private DataSnapshot currentDataSnapshot;
     private HashMap<String, String> objects = new HashMap<>();
 
     /**
@@ -44,17 +48,27 @@ public class MapPresenter implements AppService.AppServiceListener {
      * Updates additional layer on map when data changes.
      */
     @Override
-    public void dataChanged(DataSnapshot dataSnapshot, HashMap<String, String> objects) {
-        objects = objects;
-        this.activity.addAdditionalLayer(objects);
+    public void dataChanged(DataSnapshot dataSnapshot) {
+        currentDataSnapshot = dataSnapshot;
+        if (currentDataSnapshot != null) {
+            objects = geoJsonHelper.convertDataToGeoJson(currentDataSnapshot);
+            this.activity.addAdditionalLayer(objects);
+        } else {
+            Log.w("info", "Database is empty.");
+        }
     }
 
     /**
      * Gets data and updates additional layer on map.
      */
     public void getData() {
-        objects = this.activity.appService.getObjects();
-        this.activity.addAdditionalLayer(objects);
+        currentDataSnapshot = this.activity.appService.getCurrentDataSnapshot();
+        if (currentDataSnapshot != null) {
+            objects = geoJsonHelper.convertDataToGeoJson(currentDataSnapshot);
+            this.activity.addAdditionalLayer(objects);
+        } else {
+            Log.w("info", "Database is empty.");
+        }
     }
 
     /**

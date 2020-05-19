@@ -58,7 +58,6 @@ public class AppService extends Service {
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference counterRef = database.getReference("counter");
     private DatabaseReference objectRef = database.getReference("objects");
-    private HashMap<String, String> objects = new HashMap<>();
     private DataSnapshot currentDataSnapshot;
 
     // ===== Firebase Storage
@@ -86,15 +85,6 @@ public class AppService extends Service {
      */
     public void setUserPosition(Location userPosition) {
         this.userPosition = userPosition;
-    }
-
-    /**
-     * Get objects.
-     *
-     * @return objects
-     */
-    public HashMap<String, String> getObjects() {
-        return this.objects;
     }
 
     /**
@@ -153,7 +143,7 @@ public class AppService extends Service {
     public interface AppServiceListener {
         void updateUserPosition(Location location);
 
-        void dataChanged(DataSnapshot dataSnapshot, HashMap<String, String> objects);
+        void dataChanged(DataSnapshot dataSnapshot);
     }
 
     public void registerListener(AppServiceListener listener) {
@@ -220,9 +210,10 @@ public class AppService extends Service {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 currentDataSnapshot = dataSnapshot;
-                objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
-                for (AppServiceListener listener : listeners) {
-                    listener.dataChanged(currentDataSnapshot, objects);
+                if (dataSnapshot != null){
+                    for (AppServiceListener listener : listeners) {
+                        listener.dataChanged(currentDataSnapshot);
+                    }
                 }
             }
 
@@ -252,9 +243,10 @@ public class AppService extends Service {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 currentDataSnapshot = dataSnapshot;
-                objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
-                for (AppServiceListener listener : listeners) {
-                    listener.dataChanged(currentDataSnapshot, objects);
+                if (dataSnapshot != null){
+                    for (AppServiceListener listener : listeners) {
+                        listener.dataChanged(currentDataSnapshot);
+                    }
                 }
             }
 
