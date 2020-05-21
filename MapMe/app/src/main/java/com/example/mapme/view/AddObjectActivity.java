@@ -385,13 +385,10 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
     /**
      * Adds additional layer with OverpassResult to map.
      *
-     * @param result
-     * @param numberOfElements
-     * @param objectId
      */
-    public void addLayerWithOverpassResult(OverpassQueryResult result, int numberOfElements, final String objectId) {
-        for (int i = 0; i < numberOfElements; i++) {
-            final OverpassQueryResult.Element e = result.elements.get(i);
+    public void addLayerWithOverpassResult(OverpassQueryResult nodes, int numberOfNodes, OverpassQueryResult ways, int numberOfWays, OverpassQueryResult relations, int numberOfRelations, final String objectId) {
+        for (int i = 0; i < numberOfNodes; i++) {
+            final OverpassQueryResult.Element e = nodes.elements.get(i);
             GeoPoint geoPoint = new GeoPoint(e.lat, e.lon);
             Marker marker = new Marker(mapView);
             marker.setPosition(geoPoint);
@@ -409,8 +406,50 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
                         }
                     });
             mapView.getOverlays().add(marker);
-            Log.i("info", "Layer with OverpassQueryResult was added.");
         }
+        Log.i("info", "Layer with nodes was added.");
+        for (int i = 0; i < numberOfWays; i++) {
+            final OverpassQueryResult.Element e = ways.elements.get(i);
+            GeoPoint geoPoint = new GeoPoint(e.lat, e.lon);
+            Marker marker = new Marker(mapView);
+            marker.setPosition(geoPoint);
+            marker.setTitle(e.tags.name);
+            marker.setTextIcon(e.tags.name);
+            marker.setOnMarkerClickListener(
+                    new Marker.OnMarkerClickListener() {
+                        @Override
+                        public boolean onMarkerClick(Marker marker, MapView mapView) {
+                            HashMap<String, String> properties = new HashMap<>();
+                            properties.put("reference", String.valueOf(e.id));
+                            presenter.addObjectProperties(objectId, properties);
+                            showInfoReferenceAdded(AddObjectActivity.this.mapView, objectId);
+                            return false;
+                        }
+                    });
+            mapView.getOverlays().add(marker);
+        }
+        Log.i("info", "Layer with ways was added.");
+        for (int i = 0; i < numberOfRelations; i++) {
+            final OverpassQueryResult.Element e = relations.elements.get(i);
+            GeoPoint geoPoint = new GeoPoint(e.lat, e.lon);
+            Marker marker = new Marker(mapView);
+            marker.setPosition(geoPoint);
+            marker.setTitle(e.tags.name);
+            marker.setTextIcon(e.tags.name);
+            marker.setOnMarkerClickListener(
+                    new Marker.OnMarkerClickListener() {
+                        @Override
+                        public boolean onMarkerClick(Marker marker, MapView mapView) {
+                            HashMap<String, String> properties = new HashMap<>();
+                            properties.put("reference", String.valueOf(e.id));
+                            presenter.addObjectProperties(objectId, properties);
+                            showInfoReferenceAdded(AddObjectActivity.this.mapView, objectId);
+                            return false;
+                        }
+                    });
+            mapView.getOverlays().add(marker);
+        }
+        Log.i("info", "Layer with relations was added.");
         panning.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
         painting.setBackgroundColor(Color.TRANSPARENT);
     }

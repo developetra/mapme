@@ -58,14 +58,17 @@ public class AddPolygonActivity extends AddObjectActivity {
 
     /**
      * Adds additional layer with OverpassResult to map and removes PainingSurface.
-     *
-     * @param result
-     * @param numberOfElements
+     * @param nodes
+     * @param numberOfNodes
+     * @param ways
+     * @param numberOfWays
+     * @param relations
+     * @param numberOfRelations
      * @param objectId
      */
     @Override
-    public void addLayerWithOverpassResult(OverpassQueryResult result, int numberOfElements, final String objectId) {
-        super.addLayerWithOverpassResult(result, numberOfElements, objectId);
+    public void addLayerWithOverpassResult(OverpassQueryResult nodes, int numberOfNodes, OverpassQueryResult ways, int numberOfWays, OverpassQueryResult relations, int numberOfRelations, final String objectId) {
+        super.addLayerWithOverpassResult(nodes, numberOfNodes, ways, numberOfWays, relations, numberOfRelations, objectId);
         paintingSurface.setVisibility(View.GONE);
     }
 
