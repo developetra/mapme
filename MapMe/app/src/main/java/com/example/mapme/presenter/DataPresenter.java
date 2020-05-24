@@ -15,7 +15,6 @@ import java.util.HashMap;
 public class DataPresenter implements AppService.AppServiceListener {
 
     private DataActivity activity;
-    private DataSnapshot currentDataSnapshot;
 
     /**
      * Constructor.
@@ -42,25 +41,15 @@ public class DataPresenter implements AppService.AppServiceListener {
      */
     @Override
     public void dataChanged(DataSnapshot dataSnapshot) {
-        currentDataSnapshot = dataSnapshot;
-        if (currentDataSnapshot != null) {
-            activity.displayData(currentDataSnapshot);
-        } else {
-            Log.w("info", "Database is empty.");
-        }
+        activity.displayData(dataSnapshot);
     }
 
     /**
      * Gets data and updates view.
      */
     public void getData() {
-        currentDataSnapshot = this.activity.appService.getCurrentDataSnapshot();
-        if (currentDataSnapshot != null) {
-            activity.displayData(currentDataSnapshot);
-        } else {
-            Log.w("info", "Database is empty.");
-        }
-
+        DataSnapshot dataSnapshot = this.activity.appService.getCurrentDataSnapshot();
+        activity.displayData(dataSnapshot);
     }
 
     /**

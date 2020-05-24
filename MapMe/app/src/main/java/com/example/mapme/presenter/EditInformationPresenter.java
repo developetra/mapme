@@ -14,7 +14,6 @@ import java.util.HashMap;
 public class EditInformationPresenter implements AppService.AppServiceListener {
 
     private EditInformationActivity activity;
-    private DataSnapshot currentDataSnapshot;
 
     /**
      * Constructor.
@@ -35,13 +34,13 @@ public class EditInformationPresenter implements AppService.AppServiceListener {
     }
 
     /**
-     * Saves dataSnapshot when database changes.
+     * Fills properties when database changes.
      *
      * @param dataSnapshot
      */
     @Override
     public void dataChanged(DataSnapshot dataSnapshot) {
-        currentDataSnapshot = dataSnapshot;
+        activity.fillProperties(dataSnapshot);
     }
 
     /**
@@ -67,9 +66,6 @@ public class EditInformationPresenter implements AppService.AppServiceListener {
      * Calls AppService to get the current data and fills properties in the view.
      */
     public void fillProperties() {
-        if (currentDataSnapshot == null) {
-            currentDataSnapshot = activity.appService.getCurrentDataSnapshot();
-        }
-        activity.fillProperties(currentDataSnapshot);
+        activity.fillProperties(activity.appService.getCurrentDataSnapshot());
     }
 }

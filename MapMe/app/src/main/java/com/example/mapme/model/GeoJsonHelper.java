@@ -23,20 +23,22 @@ public class GeoJsonHelper {
      */
     public HashMap<String, String> convertDataToGeoJson(DataSnapshot dataSnapshot) {
         HashMap<String, String> objects = new HashMap<>();
-        for (DataSnapshot entry : dataSnapshot.getChildren()) {
-            String geometry = entry.child("geometry").getValue(String.class);
-            try {
-                JSONObject geojson = new JSONObject(geometry);
-                JSONObject feature = (JSONObject) geojson.getJSONArray("features").get(0);
-                JSONObject featureProperies = feature.getJSONObject("properties");
-                for (DataSnapshot property : entry.child("properties").getChildren()) {
-                    String key = property.getKey();
-                    String value = property.getValue(String.class);
-                    featureProperies.put(key, value);
+        if (dataSnapshot.getChildren() != null) {
+            for (DataSnapshot entry : dataSnapshot.getChildren()) {
+                String geometry = entry.child("geometry").getValue(String.class);
+                try {
+                    JSONObject geojson = new JSONObject(geometry);
+                    JSONObject feature = (JSONObject) geojson.getJSONArray("features").get(0);
+                    JSONObject featureProperies = feature.getJSONObject("properties");
+                    for (DataSnapshot property : entry.child("properties").getChildren()) {
+                        String key = property.getKey();
+                        String value = property.getValue(String.class);
+                        featureProperies.put(key, value);
+                    }
+                    objects.put(entry.getKey(), geojson.toString());
+                } catch (JSONException e) {
+                    Log.w("info", "Data entry could not be converted to geoJson.");
                 }
-                objects.put(entry.getKey(), geojson.toString());
-            } catch (JSONException e) {
-                Log.w("info", "Data entry could not be converted to geoJson.");
             }
         }
         return objects;

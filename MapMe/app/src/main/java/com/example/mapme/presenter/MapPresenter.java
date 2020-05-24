@@ -20,8 +20,6 @@ public class MapPresenter implements AppService.AppServiceListener {
     private MapActivity activity;
     private GeoJsonHelper geoJsonHelper = new GeoJsonHelper();
     public GeoPoint userGeoPoint;
-    private DataSnapshot currentDataSnapshot;
-    private HashMap<String, String> objects = new HashMap<>();
 
     /**
      * Constructor.
@@ -49,26 +47,17 @@ public class MapPresenter implements AppService.AppServiceListener {
      */
     @Override
     public void dataChanged(DataSnapshot dataSnapshot) {
-        currentDataSnapshot = dataSnapshot;
-        if (currentDataSnapshot != null) {
-            objects = geoJsonHelper.convertDataToGeoJson(currentDataSnapshot);
-            this.activity.addAdditionalLayer(objects);
-        } else {
-            Log.w("info", "Database is empty.");
-        }
+        HashMap<String, String> objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
+        this.activity.addAdditionalLayer(objects);
     }
 
     /**
      * Gets data and updates additional layer on map.
      */
     public void getData() {
-        currentDataSnapshot = this.activity.appService.getCurrentDataSnapshot();
-        if (currentDataSnapshot != null) {
-            objects = geoJsonHelper.convertDataToGeoJson(currentDataSnapshot);
-            this.activity.addAdditionalLayer(objects);
-        } else {
-            Log.w("info", "Database is empty.");
-        }
+        DataSnapshot dataSnapshot = this.activity.appService.getCurrentDataSnapshot();
+        HashMap<String, String> objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
+        this.activity.addAdditionalLayer(objects);
     }
 
     /**
