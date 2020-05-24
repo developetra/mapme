@@ -19,14 +19,6 @@ public class AppServiceTest {
     }
 
     @Test
-    public void testSetGetUserPosition() {
-    }
-
-    @Test
-    public void getObjects() {
-    }
-
-    @Test
     public void getCurrentDataSnapshot() {
     }
 

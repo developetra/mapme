@@ -48,7 +48,6 @@ public class AppService extends Service {
 
     // ===== Location
     protected LocationManager locationManager;
-    private Location userPosition = null;
 
     // ===== Internet Connection
     private ConnectivityManager connectivityManager;
@@ -68,24 +67,6 @@ public class AppService extends Service {
 
     // ===== Helper
     private GeoJsonHelper geoJsonHelper = new GeoJsonHelper();
-
-    /**
-     * Get position of user.
-     *
-     * @return userPosition
-     */
-    public Location getUserPosition() {
-        return userPosition;
-    }
-
-    /**
-     * Set position of user.
-     *
-     * @param userPosition
-     */
-    public void setUserPosition(Location userPosition) {
-        this.userPosition = userPosition;
-    }
 
     /**
      * Get current dataSnapshot.
@@ -164,7 +145,6 @@ public class AppService extends Service {
             @Override
             public void onLocationChanged(Location location) {
                 Log.i("info", "Location changed.");
-                userPosition = location;
                 for (AppServiceListener listener : listeners) {
                     listener.updateUserPosition(location);
                 }
