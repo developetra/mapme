@@ -98,57 +98,59 @@ public class DataActivity extends AppCompatActivity {
      * @param dataSnapshot
      */
     public void displayData(DataSnapshot dataSnapshot) {
-        TableLayout inputFields = findViewById(R.id.inputFields);
-        inputFields.removeAllViews();
-        for (final DataSnapshot entry : dataSnapshot.getChildren()) {
-            // id and type
-            TableRow tableRowObject = new TableRow(this);
-            TextView textViewObject = new TextView(this);
-            textViewObject.setText(entry.getKey() + "   " + entry.child("properties").child("type").getValue() + "                                                      ");
-            textViewObject.setTypeface(null, Typeface.BOLD);
-            tableRowObject.addView(textViewObject);
-            // edit button
-            ImageButton edit = new ImageButton(this);
-            edit.setImageDrawable(getResources().getDrawable(R.drawable.edit));
-            edit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startEditObjectActivity(entry.getKey());
+        if (dataSnapshot != null) {
+            TableLayout inputFields = findViewById(R.id.inputFields);
+            inputFields.removeAllViews();
+            for (final DataSnapshot entry : dataSnapshot.getChildren()) {
+                // id and type
+                TableRow tableRowObject = new TableRow(this);
+                TextView textViewObject = new TextView(this);
+                textViewObject.setText(entry.getKey() + "   " + entry.child("properties").child("type").getValue() + "                                                      ");
+                textViewObject.setTypeface(null, Typeface.BOLD);
+                tableRowObject.addView(textViewObject);
+                // edit button
+                ImageButton edit = new ImageButton(this);
+                edit.setImageDrawable(getResources().getDrawable(R.drawable.edit));
+                edit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startEditObjectActivity(entry.getKey());
+                    }
+                });
+                tableRowObject.addView(edit);
+                // delete button
+                ImageButton delete = new ImageButton(this);
+                delete.setImageDrawable(getResources().getDrawable(R.drawable.delete));
+                delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        presenter.deleteObject(entry.getKey());
+                    }
+                });
+                tableRowObject.addView(delete);
+                inputFields.addView(tableRowObject);
+                // properties
+                for (DataSnapshot property : entry.child("properties").getChildren()) {
+                    TableRow tableRowProperties = new TableRow(this);
+                    String key = property.getKey().toString();
+                    String value = property.getValue(String.class);
+                    TextView textViewProperties = new TextView(this);
+                    textViewProperties.setText("     " + key + " - " + value);
+                    tableRowProperties.addView(textViewProperties);
+                    inputFields.addView(tableRowProperties);
                 }
-            });
-            tableRowObject.addView(edit);
-            // delete button
-            ImageButton delete = new ImageButton(this);
-            delete.setImageDrawable(getResources().getDrawable(R.drawable.delete));
-            delete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    presenter.deleteObject(entry.getKey());
-                }
-            });
-            tableRowObject.addView(delete);
-            inputFields.addView(tableRowObject);
-            // properties
-            for (DataSnapshot property : entry.child("properties").getChildren()) {
-                TableRow tableRowProperties = new TableRow(this);
-                String key = property.getKey().toString();
-                String value = property.getValue(String.class);
-                TextView textViewProperties = new TextView(this);
-                textViewProperties.setText("     " + key + " - " + value);
-                tableRowProperties.addView(textViewProperties);
-                inputFields.addView(tableRowProperties);
+                // empty rows
+                TableRow emptyRow1 = new TableRow(this);
+                TextView emptytextView1 = new TextView(this);
+                emptytextView1.setText(" ");
+                emptyRow1.addView(emptytextView1);
+                inputFields.addView(emptyRow1);
+                TableRow emptyRow2 = new TableRow(this);
+                TextView emptytextView2 = new TextView(this);
+                emptytextView2.setText(" ");
+                emptyRow2.addView(emptytextView2);
+                inputFields.addView(emptyRow2);
             }
-            // empty rows
-            TableRow emptyRow1 = new TableRow(this);
-            TextView emptytextView1 = new TextView(this);
-            emptytextView1.setText(" ");
-            emptyRow1.addView(emptytextView1);
-            inputFields.addView(emptyRow1);
-            TableRow emptyRow2 = new TableRow(this);
-            TextView emptytextView2 = new TextView(this);
-            emptytextView2.setText(" ");
-            emptyRow2.addView(emptytextView2);
-            inputFields.addView(emptyRow2);
         }
     }
 

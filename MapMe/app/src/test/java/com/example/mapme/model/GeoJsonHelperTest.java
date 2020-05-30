@@ -9,8 +9,6 @@ import org.mockito.Mockito;
 
 import java.util.Collections;
 
-import static org.junit.Assert.*;
-
 public class GeoJsonHelperTest {
 
     GeoJsonHelper geoJsonHelper;
@@ -28,7 +26,9 @@ public class GeoJsonHelperTest {
     public void convertDataToGeoJson() {
         DataSnapshot dataSnapshot = Mockito.mock(DataSnapshot.class);
         DataSnapshot entry = Mockito.mock(DataSnapshot.class);
-        Mockito.when(entry.child("geometry").getValue()).thenReturn("test");
+        DataSnapshot geometry = Mockito.mock(DataSnapshot.class);
+        Mockito.when(geometry.getValue()).thenReturn("{\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"urn:ogc:def:crs:OGC:1.3:CRS84\"}},\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[10.886972399157315,49.89197146019778]},\"properties\":{\"name\":\"Marker\"}}],\"type\":\"FeatureCollection\"}");
+        Mockito.when(entry.child("geometry")).thenReturn(geometry);
         Mockito.when(dataSnapshot.getChildren()).thenReturn(Collections.singleton(entry));
         geoJsonHelper.convertDataToGeoJson(dataSnapshot);
     }

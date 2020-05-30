@@ -27,7 +27,7 @@ public class OverpassHelper {
         LatLngBounds bounds = toBounds(center, 50);
         OverpassQuery query = new OverpassQuery()
                 .format(JSON)
-                .timeout(30)
+                .timeout(180)
                 .filterQuery()
                 .node()
                 .tag("name")
@@ -64,7 +64,7 @@ public class OverpassHelper {
         LatLngBounds bounds = toBounds(center, 50);
         OverpassQuery query = new OverpassQuery()
                 .format(JSON)
-                .timeout(30)
+                .timeout(180)
                 .filterQuery()
                 .way()
                 .tag("name")
@@ -101,7 +101,7 @@ public class OverpassHelper {
         LatLngBounds bounds = toBounds(center, 50);
         OverpassQuery query = new OverpassQuery()
                 .format(JSON)
-                .timeout(30)
+                .timeout(180)
                 .filterQuery()
                 .rel()
                 .tag("name")

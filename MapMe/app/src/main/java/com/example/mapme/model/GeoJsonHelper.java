@@ -23,7 +23,7 @@ public class GeoJsonHelper {
      */
     public HashMap<String, String> convertDataToGeoJson(DataSnapshot dataSnapshot) {
         HashMap<String, String> objects = new HashMap<>();
-        if (dataSnapshot.getChildren() != null) {
+        if (dataSnapshot != null) {
             for (DataSnapshot entry : dataSnapshot.getChildren()) {
                 String geometry = entry.child("geometry").getValue(String.class);
                 try {
