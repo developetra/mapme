@@ -88,16 +88,16 @@ public class AddObjectPresenter implements AppService.AppServiceListener {
         OverpassQueryResult resultNodes = getOverpassResultNodes(geometry);
         int numberOfNodes = resultNodes.elements.size();
         Log.i("info", "Overpass result number of nodes: " + numberOfNodes);
-        OverpassQueryResult resultWays = getOverpassResultWays(geometry);
-        int numberOfWays = resultWays.elements.size();
-        Log.i("info", "Overpass result number of ways: " + numberOfWays);
-        OverpassQueryResult resultRelations = getOverpassResultRelations(geometry);
-        int numberOfRelations = resultRelations.elements.size();
-        Log.i("info", "Overpass result number of relations: " + numberOfRelations);
-        if (numberOfNodes == 0 && numberOfWays == 0 && numberOfRelations == 0) {
+//        OverpassQueryResult resultWays = getOverpassResultWays(geometry);
+//        int numberOfWays = resultWays.elements.size();
+//        Log.i("info", "Overpass result number of ways: " + numberOfWays);
+//        OverpassQueryResult resultRelations = getOverpassResultRelations(geometry);
+//        int numberOfRelations = resultRelations.elements.size();
+//        Log.i("info", "Overpass result number of relations: " + numberOfRelations);
+        if (numberOfNodes == 0 ) {
             activity.showInfoEmptyOverpassResult(objectId);
         } else {
-            activity.addLayerWithOverpassResult(resultNodes, numberOfNodes, resultWays, numberOfWays, resultRelations, numberOfRelations, objectId);
+            activity.addLayerWithOverpassResult(resultNodes, numberOfNodes, objectId);
         }
     }
 
@@ -121,45 +121,45 @@ public class AddObjectPresenter implements AppService.AppServiceListener {
         return result;
     }
 
-    /**
-     * Get Overpass result for ways.
-     *
-     * @param geometry
-     * @return OverpassQueryResult
-     */
-    public OverpassQueryResult getOverpassResultWays(OverlayWithIW geometry) {
-        OverpassQueryResult result = new OverpassQueryResult();
-        if (geometry.getClass().equals(Marker.class)) {
-            Marker marker = (Marker) geometry;
-            result = overpassHelper.searchWays(new LatLng(marker.getPosition().getLatitude(), marker.getPosition().getLongitude()));
-            return result;
-        } else {
-            BoundingBox bounds = geometry.getBounds();
-            result = overpassHelper.searchWays(new LatLng(bounds.getCenterLatitude(), bounds.getCenterLongitude()));
-        }
-        Log.i("info", "OverpassQueryResult: " + result.toString());
-        return result;
-    }
-
-    /**
-     * Get Overpass result for relations.
-     *
-     * @param geometry
-     * @return OverpassQueryResult
-     */
-    public OverpassQueryResult getOverpassResultRelations(OverlayWithIW geometry) {
-        OverpassQueryResult result = new OverpassQueryResult();
-        if (geometry.getClass().equals(Marker.class)) {
-            Marker marker = (Marker) geometry;
-            result = overpassHelper.searchRelations(new LatLng(marker.getPosition().getLatitude(), marker.getPosition().getLongitude()));
-            return result;
-        } else {
-            BoundingBox bounds = geometry.getBounds();
-            result = overpassHelper.searchRelations(new LatLng(bounds.getCenterLatitude(), bounds.getCenterLongitude()));
-        }
-        Log.i("info", "OverpassQueryResult: " + result.toString());
-        return result;
-    }
+//    /**
+//     * Get Overpass result for ways.
+//     *
+//     * @param geometry
+//     * @return OverpassQueryResult
+//     */
+//    public OverpassQueryResult getOverpassResultWays(OverlayWithIW geometry) {
+//        OverpassQueryResult result = new OverpassQueryResult();
+//        if (geometry.getClass().equals(Marker.class)) {
+//            Marker marker = (Marker) geometry;
+//            result = overpassHelper.searchWays(new LatLng(marker.getPosition().getLatitude(), marker.getPosition().getLongitude()));
+//            return result;
+//        } else {
+//            BoundingBox bounds = geometry.getBounds();
+//            result = overpassHelper.searchWays(new LatLng(bounds.getCenterLatitude(), bounds.getCenterLongitude()));
+//        }
+//        Log.i("info", "OverpassQueryResult: " + result.toString());
+//        return result;
+//    }
+//
+//    /**
+//     * Get Overpass result for relations.
+//     *
+//     * @param geometry
+//     * @return OverpassQueryResult
+//     */
+//    public OverpassQueryResult getOverpassResultRelations(OverlayWithIW geometry) {
+//        OverpassQueryResult result = new OverpassQueryResult();
+//        if (geometry.getClass().equals(Marker.class)) {
+//            Marker marker = (Marker) geometry;
+//            result = overpassHelper.searchRelations(new LatLng(marker.getPosition().getLatitude(), marker.getPosition().getLongitude()));
+//            return result;
+//        } else {
+//            BoundingBox bounds = geometry.getBounds();
+//            result = overpassHelper.searchRelations(new LatLng(bounds.getCenterLatitude(), bounds.getCenterLongitude()));
+//        }
+//        Log.i("info", "OverpassQueryResult: " + result.toString());
+//        return result;
+//    }
 
     /**
      * Calls AppService to add properties to object.

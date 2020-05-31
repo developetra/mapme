@@ -39,6 +39,8 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 
 import java.util.HashMap;
 
+import static com.example.mapme.R.drawable.position;
+
 /**
  * MapActivity - Activity that shows map with geoObjects, user position and menu items.
  */
@@ -79,10 +81,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         mapController = mapView.getController();
         mapController.setZoom(17.0);
         enableRotation();
-        userMarker = new Marker(mapView);
-        userMarker.setIcon(getResources().getDrawable(R.drawable.position));
         presenter.setUserPosition();
-        mapView.getOverlays().add(userMarker);
     }
 
     @Override
@@ -178,10 +177,22 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
      * @param userGeoPoint
      */
     public void updateUserPosition(GeoPoint userGeoPoint) {
+        userMarker = new Marker(mapView);
+        userMarker.setIcon(getResources().getDrawable(position));
+        mapView.getOverlays().add(userMarker);
         userMarker.setPosition(userGeoPoint);
-        mapController.setCenter(userGeoPoint);
         mapView.invalidate();
         Log.i("info", "MapActivity is updating user position.");
+    }
+
+    /**
+     * Center map.
+     *
+     */
+    public void centerMapOnUserPosition (View view) {
+        mapController.setCenter(presenter.getUserGeoPoint());
+        mapView.invalidate();
+        Log.i("info", "MapActivity is centering map.");
     }
 
     /**
@@ -290,6 +301,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         } else {
             Log.i("info", "Additional layer could not be added to MapActivity or is empty.");
         }
+        presenter.setUserPosition();
     }
 
 }

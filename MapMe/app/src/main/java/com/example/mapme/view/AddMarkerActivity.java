@@ -27,7 +27,7 @@ public class AddMarkerActivity extends AddObjectActivity implements View.OnLongC
         setMapPositionAndUserMarker();
         enableRotation();
         disablePainting();
-        IconPlottingOverlay plotter = new IconPlottingOverlay(this, getResources().getDrawable(R.drawable.marker_default));
+        IconPlottingOverlay plotter = new IconPlottingOverlay(this, getResources().getDrawable(R.drawable.pin));
         mapView.getOverlayManager().add(plotter);
     }
 
@@ -61,7 +61,7 @@ public class AddMarkerActivity extends AddObjectActivity implements View.OnLongC
     @Override
     public void addAdditionalLayer(HashMap<String, String> objects) {
         super.addAdditionalLayer(objects);
-        IconPlottingOverlay plotter = new IconPlottingOverlay(this, getResources().getDrawable(R.drawable.marker_default));
+        IconPlottingOverlay plotter = new IconPlottingOverlay(this, getResources().getDrawable(R.drawable.pin));
         mapView.getOverlayManager().add(plotter);
     }
 

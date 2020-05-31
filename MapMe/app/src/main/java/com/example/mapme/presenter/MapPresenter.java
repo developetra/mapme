@@ -1,11 +1,10 @@
 package com.example.mapme.presenter;
 
 import android.location.Location;
-import android.util.Log;
 
+import com.example.mapme.model.AppService;
 import com.example.mapme.model.GeoJsonHelper;
 import com.example.mapme.view.MapActivity;
-import com.example.mapme.model.AppService;
 import com.google.firebase.database.DataSnapshot;
 
 import org.osmdroid.util.GeoPoint;
@@ -19,7 +18,7 @@ public class MapPresenter implements AppService.AppServiceListener {
 
     private MapActivity activity;
     private GeoJsonHelper geoJsonHelper = new GeoJsonHelper();
-    public GeoPoint userGeoPoint;
+    public GeoPoint userGeoPoint = new GeoPoint(49.89873, 10.90067);
 
     /**
      * Constructor.
@@ -28,6 +27,14 @@ public class MapPresenter implements AppService.AppServiceListener {
      */
     public MapPresenter(final MapActivity mapActivity) {
         this.activity = mapActivity;
+    }
+
+    /**
+     * Get the current UserGeoPoint.
+     * @return
+     */
+    public GeoPoint getUserGeoPoint() {
+        return this.userGeoPoint;
     }
 
     /**
@@ -71,7 +78,6 @@ public class MapPresenter implements AppService.AppServiceListener {
      * Sets user position initially.
      */
     public void setUserPosition() {
-        userGeoPoint = new GeoPoint(49.89873, 10.90067);
         this.activity.updateUserPosition(userGeoPoint);
     }
 

@@ -58,15 +58,11 @@ public class AddPolylineActivity extends AddObjectActivity {
      * Adds additional layer with OverpassResult to map and removes PainingSurface.
      * @param nodes
      * @param numberOfNodes
-     * @param ways
-     * @param numberOfWays
-     * @param relations
-     * @param numberOfRelations
      * @param objectId
      */
     @Override
-    public void addLayerWithOverpassResult(OverpassQueryResult nodes, int numberOfNodes, OverpassQueryResult ways, int numberOfWays, OverpassQueryResult relations, int numberOfRelations, final String objectId) {
-        super.addLayerWithOverpassResult(nodes, numberOfNodes, ways, numberOfWays, relations, numberOfRelations, objectId);
+    public void addLayerWithOverpassResult(OverpassQueryResult nodes, int numberOfNodes, final String objectId) {
+        super.addLayerWithOverpassResult(nodes, numberOfNodes, objectId);
         paintingSurface.setVisibility(View.GONE);
     }
 }
