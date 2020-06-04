@@ -189,8 +189,8 @@ public class AppService extends Service {
         objectRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                currentDataSnapshot = dataSnapshot;
-                if (dataSnapshot != null){
+                if (dataSnapshot != null) {
+                    currentDataSnapshot = dataSnapshot;
                     for (AppServiceListener listener : listeners) {
                         listener.dataChanged(currentDataSnapshot);
                     }
@@ -222,7 +222,7 @@ public class AppService extends Service {
         objectRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot != null){
+                if (dataSnapshot != null) {
                     currentDataSnapshot = dataSnapshot;
                     for (AppServiceListener listener : listeners) {
                         listener.dataChanged(dataSnapshot);
@@ -261,7 +261,11 @@ public class AppService extends Service {
      * @param hashmap
      */
     public void editObjectProperties(String id, HashMap<String, String> hashmap) {
-        objectRef.child(id).child("properties").setValue(hashmap);
+        try {
+            objectRef.child(id).child("properties").setValue(hashmap);
+        } catch (Exception e) {
+            Log.e("info", "Object does not exist.");
+        }
     }
 
     /**
@@ -271,9 +275,14 @@ public class AppService extends Service {
      * @param hashmap
      */
     public void addObjectProperties(String id, HashMap<String, String> hashmap) {
-        for (String key : hashmap.keySet()) {
-            objectRef.child(id).child("properties").child(key).setValue(hashmap.get(key));
+        try {
+            for (String key : hashmap.keySet()) {
+                objectRef.child(id).child("properties").child(key).setValue(hashmap.get(key));
+            }
+        } catch (Exception e) {
+            Log.e("info", "Object does not exist.");
         }
+
     }
 
     /**
@@ -282,7 +291,11 @@ public class AppService extends Service {
      * @param id
      */
     public void deleteObject(String id) {
-        objectRef.child(id).removeValue();
+        try {
+            objectRef.child(id).removeValue();
+        } catch (Exception e) {
+            Log.e("info", "Object does not exist.");
+        }
     }
 
     /**
