@@ -40,7 +40,9 @@ public class EditInformationPresenter implements AppService.AppServiceListener {
      */
     @Override
     public void dataChanged(DataSnapshot dataSnapshot) {
-        activity.fillProperties(dataSnapshot);
+        if (dataSnapshot != null || dataSnapshot.getChildrenCount() == 2) {
+            activity.fillProperties(dataSnapshot);
+        }
     }
 
     /**
@@ -66,6 +68,9 @@ public class EditInformationPresenter implements AppService.AppServiceListener {
      * Calls AppService to get the current data and fills properties in the view.
      */
     public void fillProperties() {
-        activity.fillProperties(activity.appService.getCurrentDataSnapshot());
+        DataSnapshot dataSnapshot = activity.appService.getCurrentDataSnapshot();
+        if (dataSnapshot != null || dataSnapshot.getChildrenCount() == 2) {
+            activity.fillProperties(dataSnapshot);
+        }
     }
 }

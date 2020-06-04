@@ -23,7 +23,7 @@ public class GeoJsonHelper {
      */
     public HashMap<String, String> convertDataToGeoJson(DataSnapshot dataSnapshot) {
         HashMap<String, String> objects = new HashMap<>();
-        if (dataSnapshot != null) {
+        if (dataSnapshot != null || dataSnapshot.getChildrenCount() == 2) {
             for (DataSnapshot entry : dataSnapshot.getChildren()) {
                 String geometry = entry.child("geometry").getValue(String.class);
                 try {
@@ -52,15 +52,17 @@ public class GeoJsonHelper {
      * @return geoJsonString
      */
     public String convertDataToGeoJsonString(Context context, DataSnapshot dataSnapshot) {
-        HashMap<String, String> objects = convertDataToGeoJson(dataSnapshot);
         JSONObject combined = new JSONObject();
-        int counter = 1;
-        if (!objects.isEmpty()) {
-            for (String key : objects.keySet()) {
-                try {
-                    combined.put(String.valueOf(counter++), objects.get(key));
-                } catch (JSONException e) {
-                    Log.w("info", "Data entries could not be combined to geoJson.");
+        if (dataSnapshot != null || dataSnapshot.getChildrenCount() == 2) {
+            HashMap<String, String> objects = convertDataToGeoJson(dataSnapshot);
+            int counter = 1;
+            if (!objects.isEmpty()) {
+                for (String key : objects.keySet()) {
+                    try {
+                        combined.put(String.valueOf(counter++), objects.get(key));
+                    } catch (JSONException e) {
+                        Log.w("info", "Data entries could not be combined to geoJson.");
+                    }
                 }
             }
         }

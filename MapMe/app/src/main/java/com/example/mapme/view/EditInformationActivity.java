@@ -186,12 +186,14 @@ public class EditInformationActivity extends AppCompatActivity {
      * @param dataSnapshot
      */
     public void fillProperties(DataSnapshot dataSnapshot) {
-        for (DataSnapshot entry : dataSnapshot.getChildren()) {
-            if (entry.getKey().equals(currentGeoObjectId)) {
-                for (DataSnapshot property : entry.child("properties").getChildren()) {
-                    String key = property.getKey();
-                    String value = property.getValue(String.class);
-                    addInputField(findViewById(R.id.textView), key, value);
+        if (dataSnapshot != null || dataSnapshot.getChildrenCount() ==  2) {
+            for (DataSnapshot entry : dataSnapshot.getChildren()) {
+                if (entry.getKey().equals(currentGeoObjectId)) {
+                    for (DataSnapshot property : entry.child("properties").getChildren()) {
+                        String key = property.getKey();
+                        String value = property.getValue(String.class);
+                        addInputField(findViewById(R.id.textView), key, value);
+                    }
                 }
             }
         }

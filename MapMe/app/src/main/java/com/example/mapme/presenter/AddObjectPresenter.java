@@ -55,8 +55,10 @@ public class AddObjectPresenter implements AppService.AppServiceListener {
      */
     @Override
     public void dataChanged(DataSnapshot dataSnapshot) {
-        HashMap<String, String> objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
-        this.activity.addAdditionalLayer(objects);
+        if (dataSnapshot != null || dataSnapshot.getChildrenCount() == 2) {
+            HashMap<String, String> objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
+            this.activity.addAdditionalLayer(objects);
+        }
     }
 
     /**
@@ -64,8 +66,10 @@ public class AddObjectPresenter implements AppService.AppServiceListener {
      */
     public void getData() {
         DataSnapshot dataSnapshot = this.activity.appService.getCurrentDataSnapshot();
-        HashMap<String, String> objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
-        this.activity.addAdditionalLayer(objects);
+        if (dataSnapshot != null || dataSnapshot.getChildrenCount() == 2) {
+            HashMap<String, String> objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
+            this.activity.addAdditionalLayer(objects);
+        }
     }
 
     /**
@@ -94,7 +98,7 @@ public class AddObjectPresenter implements AppService.AppServiceListener {
 //        OverpassQueryResult resultRelations = getOverpassResultRelations(geometry);
 //        int numberOfRelations = resultRelations.elements.size();
 //        Log.i("info", "Overpass result number of relations: " + numberOfRelations);
-        if (numberOfNodes == 0 ) {
+        if (numberOfNodes == 0) {
             activity.showInfoEmptyOverpassResult(objectId);
         } else {
             activity.addLayerWithOverpassResult(resultNodes, numberOfNodes, objectId);

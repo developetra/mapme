@@ -1,13 +1,10 @@
 package com.example.mapme.presenter;
 
 import android.location.Location;
-import android.util.Log;
 
 import com.example.mapme.model.AppService;
 import com.example.mapme.view.DataActivity;
 import com.google.firebase.database.DataSnapshot;
-
-import java.util.HashMap;
 
 /**
  * Presenter for DataActivity.
@@ -41,7 +38,9 @@ public class DataPresenter implements AppService.AppServiceListener {
      */
     @Override
     public void dataChanged(DataSnapshot dataSnapshot) {
-        activity.displayData(dataSnapshot);
+        if (dataSnapshot != null || dataSnapshot.getChildrenCount() == 2) {
+            activity.displayData(dataSnapshot);
+        }
     }
 
     /**
@@ -49,7 +48,9 @@ public class DataPresenter implements AppService.AppServiceListener {
      */
     public void getData() {
         DataSnapshot dataSnapshot = this.activity.appService.getCurrentDataSnapshot();
-        activity.displayData(dataSnapshot);
+        if (dataSnapshot != null || dataSnapshot.getChildrenCount() == 2) {
+            activity.displayData(dataSnapshot);
+        }
     }
 
     /**

@@ -98,7 +98,7 @@ public class DataActivity extends AppCompatActivity {
      * @param dataSnapshot
      */
     public void displayData(DataSnapshot dataSnapshot) {
-        if (dataSnapshot != null) {
+        if (dataSnapshot != null || dataSnapshot.getChildrenCount() == 2) {
             TableLayout inputFields = findViewById(R.id.inputFields);
             inputFields.removeAllViews();
             for (final DataSnapshot entry : dataSnapshot.getChildren()) {

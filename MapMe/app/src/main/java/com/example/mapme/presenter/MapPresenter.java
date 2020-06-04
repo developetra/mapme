@@ -31,6 +31,7 @@ public class MapPresenter implements AppService.AppServiceListener {
 
     /**
      * Get the current UserGeoPoint.
+     *
      * @return
      */
     public GeoPoint getUserGeoPoint() {
@@ -54,8 +55,10 @@ public class MapPresenter implements AppService.AppServiceListener {
      */
     @Override
     public void dataChanged(DataSnapshot dataSnapshot) {
-        HashMap<String, String> objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
-        this.activity.addAdditionalLayer(objects);
+        if (dataSnapshot != null || dataSnapshot.getChildrenCount() == 2) {
+            HashMap<String, String> objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
+            this.activity.addAdditionalLayer(objects);
+        }
     }
 
     /**
@@ -63,8 +66,10 @@ public class MapPresenter implements AppService.AppServiceListener {
      */
     public void getData() {
         DataSnapshot dataSnapshot = this.activity.appService.getCurrentDataSnapshot();
-        HashMap<String, String> objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
-        this.activity.addAdditionalLayer(objects);
+        if (dataSnapshot != null || dataSnapshot.getChildrenCount() == 2) {
+            HashMap<String, String> objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
+            this.activity.addAdditionalLayer(objects);
+        }
     }
 
     /**

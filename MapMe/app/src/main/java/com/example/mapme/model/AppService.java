@@ -222,10 +222,10 @@ public class AppService extends Service {
         objectRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                currentDataSnapshot = dataSnapshot;
                 if (dataSnapshot != null){
+                    currentDataSnapshot = dataSnapshot;
                     for (AppServiceListener listener : listeners) {
-                        listener.dataChanged(currentDataSnapshot);
+                        listener.dataChanged(dataSnapshot);
                     }
                 }
             }
