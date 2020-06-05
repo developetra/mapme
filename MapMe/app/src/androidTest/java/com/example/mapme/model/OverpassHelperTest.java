@@ -22,7 +22,7 @@ public class OverpassHelperTest {
     @Test
     public void searchNodes() {
         LatLng latlng = new LatLng(49.89873, 10.90067);
-        Assert.assertNotNull(overpassHelper.searchNodes(latlng));
+        Assert.assertNotNull(OverpassHelper.searchNodes(latlng));
     }
 
 }

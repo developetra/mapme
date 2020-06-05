@@ -49,7 +49,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
     public AddObjectPresenter presenter;
     public AppService appService;
     protected boolean appServiceBound;
-    private boolean serviceConnected = false;
+    private boolean serviceConnected;
     protected MapView mapView;
     private Marker userMarker;
     private ImageButton btnRotateLeft, btnRotateRight;
@@ -68,7 +68,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
     @Override
     public void onResume() {
         super.onResume();
-        Intent bindIntent = new Intent(AddObjectActivity.this, AppService.class);
+        Intent bindIntent = new Intent(this, AppService.class);
         bindService(bindIntent, appServiceConnection, Context.BIND_AUTO_CREATE);
         mapView.onResume();
     }
@@ -254,7 +254,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
      */
     public void showInfoEditObject(View view, String id) {
         currentGeoObjectId = id;
-        AlertDialog.Builder infoDialog = new AlertDialog.Builder(AddObjectActivity.this);
+        AlertDialog.Builder infoDialog = new AlertDialog.Builder(this);
         infoDialog.setTitle("GeoObject (Id: " + id + ")");
         infoDialog.setMessage("The GeoObject has already been saved to the database. You can edit the information about the GeoObject.");
         infoDialog.setNegativeButton("Cancel",
@@ -280,7 +280,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
      */
     public void showInfoAddReferenceOrEditObject(View view, final String objectId, final OverlayWithIW geometry) {
         currentGeoObjectId = objectId;
-        AlertDialog.Builder infoDialog = new AlertDialog.Builder(AddObjectActivity.this);
+        AlertDialog.Builder infoDialog = new AlertDialog.Builder(this);
         infoDialog.setTitle("GeoObject (Id: " + objectId + ")");
         infoDialog.setMessage("The GeoObject has already been saved to the database. You can either add a reference to an existing object or edit the information about the GeoObject.");
         infoDialog.setNegativeButton("Cancel",
@@ -312,7 +312,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
      */
     public void showInfoReferenceAdded(View view, String id) {
         currentGeoObjectId = id;
-        AlertDialog.Builder infoDialog = new AlertDialog.Builder(AddObjectActivity.this);
+        AlertDialog.Builder infoDialog = new AlertDialog.Builder(this);
         infoDialog.setTitle("GeoObject (Id: " + id + ")");
         infoDialog.setMessage("The reference was added to the GeoObject. You can now edit the information about the GeoObject.");
         infoDialog.setNegativeButton("Cancel",
@@ -337,7 +337,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
      */
     public void showInfoEmptyOverpassResult(String id) {
         currentGeoObjectId = id;
-        AlertDialog.Builder infoDialog = new AlertDialog.Builder(AddObjectActivity.this);
+        AlertDialog.Builder infoDialog = new AlertDialog.Builder(this);
         infoDialog.setTitle("GeoObject (Id: " + id + ")");
         infoDialog.setMessage("There were no objects to reference found nearby.");
         infoDialog.setNegativeButton("Cancel",
@@ -400,56 +400,14 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
                         public boolean onMarkerClick(Marker marker, MapView mapView) {
                             HashMap<String, String> properties = new HashMap<>();
                             properties.put("reference", String.valueOf(e.id));
-                            presenter.addObjectProperties(objectId, properties);
-                            showInfoReferenceAdded(AddObjectActivity.this.mapView, objectId);
+                            AddObjectActivity.this.presenter.addObjectProperties(objectId, properties);
+                            AddObjectActivity.this.showInfoReferenceAdded(AddObjectActivity.this.mapView, objectId);
                             return false;
                         }
                     });
             mapView.getOverlays().add(marker);
         }
-        Log.i("info", "Layer with nodes was added.");
-//        for (int i = 0; i < numberOfWays; i++) {
-//            final OverpassQueryResult.Element e = ways.elements.get(i);
-//            GeoPoint geoPoint = new GeoPoint(e.lat, e.lon);
-//            Marker marker = new Marker(mapView);
-//            marker.setPosition(geoPoint);
-//            marker.setTitle(e.tags.name);
-//            marker.setTextIcon(e.tags.name);
-//            marker.setOnMarkerClickListener(
-//                    new Marker.OnMarkerClickListener() {
-//                        @Override
-//                        public boolean onMarkerClick(Marker marker, MapView mapView) {
-//                            HashMap<String, String> properties = new HashMap<>();
-//                            properties.put("reference", String.valueOf(e.id));
-//                            presenter.addObjectProperties(objectId, properties);
-//                            showInfoReferenceAdded(AddObjectActivity.this.mapView, objectId);
-//                            return false;
-//                        }
-//                    });
-//            mapView.getOverlays().add(marker);
-//        }
-//        Log.i("info", "Layer with ways was added.");
-//        for (int i = 0; i < numberOfRelations; i++) {
-//            final OverpassQueryResult.Element e = relations.elements.get(i);
-//            GeoPoint geoPoint = new GeoPoint(e.lat, e.lon);
-//            Marker marker = new Marker(mapView);
-//            marker.setPosition(geoPoint);
-//            marker.setTitle(e.tags.name);
-//            marker.setTextIcon(e.tags.name);
-//            marker.setOnMarkerClickListener(
-//                    new Marker.OnMarkerClickListener() {
-//                        @Override
-//                        public boolean onMarkerClick(Marker marker, MapView mapView) {
-//                            HashMap<String, String> properties = new HashMap<>();
-//                            properties.put("reference", String.valueOf(e.id));
-//                            presenter.addObjectProperties(objectId, properties);
-//                            showInfoReferenceAdded(AddObjectActivity.this.mapView, objectId);
-//                            return false;
-//                        }
-//                    });
-//            mapView.getOverlays().add(marker);
-//        }
-//        Log.i("info", "Layer with relations was added.");
+        Log.i("info", "Layer with Overpass Result was added.");
         panning.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
         painting.setBackgroundColor(Color.TRANSPARENT);
     }

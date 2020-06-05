@@ -5,10 +5,10 @@ import android.util.Log;
 
 import com.example.mapme.model.AppService;
 import com.example.mapme.model.GeoJsonHelper;
+import com.example.mapme.model.GeoObject;
 import com.example.mapme.model.OverpassHelper;
 import com.example.mapme.view.AddObjectActivity;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.database.DataSnapshot;
 
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
@@ -24,9 +24,7 @@ import hu.supercluster.overpasser.adapter.OverpassQueryResult;
  */
 public class AddObjectPresenter implements AppService.AppServiceListener {
 
-    private AddObjectActivity activity;
-    private OverpassHelper overpassHelper = new OverpassHelper();
-    private GeoJsonHelper geoJsonHelper = new GeoJsonHelper();
+    private final AddObjectActivity activity;
     public GeoPoint userGeoPoint;
 
     /**
@@ -54,10 +52,10 @@ public class AddObjectPresenter implements AppService.AppServiceListener {
      * Updates additional layer on map when data changes.
      */
     @Override
-    public void dataChanged(DataSnapshot dataSnapshot) {
-        if (dataSnapshot != null || dataSnapshot.getChildrenCount() == 2) {
-            HashMap<String, String> objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
-            this.activity.addAdditionalLayer(objects);
+    public void dataChanged(HashMap<String, GeoObject> objects) {
+        if (objects != null) {
+            HashMap<String, String> geoJsonObjects = GeoJsonHelper.insertPropertiesToGeoJson(objects);
+            this.activity.addAdditionalLayer(geoJsonObjects);
         }
     }
 
@@ -65,10 +63,10 @@ public class AddObjectPresenter implements AppService.AppServiceListener {
      * Gets data and updates additional layer on map.
      */
     public void getData() {
-        DataSnapshot dataSnapshot = this.activity.appService.getCurrentDataSnapshot();
-        if (dataSnapshot != null || dataSnapshot.getChildrenCount() == 2) {
-            HashMap<String, String> objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
-            this.activity.addAdditionalLayer(objects);
+        HashMap<String, GeoObject> objects = this.activity.appService.getObjects();
+        if (objects != null) {
+            HashMap<String, String> geoJsonObjects = GeoJsonHelper.insertPropertiesToGeoJson(objects);
+            this.activity.addAdditionalLayer(geoJsonObjects);
         }
     }
 
@@ -92,12 +90,6 @@ public class AddObjectPresenter implements AppService.AppServiceListener {
         OverpassQueryResult resultNodes = getOverpassResultNodes(geometry);
         int numberOfNodes = resultNodes.elements.size();
         Log.i("info", "Overpass result number of nodes: " + numberOfNodes);
-//        OverpassQueryResult resultWays = getOverpassResultWays(geometry);
-//        int numberOfWays = resultWays.elements.size();
-//        Log.i("info", "Overpass result number of ways: " + numberOfWays);
-//        OverpassQueryResult resultRelations = getOverpassResultRelations(geometry);
-//        int numberOfRelations = resultRelations.elements.size();
-//        Log.i("info", "Overpass result number of relations: " + numberOfRelations);
         if (numberOfNodes == 0) {
             activity.showInfoEmptyOverpassResult(objectId);
         } else {
@@ -115,55 +107,15 @@ public class AddObjectPresenter implements AppService.AppServiceListener {
         OverpassQueryResult result = new OverpassQueryResult();
         if (geometry.getClass().equals(Marker.class)) {
             Marker marker = (Marker) geometry;
-            result = overpassHelper.searchNodes(new LatLng(marker.getPosition().getLatitude(), marker.getPosition().getLongitude()));
+            result = OverpassHelper.searchNodes(new LatLng(marker.getPosition().getLatitude(), marker.getPosition().getLongitude()));
             return result;
         } else {
             BoundingBox bounds = geometry.getBounds();
-            result = overpassHelper.searchNodes(new LatLng(bounds.getCenterLatitude(), bounds.getCenterLongitude()));
+            result = OverpassHelper.searchNodes(new LatLng(bounds.getCenterLatitude(), bounds.getCenterLongitude()));
         }
-        Log.i("info", "OverpassQueryResult: " + result.toString());
+        Log.i("info", "OverpassQueryResult: " + result);
         return result;
     }
-
-//    /**
-//     * Get Overpass result for ways.
-//     *
-//     * @param geometry
-//     * @return OverpassQueryResult
-//     */
-//    public OverpassQueryResult getOverpassResultWays(OverlayWithIW geometry) {
-//        OverpassQueryResult result = new OverpassQueryResult();
-//        if (geometry.getClass().equals(Marker.class)) {
-//            Marker marker = (Marker) geometry;
-//            result = overpassHelper.searchWays(new LatLng(marker.getPosition().getLatitude(), marker.getPosition().getLongitude()));
-//            return result;
-//        } else {
-//            BoundingBox bounds = geometry.getBounds();
-//            result = overpassHelper.searchWays(new LatLng(bounds.getCenterLatitude(), bounds.getCenterLongitude()));
-//        }
-//        Log.i("info", "OverpassQueryResult: " + result.toString());
-//        return result;
-//    }
-//
-//    /**
-//     * Get Overpass result for relations.
-//     *
-//     * @param geometry
-//     * @return OverpassQueryResult
-//     */
-//    public OverpassQueryResult getOverpassResultRelations(OverlayWithIW geometry) {
-//        OverpassQueryResult result = new OverpassQueryResult();
-//        if (geometry.getClass().equals(Marker.class)) {
-//            Marker marker = (Marker) geometry;
-//            result = overpassHelper.searchRelations(new LatLng(marker.getPosition().getLatitude(), marker.getPosition().getLongitude()));
-//            return result;
-//        } else {
-//            BoundingBox bounds = geometry.getBounds();
-//            result = overpassHelper.searchRelations(new LatLng(bounds.getCenterLatitude(), bounds.getCenterLongitude()));
-//        }
-//        Log.i("info", "OverpassQueryResult: " + result.toString());
-//        return result;
-//    }
 
     /**
      * Calls AppService to add properties to object.

@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void showInfo(View view) {
-        AlertDialog.Builder infoDialog = new AlertDialog.Builder(MainActivity.this);
+        AlertDialog.Builder infoDialog = new AlertDialog.Builder(this);
         infoDialog.setTitle("How MapMe works:");
         infoDialog.setMessage(presenter.getInfoText());
         infoDialog.setPositiveButton("Ok",

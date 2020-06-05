@@ -38,22 +38,22 @@ public class PaintingSurface extends View {
     }
 
     private AddObjectActivity currentActivity;
-    private Mode drawingMode = Mode.Polyline;
+    private PaintingSurface.Mode drawingMode = PaintingSurface.Mode.Polyline;
     private Canvas canvas;
-    private Path path;
+    private final Path path;
     private MapView mapView;
-    private List<Point> points = new ArrayList<>();
+    private final List<Point> points = new ArrayList<>();
     private final Paint paint;
     private float mX, mY;
     private static final float TOUCH_TOLERANCE = 4;
-    transient Polygon lastPolygon = null;
+    transient Polygon lastPolygon;
 
     /**
      * Sets drawing mode.
      *
      * @param mode
      */
-    public void setMode(Mode mode) {
+    public void setMode(PaintingSurface.Mode mode) {
         this.drawingMode = mode;
     }
 

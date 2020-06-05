@@ -3,15 +3,18 @@ package com.example.mapme.presenter;
 import android.location.Location;
 
 import com.example.mapme.model.AppService;
+import com.example.mapme.model.GeoObject;
 import com.example.mapme.view.DataActivity;
-import com.google.firebase.database.DataSnapshot;
+
+import java.util.HashMap;
 
 /**
  * Presenter for DataActivity.
  */
 public class DataPresenter implements AppService.AppServiceListener {
 
-    private DataActivity activity;
+    private final DataActivity activity;
+    private HashMap<String, GeoObject> objects = new HashMap<>();
 
     /**
      * Constructor.
@@ -34,12 +37,12 @@ public class DataPresenter implements AppService.AppServiceListener {
     /**
      * Updates data on display when database changes.
      *
-     * @param dataSnapshot
+     * @param objects
      */
     @Override
-    public void dataChanged(DataSnapshot dataSnapshot) {
-        if (dataSnapshot != null || dataSnapshot.getChildrenCount() == 2) {
-            activity.displayData(dataSnapshot);
+    public void dataChanged(HashMap<String, GeoObject> objects) {
+        if (objects != null) {
+            activity.displayData(objects);
         }
     }
 
@@ -47,9 +50,9 @@ public class DataPresenter implements AppService.AppServiceListener {
      * Gets data and updates view.
      */
     public void getData() {
-        DataSnapshot dataSnapshot = this.activity.appService.getCurrentDataSnapshot();
-        if (dataSnapshot != null || dataSnapshot.getChildrenCount() == 2) {
-            activity.displayData(dataSnapshot);
+        objects = this.activity.appService.getObjects();
+        if (objects != null) {
+            activity.displayData(objects);
         }
     }
 

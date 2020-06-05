@@ -49,8 +49,8 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     private MapPresenter presenter;
     public AppService appService;
     protected boolean appServiceBound;
-    private boolean serviceConnected = false;
-    protected MapView mapView = null;
+    private boolean serviceConnected;
+    public MapView mapView;
     private Marker userMarker;
     private IMapController mapController;
     private ImageButton btnRotateLeft, btnRotateRight;
@@ -64,7 +64,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         Context ctx = getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
         setContentView(R.layout.activity_map);
-        mapView = (MapView) findViewById(R.id.map);
+        mapView = findViewById(R.id.map);
         mapView.setTileSource(TileSourceFactory.MAPNIK);
 //        mMapView.setTileSource(new OnlineTileSourceBase("USGS Topo", 0, 18, 256, "",
 //                new String[] { "http://a.tile.stamen.com/toner/" }) {
@@ -87,7 +87,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onResume() {
         super.onResume();
-        Intent bindIntent = new Intent(MapActivity.this, AppService.class);
+        Intent bindIntent = new Intent(this, AppService.class);
         bindService(bindIntent, appServiceConnection, Context.BIND_AUTO_CREATE);
         mapView.onResume();
     }
@@ -102,7 +102,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     /**
      * App Service Connection.
      */
-    private ServiceConnection appServiceConnection = new ServiceConnection() {
+    private final ServiceConnection appServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             AppService.LocalBinder binder = (AppService.LocalBinder) service;
@@ -201,7 +201,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
      * @param view
      */
     public void showInfoResetDatabase(View view) {
-        AlertDialog.Builder infoDialog = new AlertDialog.Builder(MapActivity.this);
+        AlertDialog.Builder infoDialog = new AlertDialog.Builder(this);
         infoDialog.setTitle("Reset Database");
         infoDialog.setMessage("Do you really want to reset the database? All previously saved data will be lost. ");
         infoDialog.setNegativeButton("Cancel",

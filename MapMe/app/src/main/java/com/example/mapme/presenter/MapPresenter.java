@@ -4,8 +4,8 @@ import android.location.Location;
 
 import com.example.mapme.model.AppService;
 import com.example.mapme.model.GeoJsonHelper;
+import com.example.mapme.model.GeoObject;
 import com.example.mapme.view.MapActivity;
-import com.google.firebase.database.DataSnapshot;
 
 import org.osmdroid.util.GeoPoint;
 
@@ -16,17 +16,18 @@ import java.util.HashMap;
  */
 public class MapPresenter implements AppService.AppServiceListener {
 
-    private MapActivity activity;
-    private GeoJsonHelper geoJsonHelper = new GeoJsonHelper();
+    private final MapActivity activity;
+    private final GeoJsonHelper geoJsonHelper = new GeoJsonHelper();
     public GeoPoint userGeoPoint = new GeoPoint(49.89873, 10.90067);
+    private HashMap<String, GeoObject> objects = new HashMap<>();
 
     /**
      * Constructor.
      *
      * @param mapActivity
      */
-    public MapPresenter(final MapActivity mapActivity) {
-        this.activity = mapActivity;
+    public MapPresenter(MapActivity mapActivity) {
+        activity = mapActivity;
     }
 
     /**
@@ -35,7 +36,7 @@ public class MapPresenter implements AppService.AppServiceListener {
      * @return
      */
     public GeoPoint getUserGeoPoint() {
-        return this.userGeoPoint;
+        return userGeoPoint;
     }
 
     /**
@@ -44,20 +45,21 @@ public class MapPresenter implements AppService.AppServiceListener {
      * @param location
      */
     @Override
-    public void updateUserPosition(final Location location) {
-        userGeoPoint.setLatitude(location.getLatitude());
-        userGeoPoint.setLongitude(location.getLongitude());
-        this.activity.updateUserPosition(userGeoPoint);
+    public void updateUserPosition(Location location) {
+        this.userGeoPoint.setLatitude(location.getLatitude());
+        this.userGeoPoint.setLongitude(location.getLongitude());
+        activity.updateUserPosition(this.userGeoPoint);
     }
 
     /**
      * Updates additional layer on map when data changes.
      */
     @Override
-    public void dataChanged(DataSnapshot dataSnapshot) {
-        if (dataSnapshot != null || dataSnapshot.getChildrenCount() == 2) {
-            HashMap<String, String> objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
-            this.activity.addAdditionalLayer(objects);
+    public void dataChanged(final HashMap<String, GeoObject> objects) {
+        this.objects = objects;
+        if (objects != null) {
+            final HashMap<String, String> geoJsonObjects = GeoJsonHelper.insertPropertiesToGeoJson(objects);
+            activity.addAdditionalLayer(geoJsonObjects);
         }
     }
 
@@ -65,10 +67,10 @@ public class MapPresenter implements AppService.AppServiceListener {
      * Gets data and updates additional layer on map.
      */
     public void getData() {
-        DataSnapshot dataSnapshot = this.activity.appService.getCurrentDataSnapshot();
-        if (dataSnapshot != null || dataSnapshot.getChildrenCount() == 2) {
-            HashMap<String, String> objects = geoJsonHelper.convertDataToGeoJson(dataSnapshot);
-            this.activity.addAdditionalLayer(objects);
+        this.objects = activity.appService.getObjects();
+        if (this.objects != null) {
+            final HashMap<String, String> geoJsonObjects = GeoJsonHelper.insertPropertiesToGeoJson(this.objects);
+            activity.addAdditionalLayer(geoJsonObjects);
         }
     }
 
@@ -76,14 +78,15 @@ public class MapPresenter implements AppService.AppServiceListener {
      * Calls AppService to reset database.
      */
     public void resetDatabase() {
-        activity.appService.resetDatabase();
+        this.activity.appService.resetDatabase();
+        this.activity.mapView.invalidate();
     }
 
     /**
      * Sets user position initially.
      */
     public void setUserPosition() {
-        this.activity.updateUserPosition(userGeoPoint);
+        activity.updateUserPosition(this.userGeoPoint);
     }
 
 }

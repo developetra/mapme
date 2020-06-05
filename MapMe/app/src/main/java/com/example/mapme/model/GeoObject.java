@@ -16,9 +16,17 @@ public class GeoObject {
     private HashMap<String, String> properties;
 
     /**
-     * Default Constructor. (required for calls to DataSnapshot.getValue(GeoObject.class))
+     * Default Constructor.
      */
     public GeoObject() {
+    }
+
+    /**
+     * Constructor.
+     */
+    public GeoObject(String geometry, HashMap<String, String> properties) {
+        this.geometry = geometry;
+        this.properties = properties;
     }
 
     /**

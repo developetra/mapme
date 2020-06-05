@@ -24,7 +24,6 @@ public class IconPlottingOverlay extends Overlay {
      * @param m
      */
     public IconPlottingOverlay(AddObjectActivity activity, Drawable m) {
-        super();
         markerIcon = m;
         currentActivity = activity;
     }
@@ -44,10 +43,10 @@ public class IconPlottingOverlay extends Overlay {
                 geoPoint.setLongitude(geoPoint.getLongitude() + 360);
             if (geoPoint.getLongitude() > 180)
                 geoPoint.setLongitude(geoPoint.getLongitude() - 360);
-            if (geoPoint.getLatitude() > mapView.getTileSystem().getMaxLatitude())
-                geoPoint.setLatitude(mapView.getTileSystem().getMaxLatitude());
-            if (geoPoint.getLatitude() < mapView.getTileSystem().getMinLatitude())
-                geoPoint.setLatitude(mapView.getTileSystem().getMinLatitude());
+            if (geoPoint.getLatitude() > MapView.getTileSystem().getMaxLatitude())
+                geoPoint.setLatitude(MapView.getTileSystem().getMaxLatitude());
+            if (geoPoint.getLatitude() < MapView.getTileSystem().getMinLatitude())
+                geoPoint.setLatitude(MapView.getTileSystem().getMinLatitude());
             Marker marker = new Marker(mapView);
             marker.setPosition(geoPoint);
             marker.setIcon(markerIcon);

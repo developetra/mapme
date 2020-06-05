@@ -30,7 +30,7 @@ public class GeoJsonHelperTest {
         Mockito.when(geometry.getValue()).thenReturn("{\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"urn:ogc:def:crs:OGC:1.3:CRS84\"}},\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[10.886972399157315,49.89197146019778]},\"properties\":{\"name\":\"Marker\"}}],\"type\":\"FeatureCollection\"}");
         Mockito.when(entry.child("geometry")).thenReturn(geometry);
         Mockito.when(dataSnapshot.getChildren()).thenReturn(Collections.singleton(entry));
-        geoJsonHelper.convertDataToGeoJson(dataSnapshot);
+        GeoJsonHelper.insertPropertiesToGeoJson(dataSnapshot);
     }
 
     @Test

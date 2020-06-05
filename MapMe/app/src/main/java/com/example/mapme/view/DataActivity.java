@@ -19,8 +19,10 @@ import android.widget.TextView;
 
 import com.example.mapme.R;
 import com.example.mapme.model.AppService;
+import com.example.mapme.model.GeoObject;
 import com.example.mapme.presenter.DataPresenter;
-import com.google.firebase.database.DataSnapshot;
+
+import java.util.HashMap;
 
 /**
  * DataActivity - Activity to display data from database.
@@ -30,7 +32,7 @@ public class DataActivity extends AppCompatActivity {
     private DataPresenter presenter;
     public AppService appService;
     protected boolean appServiceBound;
-    private boolean serviceConnected = false;
+    private boolean serviceConnected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +44,7 @@ public class DataActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        Intent bindIntent = new Intent(DataActivity.this, AppService.class);
+        Intent bindIntent = new Intent(this, AppService.class);
         bindService(bindIntent, appServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -95,17 +97,18 @@ public class DataActivity extends AppCompatActivity {
     /**
      * Displays data from database.
      *
-     * @param dataSnapshot
+     * @param objects
      */
-    public void displayData(DataSnapshot dataSnapshot) {
-        if (dataSnapshot != null || dataSnapshot.getChildrenCount() == 2) {
+    public void displayData(HashMap<String, GeoObject> objects) {
+        if (!objects.isEmpty()) {
             TableLayout inputFields = findViewById(R.id.inputFields);
             inputFields.removeAllViews();
-            for (final DataSnapshot entry : dataSnapshot.getChildren()) {
+            for (final String objectKey : objects.keySet()) {
+                GeoObject object = objects.get(objectKey);
                 // id and type
                 TableRow tableRowObject = new TableRow(this);
                 TextView textViewObject = new TextView(this);
-                textViewObject.setText(entry.getKey() + "   " + entry.child("properties").child("type").getValue() + "                                                      ");
+                textViewObject.setText(objectKey + "   " + object.getProperties().get("type"));
                 textViewObject.setTypeface(null, Typeface.BOLD);
                 tableRowObject.addView(textViewObject);
                 // edit button
@@ -113,8 +116,8 @@ public class DataActivity extends AppCompatActivity {
                 edit.setImageDrawable(getResources().getDrawable(R.drawable.edit));
                 edit.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        startEditObjectActivity(entry.getKey());
+                    public void onClick(View view) {
+                        startEditObjectActivity(objectKey);
                     }
                 });
                 tableRowObject.addView(edit);
@@ -124,32 +127,34 @@ public class DataActivity extends AppCompatActivity {
                 delete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        presenter.deleteObject(entry.getKey());
+                        presenter.deleteObject(objectKey);
                     }
                 });
                 tableRowObject.addView(delete);
                 inputFields.addView(tableRowObject);
                 // properties
-                for (DataSnapshot property : entry.child("properties").getChildren()) {
-                    TableRow tableRowProperties = new TableRow(this);
-                    String key = property.getKey().toString();
-                    String value = property.getValue(String.class);
-                    TextView textViewProperties = new TextView(this);
-                    textViewProperties.setText("     " + key + " - " + value);
-                    tableRowProperties.addView(textViewProperties);
-                    inputFields.addView(tableRowProperties);
+                for (final String propertyKey : object.getProperties().keySet()) {
+                    {
+                        TableRow tableRowProperties = new TableRow(this);
+                        String key = propertyKey;
+                        String value = object.getProperties().get(propertyKey);
+                        TextView textViewProperties = new TextView(this);
+                        textViewProperties.setText("     " + key + " - " + value);
+                        tableRowProperties.addView(textViewProperties);
+                        inputFields.addView(tableRowProperties);
+                    }
+                    // empty rows
+                    TableRow emptyRow1 = new TableRow(this);
+                    TextView emptytextView1 = new TextView(this);
+                    emptytextView1.setText(" ");
+                    emptyRow1.addView(emptytextView1);
+                    inputFields.addView(emptyRow1);
+                    TableRow emptyRow2 = new TableRow(this);
+                    TextView emptytextView2 = new TextView(this);
+                    emptytextView2.setText(" ");
+                    emptyRow2.addView(emptytextView2);
+                    inputFields.addView(emptyRow2);
                 }
-                // empty rows
-                TableRow emptyRow1 = new TableRow(this);
-                TextView emptytextView1 = new TextView(this);
-                emptytextView1.setText(" ");
-                emptyRow1.addView(emptytextView1);
-                inputFields.addView(emptyRow1);
-                TableRow emptyRow2 = new TableRow(this);
-                TextView emptytextView2 = new TextView(this);
-                emptytextView2.setText(" ");
-                emptyRow2.addView(emptytextView2);
-                inputFields.addView(emptyRow2);
             }
         }
     }
@@ -168,7 +173,7 @@ public class DataActivity extends AppCompatActivity {
      * Shows info dialog when upload is completed.
      */
     public void showInfoUploadSuccessful() {
-        AlertDialog.Builder infoDialog = new AlertDialog.Builder(DataActivity.this);
+        AlertDialog.Builder infoDialog = new AlertDialog.Builder(this);
         infoDialog.setTitle("Success");
         infoDialog.setMessage("Database was saved to Firebase Storage. ");
         infoDialog.setNegativeButton("Ok",

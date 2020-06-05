@@ -7,8 +7,8 @@ import com.example.mapme.view.MainActivity;
  */
 public class MainPresenter {
 
-    private MainActivity activity;
-    private String infoText = "MapMe is a collaborative tool for the acquisition and mapping of geospatial data. \n" +
+    private final MainActivity activity;
+    private final String infoText = "MapMe is a collaborative tool for the acquisition and mapping of geospatial data. \n" +
             "You can draw markers, polylines or polygons directly on the screen. ";
 
     /**

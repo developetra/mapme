@@ -15,7 +15,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -44,7 +44,7 @@ public class AppService extends Service {
     private static final long MINIMUM_TIME_BETWEEN_UPDATE = 1000;
     private static final long MINIMUM_DISTANCING_FOR_UPDATE = 1;
     private final IBinder binder = new LocalBinder();
-    private final List<AppServiceListener> listeners = new ArrayList<AppServiceListener>();
+    private final List<AppService.AppServiceListener> listeners = new ArrayList<AppService.AppServiceListener>();
 
     // ===== Location
     protected LocationManager locationManager;
@@ -53,11 +53,11 @@ public class AppService extends Service {
     private ConnectivityManager connectivityManager;
 
     // ===== Firebase Database
-    private long counter = 0;
-    private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference counterRef = database.getReference("counter");
-    private DatabaseReference objectRef = database.getReference("objects");
-    private DataSnapshot currentDataSnapshot;
+    private long counter;
+    private final FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private final DatabaseReference counterRef = database.getReference("counter");
+    private final DatabaseReference objectRef = database.getReference("objects");
+    private HashMap<String, GeoObject> objects;
 
     // ===== Firebase Storage
     private FirebaseStorage storage;
@@ -65,16 +65,22 @@ public class AppService extends Service {
     private StorageReference fileRef;
     private UploadTask uploadTask;
 
-    // ===== Helper
-    private GeoJsonHelper geoJsonHelper = new GeoJsonHelper();
+    /**
+     * Get objects.
+     *
+     * @return objects
+     */
+    public HashMap<String, GeoObject> getObjects() {
+        return this.objects;
+    }
 
     /**
-     * Get current dataSnapshot.
+     * Set objects.
      *
-     * @return currentDataSnapshot
+     * @param objects
      */
-    public DataSnapshot getCurrentDataSnapshot() {
-        return this.currentDataSnapshot;
+    public void setObjects(final HashMap<String, GeoObject> objects) {
+        this.objects = objects;
     }
 
     /**
@@ -124,14 +130,14 @@ public class AppService extends Service {
     public interface AppServiceListener {
         void updateUserPosition(Location location);
 
-        void dataChanged(DataSnapshot dataSnapshot);
+        void dataChanged(HashMap<String, GeoObject> objects);
     }
 
-    public void registerListener(AppServiceListener listener) {
+    public void registerListener(AppService.AppServiceListener listener) {
         listeners.add(listener);
     }
 
-    public void unregisterListener(AppServiceListener listener) {
+    public void unregisterListener(AppService.AppServiceListener listener) {
         listeners.remove(listener);
     }
 
@@ -145,7 +151,7 @@ public class AppService extends Service {
             @Override
             public void onLocationChanged(Location location) {
                 Log.i("info", "Location changed.");
-                for (AppServiceListener listener : listeners) {
+                for (AppService.AppServiceListener listener : listeners) {
                     listener.updateUserPosition(location);
                 }
             }
@@ -162,9 +168,9 @@ public class AppService extends Service {
             public void onProviderDisabled(String provider) {
             }
         };
-        if (ActivityCompat.checkSelfPermission(this,
+        if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this,
+                ContextCompat.checkSelfPermission(this,
                         Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Log.i("info", "Permission to access location not given.");
             return;
@@ -190,9 +196,11 @@ public class AppService extends Service {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot != null) {
-                    currentDataSnapshot = dataSnapshot;
-                    for (AppServiceListener listener : listeners) {
-                        listener.dataChanged(currentDataSnapshot);
+                    objects = DataSnapshotHelper.convertDataSnapshotToGeoObjects(dataSnapshot);
+                    if (!objects.isEmpty()) {
+                        for (AppService.AppServiceListener listener : listeners) {
+                            listener.dataChanged(objects);
+                        }
                     }
                 }
             }
@@ -223,9 +231,11 @@ public class AppService extends Service {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot != null) {
-                    currentDataSnapshot = dataSnapshot;
-                    for (AppServiceListener listener : listeners) {
-                        listener.dataChanged(dataSnapshot);
+                    objects = DataSnapshotHelper.convertDataSnapshotToGeoObjects(dataSnapshot);
+                    if (objects != null) {
+                        for (AppService.AppServiceListener listener : listeners) {
+                            listener.dataChanged(objects);
+                        }
                     }
                 }
             }
@@ -319,7 +329,7 @@ public class AppService extends Service {
      * Uploads file to firebase storage.
      */
     public void uploadFile() {
-        String file = geoJsonHelper.convertDataToGeoJsonString(this, currentDataSnapshot);
+        String file = GeoJsonHelper.convertObjectsToGeoJsonString(this, objects);
         byte[] data = file.getBytes();
         StorageReference storageRef = storage.getReference();
         StorageReference fileRef = storageRef.child("database.geojson");

@@ -3,8 +3,8 @@ package com.example.mapme.presenter;
 import android.location.Location;
 
 import com.example.mapme.model.AppService;
+import com.example.mapme.model.GeoObject;
 import com.example.mapme.view.EditInformationActivity;
-import com.google.firebase.database.DataSnapshot;
 
 import java.util.HashMap;
 
@@ -13,7 +13,7 @@ import java.util.HashMap;
  */
 public class EditInformationPresenter implements AppService.AppServiceListener {
 
-    private EditInformationActivity activity;
+    private final EditInformationActivity activity;
 
     /**
      * Constructor.
@@ -36,12 +36,12 @@ public class EditInformationPresenter implements AppService.AppServiceListener {
     /**
      * Fills properties when database changes.
      *
-     * @param dataSnapshot
+     * @param objects
      */
     @Override
-    public void dataChanged(DataSnapshot dataSnapshot) {
-        if (dataSnapshot != null || dataSnapshot.getChildrenCount() == 2) {
-            activity.fillProperties(dataSnapshot);
+    public void dataChanged(HashMap<String, GeoObject> objects) {
+        if (objects != null) {
+            activity.fillProperties(objects);
         }
     }
 
@@ -68,9 +68,9 @@ public class EditInformationPresenter implements AppService.AppServiceListener {
      * Calls AppService to get the current data and fills properties in the view.
      */
     public void fillProperties() {
-        DataSnapshot dataSnapshot = activity.appService.getCurrentDataSnapshot();
-        if (dataSnapshot != null || dataSnapshot.getChildrenCount() == 2) {
-            activity.fillProperties(dataSnapshot);
+        HashMap<String, GeoObject> objects = this.activity.appService.getObjects();
+        if (objects != null) {
+            activity.fillProperties(objects);
         }
     }
 }

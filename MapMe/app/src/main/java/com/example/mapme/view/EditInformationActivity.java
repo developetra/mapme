@@ -10,6 +10,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 
 import com.example.mapme.R;
 import com.example.mapme.model.AppService;
+import com.example.mapme.model.GeoObject;
 import com.example.mapme.presenter.EditInformationPresenter;
 import com.google.firebase.database.DataSnapshot;
 
@@ -30,9 +32,9 @@ public class EditInformationActivity extends AppCompatActivity {
     private EditInformationPresenter presenter;
     public AppService appService;
     protected boolean appServiceBound;
-    private boolean serviceConnected = false;
+    private boolean serviceConnected;
     public String currentGeoObjectId = "";
-    private int inputCounter = 0;
+    private int inputCounter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +50,7 @@ public class EditInformationActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        Intent bindIntent = new Intent(EditInformationActivity.this, AppService.class);
+        Intent bindIntent = new Intent(this, AppService.class);
         bindService(bindIntent, appServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -129,14 +131,14 @@ public class EditInformationActivity extends AppCompatActivity {
         EditText editTextProperty = new EditText(this);
         editTextProperty.setText(property);
         editTextProperty.setWidth(500);
-        TableRow.LayoutParams paramsProperty = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT);
+        TableRow.LayoutParams paramsProperty = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         paramsProperty.setMargins(8, 8, 8, 8);
         tableRow.addView(editTextProperty, paramsProperty);
         //input field
         EditText editTextInput = new EditText(this);
         editTextInput.setText(input);
         editTextInput.setWidth(500);
-        TableRow.LayoutParams paramsInput = new TableRow.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
+        TableRow.LayoutParams paramsInput = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         paramsInput.setMargins(8, 8, 8, 8);
         tableRow.addView(editTextInput, paramsInput);
         // add tableRow to tableLayout
@@ -155,13 +157,13 @@ public class EditInformationActivity extends AppCompatActivity {
         // property field
         EditText editTextProperty = new EditText(this);
         editTextProperty.setWidth(500);
-        TableRow.LayoutParams paramsProperty = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT);
+        TableRow.LayoutParams paramsProperty = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         paramsProperty.setMargins(8, 8, 8, 8);
         tableRow.addView(editTextProperty, paramsProperty);
         //input field
         EditText editTextInput = new EditText(this);
         editTextInput.setWidth(500);
-        TableRow.LayoutParams paramsInput = new TableRow.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
+        TableRow.LayoutParams paramsInput = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         paramsInput.setMargins(8, 8, 8, 8);
         tableRow.addView(editTextInput, paramsInput);
         // add tableRow to tableLayout
@@ -183,15 +185,16 @@ public class EditInformationActivity extends AppCompatActivity {
     /**
      * Fills input fields with given data.
      *
-     * @param dataSnapshot
+     * @param objects
      */
-    public void fillProperties(DataSnapshot dataSnapshot) {
-        if (dataSnapshot != null || dataSnapshot.getChildrenCount() ==  2) {
-            for (DataSnapshot entry : dataSnapshot.getChildren()) {
-                if (entry.getKey().equals(currentGeoObjectId)) {
-                    for (DataSnapshot property : entry.child("properties").getChildren()) {
-                        String key = property.getKey();
-                        String value = property.getValue(String.class);
+    public void fillProperties(HashMap<String, GeoObject> objects) {
+        if (!objects.isEmpty()) {
+            for (final String objectKey : objects.keySet()) {
+                if (objectKey.equals(currentGeoObjectId)) {
+                    GeoObject object = objects.get(objectKey);
+                    for (final String propertyKey : object.getProperties().keySet()) {
+                        String key = propertyKey;
+                        String value = object.getProperties().get(propertyKey);
                         addInputField(findViewById(R.id.textView), key, value);
                     }
                 }
