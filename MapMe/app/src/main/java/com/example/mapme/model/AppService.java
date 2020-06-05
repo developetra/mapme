@@ -110,6 +110,7 @@ public class AppService extends Service {
         return Service.START_NOT_STICKY;
     }
 
+
     @Override
     public IBinder onBind(Intent intent) {
         return binder;

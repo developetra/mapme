@@ -407,6 +407,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
                     });
             mapView.getOverlays().add(marker);
         }
+        mapView.invalidate();
         Log.i("info", "Layer with Overpass Result was added.");
         panning.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
         painting.setBackgroundColor(Color.TRANSPARENT);
