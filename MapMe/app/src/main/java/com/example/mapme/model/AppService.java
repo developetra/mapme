@@ -235,14 +235,14 @@ public class AppService extends Service {
     }
 
     /**
-     * Saves given geometry to database.
+     * Saves given GeoObject to database.
      *
-     * @param geometry
+     * @param geoObject
      * @return id
      */
-    public String saveToDatabase(GeoObject object) {
+    public String saveToDatabase(GeoObject geoObject) {
         DatabaseReference newReference = objectRef.push();
-        newReference.setValue(object);
+        newReference.setValue(geoObject);
         String id = newReference.getKey();
         return id;
     }
@@ -279,7 +279,7 @@ public class AppService extends Service {
     }
 
     /**
-     * Deletes object from database.
+     * Deletes object with given id from database.
      *
      * @param id
      */

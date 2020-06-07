@@ -71,7 +71,7 @@ public class AddObjectPresenter implements AppService.AppServiceListener {
     }
 
     /**
-     * Calls AppService to save geometry to database.
+     * Creates GeoObject with given geometry and calls AppService to save object to database.
      *
      * @param geometry
      * @return id
