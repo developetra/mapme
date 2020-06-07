@@ -77,7 +77,11 @@ public class AddObjectPresenter implements AppService.AppServiceListener {
      * @return id
      */
     public String saveToDatabase(OverlayWithIW geometry) {
-        return activity.appService.saveToDatabase(geometry);
+        GeoObject object = new GeoObject(geometry);
+        HashMap<String, String> properties = new HashMap<>();
+        properties.put("type", geometry.getTitle());
+        object.setProperties(properties);
+        return activity.appService.saveToDatabase(object);
     }
 
     /**

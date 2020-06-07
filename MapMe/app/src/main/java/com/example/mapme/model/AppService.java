@@ -29,8 +29,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import org.osmdroid.views.overlay.OverlayWithIW;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +42,7 @@ public class AppService extends Service {
     private static final long MINIMUM_TIME_BETWEEN_UPDATE = 1000;
     private static final long MINIMUM_DISTANCING_FOR_UPDATE = 1;
     private final IBinder binder = new LocalBinder();
-    private final List<AppService.AppServiceListener> listeners = new ArrayList<AppService.AppServiceListener>();
+    protected final List<AppService.AppServiceListener> listeners = new ArrayList<AppService.AppServiceListener>();
 
     // ===== Location
     protected LocationManager locationManager;
@@ -55,7 +53,7 @@ public class AppService extends Service {
     // ===== Firebase Database
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private final DatabaseReference counterRef = database.getReference("counter");
-    private final DatabaseReference objectRef = database.getReference("objects");
+    protected final DatabaseReference objectRef = database.getReference("objects");
     private HashMap<String, GeoObject> objects;
 
     // ===== Firebase Storage
@@ -242,11 +240,7 @@ public class AppService extends Service {
      * @param geometry
      * @return id
      */
-    public String saveToDatabase(OverlayWithIW geometry) {
-        GeoObject object = new GeoObject(geometry);
-        HashMap<String, String> properties = new HashMap<>();
-        properties.put("type", geometry.getTitle());
-        object.setProperties(properties);
+    public String saveToDatabase(GeoObject object) {
         DatabaseReference newReference = objectRef.push();
         newReference.setValue(object);
         String id = newReference.getKey();

@@ -1,8 +1,13 @@
 package com.example.mapme.model;
 
+import android.location.Location;
+
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.HashMap;
 
 
 public class AppServiceTest {
@@ -19,66 +24,68 @@ public class AppServiceTest {
     }
 
     @Test
-    public void getCurrentDataSnapshot() {
+    public void testSetGetObjects() {
+        HashMap<String, GeoObject> objects = new HashMap<>();
+        objects.put("test", new GeoObject());
+        appService.setObjects(objects);
+        Assert.assertEquals(objects, appService.getObjects());
     }
 
     @Test
-    public void onCreate() {
+    public void testRegisterListener() {
+        AppService.AppServiceListener listener = new AppService.AppServiceListener() {
+            @Override
+            public void updateUserPosition(Location location) {
+            }
+
+            @Override
+            public void dataChanged(HashMap<String, GeoObject> objects) {
+            }
+        };
+        appService.registerListener(listener);
+        Assert.assertEquals(true, appService.listeners.contains(listener));
     }
 
     @Test
-    public void onStartCommand() {
+    public void testUnRegisterListener() {
+        AppService.AppServiceListener listener = new AppService.AppServiceListener() {
+            @Override
+            public void updateUserPosition(Location location) {
+            }
+
+            @Override
+            public void dataChanged(HashMap<String, GeoObject> objects) {
+            }
+        };
+        appService.registerListener(listener);
+        appService.unregisterListener(listener);
+        Assert.assertEquals(false, appService.listeners.contains(listener));
     }
 
     @Test
-    public void onBind() {
+    public void testResetDatabase() {
+        appService.resetDatabase();
+    }
+
+
+    @Test
+    public void testSaveToDatabase() {
+        GeoObject object = new GeoObject();
+        final String id = appService.saveToDatabase(object);
+        Assert.assertTrue(appService.getObjects().containsKey(id));
     }
 
     @Test
-    public void registerListener() {
+    public void testDeleteObject() {
     }
 
     @Test
-    public void unregisterListener() {
+    public void testEditObjectProperties() {
     }
 
     @Test
-    public void uploadFile() {
+    public void testAddObjectProperties() {
     }
 
-    @Test
-    public void downloadFile() {
-    }
 
-    @Test
-    public void resetDatabase() {
-    }
-
-    @Test
-    public void updateInRealtime() {
-    }
-
-    @Test
-    public void saveToDatabase() {
-    }
-
-    @Test
-    public void editObjectProperties() {
-    }
-
-    @Test
-    public void addObjectProperties() {
-    }
-
-    @Test
-    public void deleteObject() {
-    }
-
-    @Test
-    public void incrementCounter() {
-    }
-
-    @Test
-    public void getDataFromDatabase() {
-    }
 }
