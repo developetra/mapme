@@ -53,7 +53,6 @@ public class AppService extends Service {
     private ConnectivityManager connectivityManager;
 
     // ===== Firebase Database
-    private long counter;
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
     private final DatabaseReference counterRef = database.getReference("counter");
     private final DatabaseReference objectRef = database.getReference("objects");
@@ -217,17 +216,6 @@ public class AppService extends Service {
      * Initializes realtime database.
      */
     public void updateInRealtime() {
-        counterRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                counter = (long) dataSnapshot.child("counter").getValue();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.w("info", "Failed to read value.", error.toException());
-            }
-        });
         objectRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -255,13 +243,13 @@ public class AppService extends Service {
      * @return id
      */
     public String saveToDatabase(OverlayWithIW geometry) {
-        String id = String.valueOf(counter + 1);
         GeoObject object = new GeoObject(geometry);
-        objectRef.child(id).setValue(object);
         HashMap<String, String> properties = new HashMap<>();
         properties.put("type", geometry.getTitle());
-        editObjectProperties(id, properties);
-        incrementCounter();
+        object.setProperties(properties);
+        DatabaseReference newReference = objectRef.push();
+        newReference.setValue(object);
+        String id = newReference.getKey();
         return id;
     }
 
@@ -313,17 +301,8 @@ public class AppService extends Service {
      * Resets database.
      */
     public void resetDatabase() {
-        counter = 0;
-        counterRef.child("counter").setValue(counter);
         objectRef.setValue(null);
         updateInRealtime();
-    }
-
-    /**
-     * Increments counter in database.
-     */
-    public void incrementCounter() {
-        counterRef.child("counter").setValue(counter + 1);
     }
 
     /**

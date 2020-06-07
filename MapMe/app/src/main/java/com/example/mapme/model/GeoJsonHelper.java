@@ -48,7 +48,7 @@ public class GeoJsonHelper {
      * @param objects
      * @return geoJsonString
      */
-    protected static String convertObjectsToGeoJsonString(Context context, HashMap<String, GeoObject> objects) {
+    public static String convertObjectsToGeoJsonString(Context context, HashMap<String, GeoObject> objects) {
         JSONObject combined = new JSONObject();
         HashMap<String, String> geoJsonHashmap = insertPropertiesToGeoJson(objects);
         int counter = 1;

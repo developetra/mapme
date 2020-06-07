@@ -1,21 +1,17 @@
 package com.example.mapme.model;
 
-import com.google.firebase.database.DataSnapshot;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
-import java.util.Collections;
+import java.util.HashMap;
 
 public class GeoJsonHelperTest {
 
-    GeoJsonHelper geoJsonHelper;
 
     @Before
     public void setUp() throws Exception {
-        geoJsonHelper = new GeoJsonHelper();
+
     }
 
     @After
@@ -23,17 +19,26 @@ public class GeoJsonHelperTest {
     }
 
     @Test
-    public void convertDataToGeoJson() {
-        DataSnapshot dataSnapshot = Mockito.mock(DataSnapshot.class);
-        DataSnapshot entry = Mockito.mock(DataSnapshot.class);
-        DataSnapshot geometry = Mockito.mock(DataSnapshot.class);
-        Mockito.when(geometry.getValue()).thenReturn("{\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"urn:ogc:def:crs:OGC:1.3:CRS84\"}},\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[10.886972399157315,49.89197146019778]},\"properties\":{\"name\":\"Marker\"}}],\"type\":\"FeatureCollection\"}");
-        Mockito.when(entry.child("geometry")).thenReturn(geometry);
-        Mockito.when(dataSnapshot.getChildren()).thenReturn(Collections.singleton(entry));
-        GeoJsonHelper.insertPropertiesToGeoJson(dataSnapshot);
+    public void testInsertPropertiesToGeoJson() {
+        HashMap<String, GeoObject> objects = new HashMap<>();
+        HashMap<String, String> properties = new HashMap<>();
+        properties.put("test", "test");
+        GeoObject geoObject = new GeoObject("{\n" +
+                "  \"type\": \"Feature\",\n" +
+                "  \"geometry\": {\n" +
+                "    \"type\": \"Point\",\n" +
+                "    \"coordinates\": [49.891667, 10.886944]\n" +
+                "  },\n" +
+                "  \"properties\": {\n" +
+                "    \"name\": \"Bamberger Rathaus\"\n" +
+                "  }\n" +
+                "}\n", properties);
+        objects.put("test", geoObject);
+        GeoJsonHelper.insertPropertiesToGeoJson(objects);
+
     }
 
     @Test
-    public void exportDataAsGeoJson() {
+    public void testConvertObjectsToGeoJsonString() {
     }
 }
