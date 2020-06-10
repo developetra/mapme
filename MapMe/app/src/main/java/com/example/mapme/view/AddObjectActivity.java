@@ -356,6 +356,23 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
     }
 
     /**
+     * Shows info dialog when OverpassResult was empty.
+     *
+     */
+    public void showInfoErrorWhileSaving() {
+        AlertDialog.Builder infoDialog = new AlertDialog.Builder(this);
+        infoDialog.setTitle("Error while saving GeoObject");
+        infoDialog.setMessage("It seems that there was an error while saving the GeoObject to the database. Please try again.");
+        infoDialog.setNegativeButton("Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        infoDialog.show();
+    }
+
+    /**
      * Adds additional layer with geoObjects to map.
      *
      * @param objects
@@ -364,7 +381,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
         mapView.getOverlays().clear();
         KmlDocument kmlDocument = new KmlDocument();
 
-        if (!objects.isEmpty()) {
+        if (!objects.isEmpty() && mapView != null) {
             for (String key : objects.keySet()) {
                 kmlDocument.parseGeoJSON(objects.get(key));
                 Drawable defaultMarker = getResources().getDrawable(R.drawable.pin);

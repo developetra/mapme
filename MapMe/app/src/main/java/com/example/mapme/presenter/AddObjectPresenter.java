@@ -81,7 +81,12 @@ public class AddObjectPresenter implements AppService.AppServiceListener {
         HashMap<String, String> properties = new HashMap<>();
         properties.put("type", geometry.getTitle());
         object.setProperties(properties);
-        return activity.appService.saveToDatabase(object);
+        String id = activity.appService.saveToDatabase(object);
+        if (id == null){
+            activity.showInfoErrorWhileSaving();
+            return null;
+        }
+        return id;
     }
 
     /**

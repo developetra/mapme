@@ -241,10 +241,15 @@ public class AppService extends Service {
      * @return id
      */
     public String saveToDatabase(GeoObject geoObject) {
-        DatabaseReference newReference = objectRef.push();
-        newReference.setValue(geoObject);
-        String id = newReference.getKey();
-        return id;
+        try {
+            DatabaseReference newReference = objectRef.push();
+            newReference.setValue(geoObject);
+            String id = newReference.getKey();
+            return id;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
