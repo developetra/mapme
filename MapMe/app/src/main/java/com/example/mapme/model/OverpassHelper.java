@@ -23,7 +23,7 @@ public class OverpassHelper {
      * @param center
      * @return OverpassQueryResult
      */
-    public static OverpassQueryResult searchNodes(LatLng center) {
+    public static OverpassQueryResult search(LatLng center) {
         LatLngBounds bounds = toBounds(center, 50);
         OverpassQuery query = new OverpassQuery()
                 .format(JSON)

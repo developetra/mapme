@@ -2,7 +2,6 @@ package com.example.mapme.view.overlays;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -12,7 +11,6 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.example.mapme.model.GeoJsonHelper;
 import com.example.mapme.view.AddObjectActivity;
 
 import org.osmdroid.util.GeoPoint;
@@ -20,9 +18,6 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.Polygon;
 import org.osmdroid.views.overlay.Polyline;
-import org.osmdroid.views.overlay.milestones.MilestoneBitmapDisplayer;
-import org.osmdroid.views.overlay.milestones.MilestoneManager;
-import org.osmdroid.views.overlay.milestones.MilestonePixelDistanceLister;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -366,7 +366,6 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
 
     /**
      * Shows info dialog when OverpassResult was empty.
-     *
      */
     public void showInfoErrorWhileSaving() {
         AlertDialog.Builder infoDialog = new AlertDialog.Builder(this);
@@ -411,7 +410,6 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
 
     /**
      * Adds additional layer with OverpassResult to map.
-     *
      */
     public void addLayerWithOverpassResult(OverpassQueryResult nodes, int numberOfNodes, final String objectId) {
         for (int i = 0; i < numberOfNodes; i++) {

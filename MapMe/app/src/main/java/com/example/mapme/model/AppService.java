@@ -52,7 +52,6 @@ public class AppService extends Service {
 
     // ===== Firebase Database
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private final DatabaseReference counterRef = database.getReference("counter");
     protected final DatabaseReference objectRef = database.getReference("objects");
     private HashMap<String, GeoObject> objects;
 
@@ -81,13 +80,12 @@ public class AppService extends Service {
     }
 
     /**
-     * onCreate.
+     * OnCreate.
      */
     @Override
     public void onCreate() {
         super.onCreate();
-
-        // TODO: Do not run request in main thread:
+        // allow application to perform a networking operation on its main thread:
         // https://stackoverflow.com/questions/6343166/how-to-fix-android-os-networkonmainthreadexception
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -229,7 +227,7 @@ public class AppService extends Service {
 
             @Override
             public void onCancelled(DatabaseError error) {
-                Log.w("info", "Failed to update map.", error.toException());
+                Log.w("info", "Failed to update database.", error.toException());
             }
         });
     }
@@ -247,7 +245,7 @@ public class AppService extends Service {
             String id = newReference.getKey();
             return id;
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("info", "Failed to save object.", e);
             return null;
         }
     }

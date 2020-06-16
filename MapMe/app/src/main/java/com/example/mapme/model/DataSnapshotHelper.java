@@ -4,8 +4,17 @@ import com.google.firebase.database.DataSnapshot;
 
 import java.util.HashMap;
 
+/**
+ * Helper class for converting DataSnapshot to HashMap of GeoObjects.
+ */
 public class DataSnapshotHelper {
 
+    /**
+     * Converts given DataSnapshot to HashMap of GeoObjects.
+     *
+     * @param dataSnapshot
+     * @return objects
+     */
     protected static HashMap<String, GeoObject> convertDataSnapshotToGeoObjects(final DataSnapshot dataSnapshot) {
         final HashMap<String, GeoObject> objects = new HashMap<>();
         if (dataSnapshot != null) {

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -20,7 +19,6 @@ import com.example.mapme.R;
 import com.example.mapme.model.AppService;
 import com.example.mapme.model.GeoObject;
 import com.example.mapme.presenter.EditInformationPresenter;
-import com.google.firebase.database.DataSnapshot;
 
 import java.util.HashMap;
 

@@ -57,6 +57,7 @@ public class AddPolygonActivity extends AddObjectActivity {
 
     /**
      * Adds additional layer with OverpassResult to map and removes PainingSurface.
+     *
      * @param nodes
      * @param numberOfNodes
      * @param objectId

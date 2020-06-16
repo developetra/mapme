@@ -152,6 +152,11 @@ public class DataActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Creates an empty row.
+     *
+     * @return
+     */
     public TableRow createEmptyRow() {
         TableRow emptyRow = new TableRow(this);
         TextView emptytextView = new TextView(this);

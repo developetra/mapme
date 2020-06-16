@@ -1,5 +1,6 @@
 package com.example.mapme.presenter;
 
+import android.arch.lifecycle.Lifecycle;
 import android.location.Location;
 import android.util.Log;
 
@@ -55,7 +56,9 @@ public class AddObjectPresenter implements AppService.AppServiceListener {
     public void dataChanged(HashMap<String, GeoObject> objects) {
         if (objects != null) {
             HashMap<String, String> geoJsonObjects = GeoJsonHelper.insertPropertiesToGeoJson(objects);
-            this.activity.addAdditionalLayer(geoJsonObjects);
+            if (this.activity.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
+                this.activity.addAdditionalLayer(geoJsonObjects);
+            }
         }
     }
 
@@ -82,7 +85,7 @@ public class AddObjectPresenter implements AppService.AppServiceListener {
         properties.put("type", geometry.getTitle());
         object.setProperties(properties);
         String id = activity.appService.saveToDatabase(object);
-        if (id == null){
+        if (id == null) {
             activity.showInfoErrorWhileSaving();
             return null;
         }
@@ -116,11 +119,11 @@ public class AddObjectPresenter implements AppService.AppServiceListener {
         OverpassQueryResult result = new OverpassQueryResult();
         if (geometry.getClass().equals(Marker.class)) {
             Marker marker = (Marker) geometry;
-            result = OverpassHelper.searchNodes(new LatLng(marker.getPosition().getLatitude(), marker.getPosition().getLongitude()));
+            result = OverpassHelper.search(new LatLng(marker.getPosition().getLatitude(), marker.getPosition().getLongitude()));
             return result;
         } else {
             BoundingBox bounds = geometry.getBounds();
-            result = OverpassHelper.searchNodes(new LatLng(bounds.getCenterLatitude(), bounds.getCenterLongitude()));
+            result = OverpassHelper.search(new LatLng(bounds.getCenterLatitude(), bounds.getCenterLongitude()));
         }
         Log.i("info", "OverpassQueryResult: " + result);
         return result;

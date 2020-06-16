@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 /**
- * Helper class for converting data to GeoJson.
+ * Helper class for converting GeoObjects to GeoJson.
  */
 public class GeoJsonHelper {
 

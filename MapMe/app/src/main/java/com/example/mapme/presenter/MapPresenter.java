@@ -1,5 +1,6 @@
 package com.example.mapme.presenter;
 
+import android.arch.lifecycle.Lifecycle;
 import android.location.Location;
 
 import com.example.mapme.model.AppService;
@@ -17,7 +18,6 @@ import java.util.HashMap;
 public class MapPresenter implements AppService.AppServiceListener {
 
     private final MapActivity activity;
-    private final GeoJsonHelper geoJsonHelper = new GeoJsonHelper();
     public GeoPoint userGeoPoint = new GeoPoint(49.89873, 10.90067);
     private HashMap<String, GeoObject> objects = new HashMap<>();
 
@@ -58,8 +58,10 @@ public class MapPresenter implements AppService.AppServiceListener {
     public void dataChanged(final HashMap<String, GeoObject> objects) {
         this.objects = objects;
         if (objects != null) {
-            final HashMap<String, String> geoJsonObjects = GeoJsonHelper.insertPropertiesToGeoJson(objects);
-            activity.addAdditionalLayer(geoJsonObjects);
+            HashMap<String, String> geoJsonObjects = GeoJsonHelper.insertPropertiesToGeoJson(objects);
+            if (this.activity.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
+                this.activity.addAdditionalLayer(geoJsonObjects);
+            }
         }
     }
 

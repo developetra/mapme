@@ -77,14 +77,29 @@ public class AppServiceTest {
 
     @Test
     public void testDeleteObject() {
+        GeoObject object = new GeoObject();
+        final String id = appService.saveToDatabase(object);
+        appService.deleteObject(id);
     }
 
     @Test
     public void testEditObjectProperties() {
+        GeoObject object = new GeoObject();
+        final String id = appService.saveToDatabase(object);
+        HashMap<String, String> properties = new HashMap<>();
+        properties.put("test", "test");
+        appService.editObjectProperties(id, properties);
+        Assert.assertNotNull(appService.objectRef.child(id).child("properties"));
     }
 
     @Test
     public void testAddObjectProperties() {
+        GeoObject object = new GeoObject();
+        final String id = appService.saveToDatabase(object);
+        HashMap<String, String> properties = new HashMap<>();
+        properties.put("test", "test");
+        appService.addObjectProperties(id, properties);
+        Assert.assertNotNull(appService.objectRef.child(id).child("properties"));
     }
 
 

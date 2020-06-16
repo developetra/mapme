@@ -79,7 +79,9 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 //        });
         mapView.setMultiTouchControls(true);
         mapController = mapView.getController();
-        mapController.setZoom(17.0);
+        mapController.setCenter(new GeoPoint(51.5167, 9.9167));
+        mapController.setZoom(7.0);
+        mapView.invalidate();
         enableRotation();
         setUserMarker();
         presenter.setUserPosition();
@@ -197,6 +199,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
      * Center map.
      */
     public void centerMapOnUserPosition(View view) {
+        mapController.setZoom(18.0);
         mapController.setCenter(presenter.getUserGeoPoint());
         mapView.invalidate();
         Log.i("info", "MapActivity is centering map.");
