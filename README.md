@@ -1,0 +1,1 @@
+MapMe is a collaborative tool for the acquisition and mapping of geospatial data. To create new geoobjects, you can draw markers, polylines or polygons directly on the screen and add more information about them. Additionally you can add a reference to a nearby object already existing in Open Street Maps data.

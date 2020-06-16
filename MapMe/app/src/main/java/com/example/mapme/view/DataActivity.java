@@ -108,7 +108,7 @@ public class DataActivity extends AppCompatActivity {
                 // id and type
                 TableRow tableRowObject = new TableRow(this);
                 TextView textViewObject = new TextView(this);
-                textViewObject.setText(objectKey + "   " + object.getProperties().get("type"));
+                textViewObject.setText("  " + object.getProperties().get("type") + ": " + objectKey + "    ");
                 textViewObject.setTypeface(null, Typeface.BOLD);
                 tableRowObject.addView(textViewObject);
                 // edit button
@@ -134,29 +134,30 @@ public class DataActivity extends AppCompatActivity {
                 inputFields.addView(tableRowObject);
                 // properties
                 for (final String propertyKey : object.getProperties().keySet()) {
-                    {
-                        TableRow tableRowProperties = new TableRow(this);
-                        String key = propertyKey;
-                        String value = object.getProperties().get(propertyKey);
-                        TextView textViewProperties = new TextView(this);
-                        textViewProperties.setText("     " + key + " - " + value);
-                        tableRowProperties.addView(textViewProperties);
-                        inputFields.addView(tableRowProperties);
-                    }
-                    // empty rows
-                    TableRow emptyRow1 = new TableRow(this);
-                    TextView emptytextView1 = new TextView(this);
-                    emptytextView1.setText(" ");
-                    emptyRow1.addView(emptytextView1);
-                    inputFields.addView(emptyRow1);
-                    TableRow emptyRow2 = new TableRow(this);
-                    TextView emptytextView2 = new TextView(this);
-                    emptytextView2.setText(" ");
-                    emptyRow2.addView(emptytextView2);
-                    inputFields.addView(emptyRow2);
+
+                    TableRow tableRowProperties = new TableRow(this);
+                    String key = propertyKey;
+                    String value = object.getProperties().get(propertyKey);
+                    TextView textViewProperties = new TextView(this);
+                    textViewProperties.setText("     " + key + " - " + value);
+                    tableRowProperties.addView(textViewProperties);
+                    inputFields.addView(tableRowProperties);
                 }
+                // empty rows
+                inputFields.addView(createEmptyRow());
+                inputFields.addView(createEmptyRow());
+                inputFields.addView(createEmptyRow());
+                inputFields.addView(createEmptyRow());
             }
         }
+    }
+
+    public TableRow createEmptyRow() {
+        TableRow emptyRow = new TableRow(this);
+        TextView emptytextView = new TextView(this);
+        emptytextView.setText(" ");
+        emptyRow.addView(emptytextView);
+        return emptyRow;
     }
 
     /**
