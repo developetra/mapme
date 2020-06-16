@@ -72,7 +72,7 @@ public class AppServiceTest {
     public void testSaveToDatabase() {
         GeoObject object = new GeoObject();
         final String id = appService.saveToDatabase(object);
-        Assert.assertTrue(appService.getObjects().containsKey(id));
+        Assert.assertNotNull(appService.objectRef.child(id));
     }
 
     @Test

@@ -103,23 +103,32 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
     };
 
     /**
-     * Processes extras from intent and sets map position and user marker accordingly.
+     * Processes extras from intent and sets map position accordingly.
      */
-    public void setMapPositionAndUserMarker() {
+    public void setMapPosition() {
         IMapController mapController = mapView.getController();
         Intent intent = getIntent();
         double mapCenterLatitude = intent.getDoubleExtra("mapCenterLatitude", 49.89873);
         double mapCenterLongitude = intent.getDoubleExtra("mapCenterLongitude", 10.90067);
         double zoomLevel = intent.getDoubleExtra("zoomLevel", 17.0);
-        double userGeoPointLatitude = intent.getDoubleExtra("userGeoPointLatitude", 0);
-        double userGeoPointLongitude = intent.getDoubleExtra("userGeoPointLongitude", 0);
+
         GeoPoint startPoint = new GeoPoint(mapCenterLatitude, mapCenterLongitude);
         mapController.setCenter(startPoint);
         mapController.setZoom(zoomLevel);
+    }
+
+    /**
+     * Processes extras from intent and sets user marker accordingly.
+     */
+    public void setUserMarker() {
+        Intent intent = getIntent();
+        double userGeoPointLatitude = intent.getDoubleExtra("userGeoPointLatitude", 0);
+        double userGeoPointLongitude = intent.getDoubleExtra("userGeoPointLongitude", 0);
         userMarker = new Marker(mapView);
         userMarker.setIcon(getResources().getDrawable(R.drawable.position));
         userMarker.setPosition(new GeoPoint(userGeoPointLatitude, userGeoPointLongitude));
         mapView.getOverlays().add(userMarker);
+        presenter.setUserPosition();
     }
 
     /**
@@ -379,8 +388,9 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
      */
     public void addAdditionalLayer(HashMap<String, String> objects) {
         mapView.getOverlays().clear();
+        setUserMarker();
+        presenter.setUserPosition();
         KmlDocument kmlDocument = new KmlDocument();
-
         if (!objects.isEmpty() && mapView != null) {
             for (String key : objects.keySet()) {
                 kmlDocument.parseGeoJSON(objects.get(key));

@@ -81,6 +81,7 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         mapController = mapView.getController();
         mapController.setZoom(17.0);
         enableRotation();
+        setUserMarker();
         presenter.setUserPosition();
     }
 
@@ -120,6 +121,16 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
             Log.i("info", "Service unbound to MapActivity.");
         }
     };
+
+    /**
+     * Sets user marker.
+     */
+    public void setUserMarker() {
+        userMarker = new Marker(mapView);
+        userMarker.setIcon(getResources().getDrawable(position));
+        mapView.getOverlays().add(userMarker);
+        presenter.setUserPosition();
+    }
 
     /**
      * Enables rotation using icons or multitouch.
@@ -177,9 +188,6 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
      * @param userGeoPoint
      */
     public void updateUserPosition(GeoPoint userGeoPoint) {
-        userMarker = new Marker(mapView);
-        userMarker.setIcon(getResources().getDrawable(position));
-        mapView.getOverlays().add(userMarker);
         userMarker.setPosition(userGeoPoint);
         mapView.invalidate();
         Log.i("info", "MapActivity is updating user position.");
@@ -187,9 +195,8 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
     /**
      * Center map.
-     *
      */
-    public void centerMapOnUserPosition (View view) {
+    public void centerMapOnUserPosition(View view) {
         mapController.setCenter(presenter.getUserGeoPoint());
         mapView.invalidate();
         Log.i("info", "MapActivity is centering map.");
@@ -284,6 +291,8 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
      */
     public void addAdditionalLayer(HashMap<String, String> objects) {
         mapView.getOverlays().clear();
+        setUserMarker();
+        presenter.setUserPosition();
         KmlDocument kmlDocument = new KmlDocument();
         if (!objects.isEmpty()) {
             for (String key : objects.keySet()) {
@@ -301,7 +310,6 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         } else {
             Log.i("info", "Additional layer could not be added to MapActivity or is empty.");
         }
-        presenter.setUserPosition();
     }
 
 }

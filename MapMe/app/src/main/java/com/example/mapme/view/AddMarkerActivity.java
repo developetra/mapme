@@ -24,7 +24,8 @@ public class AddMarkerActivity extends AddObjectActivity implements View.OnLongC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_object);
         mapView = findViewById(R.id.map);
-        setMapPositionAndUserMarker();
+        setMapPosition();
+        setUserMarker();
         enableRotation();
         disablePainting();
         IconPlottingOverlay plotter = new IconPlottingOverlay(this, getResources().getDrawable(R.drawable.pin));

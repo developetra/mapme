@@ -25,7 +25,8 @@ public class AddPolylineActivity extends AddObjectActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_object);
         mapView = findViewById(R.id.map);
-        setMapPositionAndUserMarker();
+        setMapPosition();
+        setUserMarker();
         enableRotation();
         enablePainting(PaintingSurface.Mode.Polyline);
     }

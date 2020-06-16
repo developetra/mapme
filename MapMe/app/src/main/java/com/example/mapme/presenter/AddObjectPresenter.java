@@ -25,7 +25,7 @@ import hu.supercluster.overpasser.adapter.OverpassQueryResult;
 public class AddObjectPresenter implements AppService.AppServiceListener {
 
     private final AddObjectActivity activity;
-    public GeoPoint userGeoPoint;
+    public GeoPoint userGeoPoint = new GeoPoint(49.89873, 10.90067);
 
     /**
      * Constructor.
@@ -134,6 +134,13 @@ public class AddObjectPresenter implements AppService.AppServiceListener {
      */
     public void addObjectProperties(String id, HashMap<String, String> hashmap) {
         activity.appService.addObjectProperties(id, hashmap);
+    }
+
+    /**
+     * Sets user position initially.
+     */
+    public void setUserPosition() {
+        activity.updateUserPosition(this.userGeoPoint);
     }
 
 }
