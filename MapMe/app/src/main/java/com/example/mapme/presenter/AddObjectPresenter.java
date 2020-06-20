@@ -69,7 +69,9 @@ public class AddObjectPresenter implements AppService.AppServiceListener {
         HashMap<String, GeoObject> objects = this.activity.appService.getObjects();
         if (objects != null) {
             HashMap<String, String> geoJsonObjects = GeoJsonHelper.insertPropertiesToGeoJson(objects);
-            this.activity.addAdditionalLayer(geoJsonObjects);
+            if (this.activity.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
+                this.activity.addAdditionalLayer(geoJsonObjects);
+            }
         }
     }
 
@@ -102,11 +104,15 @@ public class AddObjectPresenter implements AppService.AppServiceListener {
         OverpassQueryResult resultNodes = getOverpassResultNodes(geometry);
         int numberOfNodes = resultNodes.elements.size();
         Log.i("info", "Overpass result number of nodes: " + numberOfNodes);
-        if (numberOfNodes == 0) {
-            activity.showInfoEmptyOverpassResult(objectId);
-        } else {
-            activity.addLayerWithOverpassResult(resultNodes, numberOfNodes, objectId);
+        if (this.activity.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
+            if (numberOfNodes == 0) {
+                activity.showInfoEmptyOverpassResult(objectId);
+            } else {
+                activity.addLayerWithOverpassResult(resultNodes, numberOfNodes, objectId);
+            }
         }
+
+
     }
 
     /**

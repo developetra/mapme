@@ -70,9 +70,11 @@ public class MapPresenter implements AppService.AppServiceListener {
      */
     public void getData() {
         this.objects = activity.appService.getObjects();
-        if (this.objects != null) {
-            final HashMap<String, String> geoJsonObjects = GeoJsonHelper.insertPropertiesToGeoJson(this.objects);
-            activity.addAdditionalLayer(geoJsonObjects);
+        if (objects != null) {
+            HashMap<String, String> geoJsonObjects = GeoJsonHelper.insertPropertiesToGeoJson(objects);
+            if (this.activity.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
+                this.activity.addAdditionalLayer(geoJsonObjects);
+            }
         }
     }
 

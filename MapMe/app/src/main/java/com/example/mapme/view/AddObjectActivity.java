@@ -319,11 +319,11 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
      * @param view
      * @param id
      */
-    public void showInfoReferenceAdded(View view, String id) {
+    public void showInfoReferenceAdded(View view, String id, String reference) {
         currentGeoObjectId = id;
         AlertDialog.Builder infoDialog = new AlertDialog.Builder(this);
         infoDialog.setTitle("GeoObject (Id: " + id + ")");
-        infoDialog.setMessage("The reference was added to the GeoObject. You can now edit the information about the GeoObject.");
+        infoDialog.setMessage("The reference to " + reference + " was added to the GeoObject. You can now edit the information about the GeoObject.");
         infoDialog.setNegativeButton("Cancel",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -417,8 +417,10 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
             GeoPoint geoPoint = new GeoPoint(e.lat, e.lon);
             Marker marker = new Marker(mapView);
             marker.setPosition(geoPoint);
-            marker.setTitle(e.tags.name);
-            marker.setTextIcon(e.tags.name);
+            if (e.tags.name != null){
+                marker.setTitle(e.tags.name);
+                marker.setTextIcon(e.tags.name);
+            }
             marker.setOnMarkerClickListener(
                     new Marker.OnMarkerClickListener() {
                         @Override
@@ -426,7 +428,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
                             HashMap<String, String> properties = new HashMap<>();
                             properties.put("reference", String.valueOf(e.id));
                             AddObjectActivity.this.presenter.addObjectProperties(objectId, properties);
-                            AddObjectActivity.this.showInfoReferenceAdded(AddObjectActivity.this.mapView, objectId);
+                            AddObjectActivity.this.showInfoReferenceAdded(AddObjectActivity.this.mapView, objectId, e.tags.name);
                             return false;
                         }
                     });
