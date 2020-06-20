@@ -126,7 +126,7 @@ public class PaintingSurface extends View {
      * @param x
      * @param y
      */
-    private void touch_move(float x, float y) {
+    private void touchMove(float x, float y) {
         float dx = Math.abs(x - mX);
         float dy = Math.abs(y - mY);
         if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
@@ -139,7 +139,7 @@ public class PaintingSurface extends View {
     /**
      * Save object when finish painting.
      */
-    private void touch_up() {
+    private void touchUp() {
         path.lineTo(mX, mY);
         canvas.drawPath(path, paint);
         path.reset();
@@ -215,11 +215,11 @@ public class PaintingSurface extends View {
                 invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
-                touch_move(x, y);
+                touchMove(x, y);
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
-                touch_up();
+                touchUp();
                 invalidate();
                 break;
         }
