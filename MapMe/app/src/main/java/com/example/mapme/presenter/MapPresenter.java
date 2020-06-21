@@ -18,7 +18,7 @@ import java.util.HashMap;
 public class MapPresenter implements AppService.AppServiceListener {
 
     private final MapActivity activity;
-    public GeoPoint userGeoPoint = new GeoPoint(49.89873, 10.90067);
+    public GeoPoint userGeoPoint = new GeoPoint(49.894830, 10.888578);
     private HashMap<String, GeoObject> objects = new HashMap<>();
 
     /**

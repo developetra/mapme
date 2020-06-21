@@ -8,6 +8,8 @@ import android.view.View;
 import com.example.mapme.R;
 import com.example.mapme.view.overlays.PaintingSurface;
 
+import org.osmdroid.views.overlay.OverlayWithIW;
+
 import hu.supercluster.overpasser.adapter.OverpassQueryResult;
 
 /**
@@ -42,6 +44,19 @@ public class AddPolylineActivity extends AddObjectActivity {
         startActivity(intent);
     }
 
+    /**
+     * Shows info dialog to add reference or edit geoObject.
+     *
+     * @param view
+     * @param objectId
+     */
+    public void showInfoAddReferenceOrEditObject(View view, final String objectId, final OverlayWithIW geometry) {
+        super.showInfoAddReferenceOrEditObject(view, objectId, geometry);
+        paintingSurface.setVisibility(View.GONE);
+        panning.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+        painting.setBackgroundColor(Color.TRANSPARENT);
+    }
+    
     /**
      * Shows info dialog when OverpassResult was empty and sets mode back to mapmode.
      *

@@ -8,6 +8,8 @@ import android.view.View;
 import com.example.mapme.R;
 import com.example.mapme.view.overlays.PaintingSurface;
 
+import org.osmdroid.views.overlay.OverlayWithIW;
+
 import hu.supercluster.overpasser.adapter.OverpassQueryResult;
 
 /**
@@ -40,6 +42,19 @@ public class AddPolygonActivity extends AddObjectActivity {
         intent.putExtra("name", "Edit Polygon");
         intent.putExtra("id", currentGeoObjectId);
         startActivity(intent);
+    }
+
+    /**
+     * Shows info dialog to add reference or edit geoObject.
+     *
+     * @param view
+     * @param objectId
+     */
+    public void showInfoAddReferenceOrEditObject(View view, final String objectId, final OverlayWithIW geometry) {
+        super.showInfoAddReferenceOrEditObject(view, objectId, geometry);
+        paintingSurface.setVisibility(View.GONE);
+        panning.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+        painting.setBackgroundColor(Color.TRANSPARENT);
     }
 
     /**
