@@ -292,19 +292,19 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
         AlertDialog.Builder infoDialog = new AlertDialog.Builder(this);
         infoDialog.setTitle("GeoObject (Id: " + objectId + ")");
         infoDialog.setMessage("The GeoObject has already been saved to the database. You can either add a reference to an existing object or edit the information about the GeoObject.");
-        infoDialog.setNegativeButton("Cancel",
+        infoDialog.setPositiveButton("Cancel",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
                     }
                 });
-        infoDialog.setNeutralButton("Edit",
+        infoDialog.setNegativeButton("Edit",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         startEditObjectActivity();
                     }
                 });
-        infoDialog.setPositiveButton("Add Reference",
+        infoDialog.setNeutralButton("Add Reference",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         presenter.computeOverpassResult(geometry, objectId);
