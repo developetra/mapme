@@ -100,7 +100,6 @@ public class DataActivity extends AppCompatActivity {
      * @param objects
      */
     public void displayData(HashMap<String, GeoObject> objects) {
-        if (!objects.isEmpty()) {
             TableLayout inputFields = findViewById(R.id.inputFields);
             inputFields.removeAllViews();
             for (final String objectKey : objects.keySet()) {
@@ -149,7 +148,6 @@ public class DataActivity extends AppCompatActivity {
                 inputFields.addView(createEmptyRow());
                 inputFields.addView(createEmptyRow());
             }
-        }
     }
 
     /**

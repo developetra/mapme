@@ -56,7 +56,7 @@ public class AddPolylineActivity extends AddObjectActivity {
         panning.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
         painting.setBackgroundColor(Color.TRANSPARENT);
     }
-    
+
     /**
      * Shows info dialog when OverpassResult was empty and sets mode back to mapmode.
      *
