@@ -66,6 +66,13 @@ public class DataPresenter implements AppService.AppServiceListener {
     }
 
     /**
+     * Calls AppService to reset database.
+     */
+    public void resetDatabase() {
+        this.activity.appService.resetDatabase();
+    }
+
+    /**
      * Calls AppService to save file to firebase storage.
      */
     public void saveToCloud() {

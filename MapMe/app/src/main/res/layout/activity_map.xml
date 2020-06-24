@@ -91,24 +91,12 @@
         android:id="@+id/data"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/delete"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="1dp"
-        android:backgroundTint="@color/colorPrimaryDark"
-        android:onClick="startDataActivity"
-        android:src="@drawable/data" />
-
-    <ImageButton
-        android:id="@+id/delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="10dp"
         android:backgroundTint="@color/colorPrimaryDark"
-        android:onClick="showInfoResetDatabase"
-        android:src="@drawable/delete" />
+        android:onClick="startDataActivity"
+        android:src="@drawable/data" />
 
 </RelativeLayout>

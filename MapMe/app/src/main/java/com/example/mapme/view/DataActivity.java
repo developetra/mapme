@@ -174,6 +174,31 @@ public class DataActivity extends AppCompatActivity {
     }
 
     /**
+     * Shows info dialog to reset database.
+     *
+     * @param view
+     */
+    public void showInfoResetDatabase(View view) {
+        AlertDialog.Builder infoDialog = new AlertDialog.Builder(this);
+        infoDialog.setTitle("Reset Database");
+        infoDialog.setMessage("Do you really want to reset the database? All previously saved data will be lost. ");
+        infoDialog.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        infoDialog.setNeutralButton("Reset",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        presenter.resetDatabase();
+                        dialog.cancel();
+                    }
+                });
+        infoDialog.show();
+    }
+
+    /**
      * Shows info dialog when upload is completed.
      */
     public void showInfoUploadSuccessful() {

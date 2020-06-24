@@ -79,14 +79,6 @@ public class MapPresenter implements AppService.AppServiceListener {
     }
 
     /**
-     * Calls AppService to reset database.
-     */
-    public void resetDatabase() {
-        this.activity.appService.resetDatabase();
-        this.activity.mapView.invalidate();
-    }
-
-    /**
      * Sets user position initially.
      */
     public void setUserPosition() {
