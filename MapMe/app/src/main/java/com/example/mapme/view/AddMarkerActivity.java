@@ -2,7 +2,9 @@ package com.example.mapme.view;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.mapme.R;
 import com.example.mapme.view.overlays.IconPlottingOverlay;
@@ -30,6 +32,9 @@ public class AddMarkerActivity extends AddObjectActivity implements View.OnLongC
         disablePainting();
         IconPlottingOverlay plotter = new IconPlottingOverlay(this, getResources().getDrawable(R.drawable.pin));
         mapView.getOverlayManager().add(plotter);
+        Toast toast = Toast.makeText(this, "Press and hold to set a marker", Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.TOP, 0, 200);
+        toast.show();
     }
 
     /**

@@ -3,7 +3,9 @@ package com.example.mapme.view;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.mapme.R;
 import com.example.mapme.view.overlays.PaintingSurface;
@@ -31,6 +33,9 @@ public class AddPolygonActivity extends AddObjectActivity {
         setUserMarker();
         enableRotation();
         enablePainting(PaintingSurface.Mode.Polygon);
+        Toast toast = Toast.makeText(this, "Select drawing mode on the right to draw a polygon", Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.TOP, 0, 200);
+        toast.show();
     }
 
     /**
