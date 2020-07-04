@@ -100,60 +100,60 @@ public class DataActivity extends AppCompatActivity {
      * @param objects
      */
     public void displayData(HashMap<String, GeoObject> objects) {
-            TableLayout inputFields = findViewById(R.id.inputFields);
-            inputFields.removeAllViews();
-            for (final String objectKey : objects.keySet()) {
-                GeoObject object = objects.get(objectKey);
-                // id and type
-                TableRow tableRowObject = new TableRow(this);
-                TextView textViewObject = new TextView(this);
-                textViewObject.setText("  " + object.getProperties().get("type") + ": " + objectKey + "    ");
-                textViewObject.setTypeface(null, Typeface.BOLD);
-                tableRowObject.addView(textViewObject);
-                // edit button
-                ImageButton edit = new ImageButton(this);
-                edit.setImageDrawable(getResources().getDrawable(R.drawable.edit));
-                edit.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        startEditObjectActivity(objectKey);
-                    }
-                });
-                tableRowObject.addView(edit);
-                // delete button
-                ImageButton delete = new ImageButton(this);
-                delete.setImageDrawable(getResources().getDrawable(R.drawable.delete));
-                delete.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        presenter.deleteObject(objectKey);
-                    }
-                });
-                tableRowObject.addView(delete);
-                inputFields.addView(tableRowObject);
-                // properties
-                for (final String propertyKey : object.getProperties().keySet()) {
-
-                    TableRow tableRowProperties = new TableRow(this);
-                    String key = propertyKey;
-                    String value = object.getProperties().get(propertyKey);
-                    TextView textViewProperties = new TextView(this);
-                    textViewProperties.setText("     " + key + " - " + value);
-                    tableRowProperties.addView(textViewProperties);
-                    inputFields.addView(tableRowProperties);
+        TableLayout inputFields = findViewById(R.id.inputFields);
+        inputFields.removeAllViews();
+        for (final String objectKey : objects.keySet()) {
+            GeoObject object = objects.get(objectKey);
+            // id and type
+            TableRow tableRowObject = new TableRow(this);
+            TextView textViewObject = new TextView(this);
+            textViewObject.setText("  " + object.getProperties().get("type") + ": " + objectKey + "    ");
+            textViewObject.setTypeface(null, Typeface.BOLD);
+            tableRowObject.addView(textViewObject);
+            // edit button
+            ImageButton edit = new ImageButton(this);
+            edit.setImageDrawable(getResources().getDrawable(R.drawable.edit));
+            edit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startEditObjectActivity(objectKey);
                 }
-                // empty rows
-                inputFields.addView(createEmptyRow());
-                inputFields.addView(createEmptyRow());
-                inputFields.addView(createEmptyRow());
-                inputFields.addView(createEmptyRow());
+            });
+            tableRowObject.addView(edit);
+            // delete button
+            ImageButton delete = new ImageButton(this);
+            delete.setImageDrawable(getResources().getDrawable(R.drawable.delete));
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    presenter.deleteObject(objectKey);
+                }
+            });
+            tableRowObject.addView(delete);
+            inputFields.addView(tableRowObject);
+            // properties
+            for (final String propertyKey : object.getProperties().keySet()) {
+
+                TableRow tableRowProperties = new TableRow(this);
+                String key = propertyKey;
+                String value = object.getProperties().get(propertyKey);
+                TextView textViewProperties = new TextView(this);
+                textViewProperties.setText("     " + key + " - " + value);
+                tableRowProperties.addView(textViewProperties);
+                inputFields.addView(tableRowProperties);
             }
+            // empty rows
+            inputFields.addView(createEmptyRow());
+            inputFields.addView(createEmptyRow());
+            inputFields.addView(createEmptyRow());
+            inputFields.addView(createEmptyRow());
+        }
     }
 
     /**
      * Creates an empty row.
      *
-     * @return
+     * @return TableRow
      */
     public TableRow createEmptyRow() {
         TableRow emptyRow = new TableRow(this);
@@ -163,8 +163,11 @@ public class DataActivity extends AppCompatActivity {
         return emptyRow;
     }
 
+
     /**
      * Opens new EditInformationActivity for geoObject with given id.
+     *
+     * @param id
      */
     public void startEditObjectActivity(String id) {
         Intent intent = new Intent(this, EditInformationActivity.class);

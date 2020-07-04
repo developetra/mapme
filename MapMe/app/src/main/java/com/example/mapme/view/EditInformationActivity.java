@@ -116,10 +116,13 @@ public class EditInformationActivity extends AppCompatActivity {
         this.finish();
     }
 
+
     /**
      * Adds new row with filled input fields to layout.
      *
      * @param view
+     * @param property
+     * @param input
      */
     public void addInputField(View view, String property, String input) {
         TableLayout inputFields = findViewById(R.id.inputFields);

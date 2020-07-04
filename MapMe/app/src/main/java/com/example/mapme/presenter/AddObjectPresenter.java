@@ -111,8 +111,6 @@ public class AddObjectPresenter implements AppService.AppServiceListener {
                 activity.addLayerWithOverpassResult(resultNodes, numberOfNodes, objectId);
             }
         }
-
-
     }
 
     /**

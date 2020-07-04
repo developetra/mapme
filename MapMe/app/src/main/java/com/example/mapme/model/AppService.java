@@ -105,14 +105,19 @@ public class AppService extends Service {
         return Service.START_NOT_STICKY;
     }
 
-
+    /**
+     * OnBind.
+     *
+     * @param intent
+     * @return binder
+     */
     @Override
     public IBinder onBind(Intent intent) {
         return binder;
     }
 
     /**
-     * Local Binder.
+     * Local Binder class.
      */
     public class LocalBinder extends Binder {
         public AppService getService() {
@@ -121,7 +126,7 @@ public class AppService extends Service {
     }
 
     /**
-     * App Service Listener & listener methods.
+     * AppServiceListener interface.
      */
     public interface AppServiceListener {
         void updateUserPosition(Location location);
@@ -129,16 +134,26 @@ public class AppService extends Service {
         void dataChanged(HashMap<String, GeoObject> objects);
     }
 
+    /**
+     * Registers an AppServiceListener.
+     *
+     * @param listener
+     */
     public void registerListener(AppService.AppServiceListener listener) {
         listeners.add(listener);
     }
 
+    /**
+     * Unregisters an AppServiceListener.
+     *
+     * @param listener
+     */
     public void unregisterListener(AppService.AppServiceListener listener) {
         listeners.remove(listener);
     }
 
     /**
-     * Initializes locationManager.
+     * Initializes LocationManager.
      */
     private void initLocationManager() {
         Log.i("info", "LocationManager initialized.");

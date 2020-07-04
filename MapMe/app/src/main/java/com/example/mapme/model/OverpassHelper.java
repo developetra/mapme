@@ -57,7 +57,7 @@ public class OverpassHelper {
      * Interprets overpass query.
      *
      * @param query
-     * @return
+     * @return OverpassQueryResult
      */
     private static OverpassQueryResult interpret(String query) {
         // fix Overpasser bug
@@ -77,7 +77,7 @@ public class OverpassHelper {
      *
      * @param center
      * @param radiusInMeters
-     * @return
+     * @return LatLngBounds
      */
     private static LatLngBounds toBounds(LatLng center, double radiusInMeters) {
         double distanceFromCenterToCorner = radiusInMeters * Math.sqrt(2.0);

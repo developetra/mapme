@@ -66,15 +66,11 @@ public class GeoJsonHelperTest {
     /**
      * @return The {@link Context} of the test project.
      */
-    private Context getTestContext()
-    {
-        try
-        {
+    private Context getTestContext() {
+        try {
             Method getTestContext = GeoJsonHelperTest.class.getMethod("getTestContext");
             return (Context) getTestContext.invoke(this);
-        }
-        catch (final Exception exception)
-        {
+        } catch (final Exception exception) {
             exception.printStackTrace();
             return null;
         }

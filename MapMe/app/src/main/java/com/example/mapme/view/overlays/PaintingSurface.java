@@ -56,10 +56,10 @@ public class PaintingSurface extends View {
      * Constructor.
      *
      * @param context
-     * @param attrs
+     * @param attributeSet
      */
-    public PaintingSurface(Context context, AttributeSet attrs) {
-        super(context, attrs);
+    public PaintingSurface(Context context, AttributeSet attributeSet) {
+        super(context, attributeSet);
         path = new Path();
         paint = new Paint();
         paint.setAntiAlias(true);
@@ -74,15 +74,15 @@ public class PaintingSurface extends View {
     /**
      * Creates new canvas.
      *
-     * @param w
-     * @param h
-     * @param oldw
-     * @param oldh
+     * @param width
+     * @param height
+     * @param oldwidth
+     * @param oldheight
      */
     @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        final Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+    protected void onSizeChanged(int width, int height, int oldwidth, int oldheight) {
+        super.onSizeChanged(width, height, oldwidth, oldheight);
+        final Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         this.canvas = new Canvas(bitmap);
     }
 
@@ -202,7 +202,7 @@ public class PaintingSurface extends View {
      * Touch event.
      *
      * @param event
-     * @return
+     * @return boolean
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {

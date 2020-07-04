@@ -64,17 +64,6 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         setContentView(R.layout.activity_map);
         mapView = findViewById(R.id.map);
         mapView.setTileSource(TileSourceFactory.MAPNIK);
-//        mMapView.setTileSource(new OnlineTileSourceBase("USGS Topo", 0, 18, 256, "",
-//                new String[] { "http://a.tile.stamen.com/toner/" }) {
-//            @Override
-//            public String getTileURLString(long pMapTileIndex) {
-//                return getBaseUrl()
-//                        + MapTileIndex.getZoom(pMapTileIndex)
-//                        + "/" + MapTileIndex.getX(pMapTileIndex)
-//                        + "/" + MapTileIndex.getY(pMapTileIndex)
-//                        + mImageFilenameEnding;
-//            }
-//        });
         mapView.setMultiTouchControls(true);
         mapController = mapView.getController();
         mapController.setCenter(new GeoPoint(51.5167, 9.9167));
@@ -263,6 +252,8 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
     /**
      * Adds layer with geoObjects from database to map.
+     *
+     * @param objects
      */
     public void addAdditionalLayer(HashMap<String, String> objects) {
         mapView.getOverlays().clear();

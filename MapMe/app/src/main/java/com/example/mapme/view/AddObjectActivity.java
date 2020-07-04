@@ -44,7 +44,7 @@ import java.util.HashMap;
 import hu.supercluster.overpasser.adapter.OverpassQueryResult;
 
 /**
- * AddObjectActivity - this abstract Activity provides all common methods for AddMarker, AddPolygon and AddPolyline Activities.
+ * AddObjectActivity - abstract Activity that provides all common methods for AddMarker, AddPolygon and AddPolyline Activities.
  */
 public abstract class AddObjectActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -242,7 +242,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
      * Calls presenter to save geoObject to database.
      *
      * @param geometry
-     * @return
+     * @return id as String
      */
     public String saveToDatabase(OverlayWithIW geometry) {
         return presenter.saveToDatabase(geometry);
@@ -412,6 +412,10 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
 
     /**
      * Adds additional layer with OverpassResult to map.
+     *
+     * @param nodes
+     * @param numberOfNodes
+     * @param objectId
      */
     public void addLayerWithOverpassResult(OverpassQueryResult nodes, int numberOfNodes, final String objectId) {
         for (int i = 0; i < numberOfNodes; i++) {
@@ -419,7 +423,7 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
             GeoPoint geoPoint = new GeoPoint(e.lat, e.lon);
             Marker marker = new Marker(mapView);
             marker.setPosition(geoPoint);
-            if (e.tags.name != null){
+            if (e.tags.name != null) {
                 marker.setTitle(e.tags.name);
                 marker.setTextIcon(e.tags.name);
             }

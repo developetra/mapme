@@ -41,7 +41,7 @@ public class AddMarkerActivity extends AddObjectActivity implements View.OnLongC
      * Drop marker onLongClick.
      *
      * @param view
-     * @return
+     * @return boolean
      */
     @Override
     public boolean onLongClick(View view) {

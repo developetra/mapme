@@ -33,7 +33,7 @@ public class CustomOverlay extends FolderOverlay {
      *
      * @param e
      * @param mapView
-     * @return
+     * @return boolean
      */
     @Override
     public boolean onLongPress(final MotionEvent e, final MapView mapView) {
@@ -68,7 +68,7 @@ public class CustomOverlay extends FolderOverlay {
      *
      * @param e
      * @param mapView
-     * @return
+     * @return boolean
      */
     protected boolean hitTest(final MotionEvent e, final MapView mapView) {
         GeoPoint geoPoint = (GeoPoint) mapView.getProjection().fromPixels((int) e.getX(), (int) e.getY(), null);

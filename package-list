@@ -1,0 +1,5 @@
+com.example.mapme.model
+com.example.mapme.presenter
+com.example.mapme.view
+com.example.mapme.view.overlays
+com.example.mapme.widgets

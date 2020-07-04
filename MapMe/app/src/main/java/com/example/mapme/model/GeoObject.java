@@ -23,6 +23,9 @@ public class GeoObject {
 
     /**
      * Constructor.
+     *
+     * @param geometry
+     * @param properties
      */
     public GeoObject(String geometry, HashMap<String, String> properties) {
         this.geometry = geometry;

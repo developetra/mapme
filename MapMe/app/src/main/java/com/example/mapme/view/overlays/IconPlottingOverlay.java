@@ -21,24 +21,24 @@ public class IconPlottingOverlay extends Overlay {
      * Constructor.
      *
      * @param activity
-     * @param m
+     * @param markerIcon
      */
-    public IconPlottingOverlay(AddObjectActivity activity, Drawable m) {
-        markerIcon = m;
+    public IconPlottingOverlay(AddObjectActivity activity, Drawable markerIcon) {
+        this.markerIcon = markerIcon;
         currentActivity = activity;
     }
 
     /**
      * Add overlay with marker when pressing on map.
      *
-     * @param e
+     * @param motionEvent
      * @param mapView
-     * @return
+     * @return boolean
      */
     @Override
-    public boolean onLongPress(final MotionEvent e, final MapView mapView) {
+    public boolean onLongPress(final MotionEvent motionEvent, final MapView mapView) {
         if (markerIcon != null) {
-            GeoPoint geoPoint = (GeoPoint) mapView.getProjection().fromPixels((int) e.getX(), (int) e.getY(), null);
+            GeoPoint geoPoint = (GeoPoint) mapView.getProjection().fromPixels((int) motionEvent.getX(), (int) motionEvent.getY(), null);
             if (geoPoint.getLongitude() < -180)
                 geoPoint.setLongitude(geoPoint.getLongitude() + 360);
             if (geoPoint.getLongitude() > 180)

@@ -33,7 +33,7 @@ public class MapPresenter implements AppService.AppServiceListener {
     /**
      * Get the current UserGeoPoint.
      *
-     * @return
+     * @return GeoPoint
      */
     public GeoPoint getUserGeoPoint() {
         return userGeoPoint;
