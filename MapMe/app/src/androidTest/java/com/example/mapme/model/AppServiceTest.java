@@ -1,15 +1,17 @@
 package com.example.mapme.model;
 
 import android.location.Location;
+import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.HashMap;
 
-
+@RunWith(AndroidJUnit4.class)
 public class AppServiceTest {
 
     AppService appService;
