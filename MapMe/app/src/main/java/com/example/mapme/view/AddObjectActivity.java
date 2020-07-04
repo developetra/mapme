@@ -15,8 +15,10 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.example.mapme.R;
 import com.example.mapme.model.AppService;
@@ -438,6 +440,9 @@ public abstract class AddObjectActivity extends AppCompatActivity implements Vie
         Log.i("info", "Layer with Overpass Result was added.");
         panning.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
         painting.setBackgroundColor(Color.TRANSPARENT);
+        Toast toast = Toast.makeText(this, "Press on name to select a reference", Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.TOP, 0, 200);
+        toast.show();
     }
 
 }
