@@ -56,6 +56,7 @@ public class AddObjectPresenter implements AppService.AppServiceListener {
     public void dataChanged(HashMap<String, GeoObject> objects) {
         if (objects != null) {
             HashMap<String, String> geoJsonObjects = GeoJsonHelper.insertPropertiesToGeoJson(objects);
+            // check if activity is already resumed so the app does not crash
             if (this.activity.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
                 this.activity.addAdditionalLayer(geoJsonObjects);
             }

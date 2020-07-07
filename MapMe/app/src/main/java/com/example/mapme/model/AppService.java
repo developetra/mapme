@@ -85,8 +85,7 @@ public class AppService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        // allow application to perform a networking operation on its main thread:
-        // https://stackoverflow.com/questions/6343166/how-to-fix-android-os-networkonmainthreadexception
+        // allow application to perform a networking operation on its main thread
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
     }
